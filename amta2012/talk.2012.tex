@@ -964,6 +964,19 @@ rename file .mm
 
 \slide{KenLM}
 
+\begin{itemize}
+\item Another binary LM implementation
+\item Advantages:
+  \\ Built into Moses. No need to compile separate library
+  \\ Faster than IRSTLM and SRILM
+  \\ Multi-threadable
+\item {Create binary LM}
+  \\  build\_binary lm.arpa lm.binlm
+\item {Use in Moses}
+  \\ {[}lmodel-file{]}
+  \\ 9 0 5 lm.binlm
+
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
