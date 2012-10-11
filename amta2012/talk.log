@@ -1,4 +1,4 @@
-This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2012.3.29)  10 OCT 2012 13:57
+This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2012.3.29)  10 OCT 2012 17:55
 entering extended mode
  %&-line parsing enabled.
 **talk.tex
@@ -842,22 +842,8 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  []
 
 [9]
-
-! LaTeX Error: There's no line here to end.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.217 \item[Many others...]  \\ W
-                                 orld Trade Organisation, Adobe, Symantec, W...
-
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
 File: univ-edinburgh.pdf Graphic file (type pdf)
-<use univ-edinburgh.pdf>
+ <use univ-edinburgh.pdf>
 Underfull \hbox (badness 10000) has occurred while \output is active
 [][][]
  []
@@ -1221,7 +1207,7 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  []
 
 [48]
-Underfull \hbox (badness 10000) in paragraph at lines 734--735
+Underfull \hbox (badness 10000) in paragraph at lines 735--736
 
  []
 
@@ -1253,12 +1239,12 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  []
 
 [52]
-Underfull \hbox (badness 10000) in paragraph at lines 842--844
+Underfull \hbox (badness 10000) in paragraph at lines 843--845
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 848--850
+Underfull \hbox (badness 10000) in paragraph at lines 849--851
 
  []
 
@@ -1269,7 +1255,7 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  []
 
 [53]
-Underfull \hbox (badness 10000) in paragraph at lines 866--868
+Underfull \hbox (badness 10000) in paragraph at lines 867--869
 
  []
 
@@ -1280,12 +1266,12 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  []
 
 [54]
-Underfull \hbox (badness 10000) in paragraph at lines 885--887
+Underfull \hbox (badness 10000) in paragraph at lines 886--888
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 891--893
+Underfull \hbox (badness 10000) in paragraph at lines 892--894
 
  []
 
@@ -1303,12 +1289,12 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  []
 
 [56]
-Underfull \hbox (badness 10000) in paragraph at lines 921--923
+Underfull \hbox (badness 10000) in paragraph at lines 922--924
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 927--929
+Underfull \hbox (badness 10000) in paragraph at lines 928--930
 
  []
 
@@ -1319,12 +1305,12 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  []
 
 [57]
-Underfull \hbox (badness 10000) in paragraph at lines 941--943
+Underfull \hbox (badness 10000) in paragraph at lines 942--944
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 948--950
+Underfull \hbox (badness 10000) in paragraph at lines 949--951
 
  []
 
@@ -1456,7 +1442,7 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 <lattice-german.png, id=698, 1156.32pt x 153.57375pt>
 File: lattice-german.png Graphic file (type png)
  <use lattice-german.png>
-Overfull \hbox (18.29051pt too wide) in paragraph at lines 1274--1275
+Overfull \hbox (18.29051pt too wide) in paragraph at lines 1275--1276
  [] 
  []
 
@@ -1495,7 +1481,7 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  []
 
 [76]
-Overfull \hbox (22.5715pt too wide) in paragraph at lines 1438--1439
+Overfull \hbox (22.5715pt too wide) in paragraph at lines 1439--1440
  [][][][][][][] 
  []
 
@@ -1516,7 +1502,7 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  []
 
 [78 <./search-graph.png (PNG copy)>]
-Underfull \hbox (badness 6063) in paragraph at lines 1480--1481
+Underfull \hbox (badness 6063) in paragraph at lines 1481--1482
 []\OT1/fcmss/m/n/20.74 Individual words or
  []
 
@@ -1524,7 +1510,7 @@ Underfull \hbox (badness 6063) in paragraph at lines 1480--1481
 File: lattice-caitra.png Graphic file (type png)
 
 <use lattice-caitra.png>
-Overfull \hbox (27.14941pt too wide) in paragraph at lines 1475--1496
+Overfull \hbox (27.14941pt too wide) in paragraph at lines 1476--1497
 [] 
  []
 
@@ -1607,7 +1593,7 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 Missing character: There is no Ã in font txtt!
 Missing character: There is no ¼ in font txtt!
 
-Overfull \hbox (32.45154pt too wide) in paragraph at lines 1799--1800
+Overfull \hbox (32.45154pt too wide) in paragraph at lines 1800--1801
  [][][][][][] 
  []
 
@@ -1618,7 +1604,7 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  []
 
 [89]
-Overfull \hbox (37.4918pt too wide) in paragraph at lines 1820--1821
+Overfull \hbox (37.4918pt too wide) in paragraph at lines 1821--1822
  [][][][][][] 
  []
 
@@ -1652,12 +1638,12 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  []
 
 [93]
-Underfull \hbox (badness 10000) in paragraph at lines 1923--1924
+Underfull \hbox (badness 10000) in paragraph at lines 1924--1925
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1931--1932
+Underfull \hbox (badness 10000) in paragraph at lines 1932--1933
 
  []
 
@@ -1709,7 +1695,7 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 File: web-interface-experiments.png Graphic file (type png)
 
 <use web-interface-experiments.png>
-Overfull \hbox (32.22887pt too wide) in paragraph at lines 2035--2035
+Overfull \hbox (32.22887pt too wide) in paragraph at lines 2036--2036
  [] 
  []
 
@@ -1724,7 +1710,7 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 File: web-interface-runs.png Graphic file (type png)
 
 <use web-interface-runs.png>
-Overfull \hbox (38.25133pt too wide) in paragraph at lines 2043--2044
+Overfull \hbox (38.25133pt too wide) in paragraph at lines 2044--2045
  [] 
  []
 
@@ -1750,7 +1736,7 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 File: analysis-unknown.png Graphic file (type png)
 
 <use analysis-unknown.png>
-Overfull \hbox (38.25133pt too wide) in paragraph at lines 2067--2068
+Overfull \hbox (38.25133pt too wide) in paragraph at lines 2068--2069
  [][] 
  []
 
@@ -1786,14 +1772,14 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 <biconcor1.png, id=870, 974.64125pt x 209.78375pt>
 File: biconcor1.png Graphic file (type png)
  <use biconcor1.png>
-Overfull \hbox (30.47229pt too wide) in paragraph at lines 2101--2101
+Overfull \hbox (30.47229pt too wide) in paragraph at lines 2102--2102
  [] 
  []
 
 <biconcor2.png, id=871, 972.63374pt x 199.74625pt>
 File: biconcor2.png Graphic file (type png)
  <use biconcor2.png>
-Overfull \hbox (28.96666pt too wide) in paragraph at lines 2102--2102
+Overfull \hbox (28.96666pt too wide) in paragraph at lines 2103--2103
  [][] 
  []
 
@@ -1819,7 +1805,7 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 File: analysis-tree-alignment.png Graphic file (type png)
 
 <use analysis-tree-alignment.png>
-Overfull \hbox (29.41652pt too wide) in paragraph at lines 2121--2121
+Overfull \hbox (29.41652pt too wide) in paragraph at lines 2122--2122
  [] 
  []
 
@@ -1834,7 +1820,7 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 File: analysis-comparison.png Graphic file (type png)
 
 <use analysis-comparison.png>
-Overfull \hbox (36.24385pt too wide) in paragraph at lines 2131--2131
+Overfull \hbox (36.24385pt too wide) in paragraph at lines 2132--2132
  [] 
  []
 
@@ -1901,7 +1887,7 @@ e1/bluesky/cm/cmr10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmr7.pfb></usr
 uesky/cm/cmssbx10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmsy10.pfb></usr
 /share/texmf/fonts/type1/bluesky/cm/cmsy7.pfb></usr/share/texmf/fonts/type1/pub
 lic/txfonts/txtt.pfb>
-Output written on talk.pdf (112 pages, 2179375 bytes).
+Output written on talk.pdf (112 pages, 2179347 bytes).
 PDF statistics:
  948 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 131072)

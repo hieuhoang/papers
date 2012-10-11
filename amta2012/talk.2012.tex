@@ -214,7 +214,7 @@
 \item[Autodesk] --- \\ showed productivity increases in translating manuals when post-editing output from a custom-build Moses system
 \item[Systran] --- \\ developed statistical post-editing using Moses
 \item[Asia Online] --- \\ offers translation technology and services based on Moses
-\item[Many others...]  \\ World Trade Organisation, Adobe, Symantec, WIPO, Sybase, Safaba
+\item[Many others] ...  \\ World Trade Organisation, Adobe, Symantec, WIPO, Sybase, Safaba
 \end{description}
 
 
@@ -421,7 +421,12 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 
 \slide{Advanced Topics}
 \begin{itemize} \itemsep -1mm
+
+\item How do I get started?
+\item Training
+\item Decoding
 \item Data and domain adaptation
+
 \item Speed vs. quality
 \item Speed vs. memory use
 \item Language models
@@ -454,7 +459,10 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
-\item \currenttopic{Data and domain adaptation}
+\item \currenttopic{How do I get started?}
+\item Training
+\item Decoding
+\item Data and domain adaptation
 \item Speed vs. quality
 \item Speed vs. memory use
 \item Language models
@@ -469,38 +477,292 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Data}
-\vspace{15mm}
-\begin{itemize}
-\item Parallel corpora $\rightarrow$ translation model
-\begin{itemize}
-\item sentence-aligned translated texts
-\item translation memories are parallel corpora
-\item dictionaries are parallel corpora
+\slide{How do I get started?}
+
+\begin{itemize} \itemsep -1mm
+
+\item{Collect your data} ... 
+  \\ Parallel data 
+  \\ Translation memories
+  \\ Open-sourced data, eg. Europarl, UN. Taus-repository
+  \\ Monolingual data
+
+\item{Set up Moses}
+  \\ Download source code for Moses + GIZA++/MGIZA
+  \\ Compile, install
+  \\ More info:
+       http://www.statmt.org/moses/
+
 \end{itemize}
-\item Monolingual corpora $\rightarrow$ language model
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{How do I get started?}
+
+\begin{itemize} \itemsep -1mm
+
+\item{Run manually} 
+   \\ Clean, lowercase data
+   \\ Run word alignment
+   \\ Train phrase-tables, language models, lexicalized reordering models
+   \\ Tune
+   \\ Test
+
+\item{Use the EMS (Experiment Management System) } 
+   \\ Automate entire process
+   \\ Support for multi-core servers. And Sun Grid Engines (SGE)
+   \\ Reuse existing alignments or models
+   \\ Example config files available in Moses
+   \\ Disadvantage --- not all features are implemented
+
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{Experiment Management System}
 \begin{itemize}
-\item text in the target language
-\item billions of words easy to handle
+\item One configuration file for all settings: record of all experimental details
+\item Scheduler of individual steps in pipeline
+\begin{itemize}
+\item automatically keeps track of dependencies
+\item on single machine, multi-core machines, GridEngine clusters
+\item parallel execution 
+\item crash detection
+\item automatic re-use of prior results
+\end{itemize}
+\item Fast to use
+\begin{itemize}
+\item set up a new experiments in minutes
+\item set up a variation of an experiment in seconds
 \end{itemize}
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Domain Adaptation}
+\slide{}
+\begin{center} \vspace{-5mm}
+\includegraphics[scale=1.41]{ems-agenda-composite.pdf}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{How does it work?}
+\vspace{30mm}
+\begin{itemize}
+\item Write a configuration file
+(typically by adapting an existing file)
+\vspace{15mm}
+\item Execute:
+\vspace{-10mm}
+\begin{center}
+\littlecode{\normalsize experiment.perl -config config}
+\end{center}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Web Interface}
+\begin{center}
+\includegraphics[scale=1]{web-interface-experiments.png}\\[5mm]
+List of experiments
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{List of Runs}
+\begin{center}\vspace{-9mm}
+\includegraphics[scale=1]{web-interface-runs}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Analysis: Basic Statistics}
+\begin{center}
+\includegraphics[scale=1]{analysis-stats.png}
+\end{center}
+\begin{itemize}
+\item Basic statistics
+\begin{itemize}
+\item n-gram precision
+\item evaluation metrics
+\item coverage of the input in corpus and translation model
+\item phrase segmentations used
+\end{itemize}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Analysis: Unknown Words}
+\begin{center}
+grouped by frequency in test set\\[5mm]
+\includegraphics[scale=1]{analysis-unknown.png}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Analysis: Output Annotation}
+\vspace{30mm}
+\begin{center}
+\includegraphics[scale=1.5]{analysis-bleu.png}\\[20mm]
+Color highlighting to indicate n-gram overlap with reference translation\\[5mm]
+darker bleu = word is part of larger n-gram match
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Analysis: Input Annotation}
+\vspace{10mm}
+\begin{center}
+\includegraphics[scale=1.5]{analysis-coverage.png}\\[20mm]
+\end{center}
+\begin{itemize}
+\item For each word and phrase, color coding and stats on
+\begin{itemize}
+\item number of occurrences in training corpus
+\item number of distinct translations in translation model
+\item entropy of conditional translation probability distribution $\phi(e|f)$ (normalized)
+\end{itemize}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Analysis: Bilingual Concordancer}
+\vspace{-5mm}
+\begin{center}
+\includegraphics[scale=0.75]{biconcor1.png}\\[5mm]
+\includegraphics[scale=0.75]{biconcor2.png}\\
+translation of input phrase in training data context
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Analysis: Alignment}
+\vspace{30mm}
+\begin{center}
+\includegraphics[scale=1.5]{analysis-alignment.png}\\[10mm]
+Phrase alignment of the decoding process\\[5mm]
+(red border, interactive)
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Analysis: Tree Alignment}
+\vspace{15mm}
+\begin{center}
+\includegraphics[scale=1.2]{analysis-tree-alignment.png}\\[10mm]
+Uses nested boxes to indicate tree structure\\[3mm]
+(red border, yellow shaded spans in focus, interactive)\\[3mm]
+for syntax model, non-terminals are also shown
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Analysis: Comparison of 2 Runs}
+\begin{center}
+\includegraphics[scale=1]{analysis-comparison.png}\\[10mm]
+Different words are highlighted\\[3mm]
+sortable by most improvement, deterioration
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Advanced Features}
+\vspace{-5mm}
+\textcolor{darkgrey}{
+\begin{itemize} \itemsep -1mm
+\item Data and domain adaptation
+\item \currenttopic{Faster Training}
+\item Speed vs. quality
+\item Speed vs. memory use
+\item Language models
+\item Instructions to decoder
+\item Input formats
+\item Output formats
+\item Translation models
+\item Experiment management system
+\end{itemize}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Faster Training}
+
+\begin{itemize} \itemsep -1mm
+\item {Crucial steps:} 
+  \\ Tokenization
+  \\ Alignment
+  \\ Extraction
+  \\ Phrase-table creation
+  \\ Train LM
+
+\item {Multicore Parallelization} 
+  \\ Run in parallel all steps that can be run concurrently
+  \\ .../train-model.perl -parallel
+  \\ EMS: [TRAINING] 
+  \\      parallel = yes
+
+\item {Tokenization}
+  \\    tokenizer.perl -threads NUM
+\item {Word Alignment}
+  \\    Use MGIZA, not GIZA++
+  \\    .../train-model.perl -mgiza -mgiza-cpus NUM
+  \\    EMS: training-options = ``-mgiza -mgiza-cpus 8``
+\item {MGIZA on memory-limited machines}
+  \\ snt2cooc program requires 6GB+ memory
+  \\ Reimplementation uses 10MB, but take longer to run
+       .../train-model.perl -snt2cooc snt2cooc.pl
+       EMS: training-options = ``-snt2cooc snt2cooc.pl``
+\item {Parallel Extraction}
+  \\ Split training data into NUM equal parts, extract concurrently
+  \\ .../train-model.perl -cores NUM
+  \\ Relly heavily on Unix 'sort' command. Optimizat for speed
+  \\ Example:
+  \\     .../train-model.perl  -sort-buffer-size 10G -sort-batch-size 253 -sort-compress gzip -sort-parallel 5
+  \\   will call always sort with arguments
+  \\     sort  -S 10G --batch-size 253 --compress-program gzip --parallel 5
+  \\ Dependent on
+  \\      sort version
+  \\      Unix version
+  \\      available memory
+
+\item {LM Training}
+  \\ Use IRST toolkit for training
+  \\ EMS: irst-dir = [IRST path]
+  \\      lm-training = ''$moses-script-dir/generic/trainlm-irst.perl -cores NUM -irst-dir $irst-dir``
+  \\ Train with more data, in parallel
+  \\ Output to SRI-compatible file
+
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{IRSTLM: Training}
 \vspace{10mm}
 \begin{itemize}
-\item The more data, the better
-\item The more in-domain data, the better\\
-(even in-domain monolingual data very valuable)
-\item Multiple models 
+
+\item Developed by FBK-irst, Trento, Italy
+
+\item Specialized training for large corpora
+	\begin{itemize}
+	\item parallelization
+	\item reduce memory usage
+	\end{itemize}
+\item Training: \\
+\begin{SaveVerbatim}{myverb} 
+build-lm.sh -i "gunzip -c corpus.gz" -n 3 
+      -o train.irstlm.gz -k 10
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+
 \begin{itemize}
-\item train a translation model for each domain corpus
-\item train a language model for each domain corpus
-\item use all, tune weights for each model
-\item alternative: interpolate language model
+\item \littlecode{-n 3} = n-gram order
+\item \littlecode{-k 10} = split training procedure into 10 steps
 \end{itemize}
-\item Always tune towards target domain
+
+\item Quantization of probabilities
+	\begin{itemize}
+	\item reduces memory but lose accuracy
+	\item probability stored in 1 byte instead of 4 bytes
+	\end{itemize}
+
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -523,113 +785,18 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Speed}
+\slide{Fast Decoding}
+
 \vspace{15mm}
 \begin{itemize}
 \item Easy speed-up: multi-threaded decoding
 \begin{center}
 \littlecode{--threads NUM}
 \end{center}
-\item Requires boost library
-\item Does not currently work for:
-\begin{itemize}
-\item syntax-based decoding
-\item IRSTLM
-\item randLM
+
+\item Difficult speed-up: Minimize memory usage
+
 \end{itemize}
-\end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Speed vs. Quality}
-\begin{center} 
-\includegraphics[scale=0.95]{decoding-step5.pdf}
-\end{center}
-\begin{itemize} \itemsep -1mm
-\item Decoder search creates very large number of partial translations ("hypotheses")
-\item Decoding time $\sim$ number of hypotheses created
-\item Translation quality $\sim$ number of hypothesis created
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Hypothesis Stacks}
-\begin{center} 
-\includegraphics[scale=1]{hypothesis-stacks-fw.pdf}
-\end{center}
-\vspace{-2mm}
-\begin{itemize} \itemsep -2mm
-\item Phrase-based: One stack per number of input words covered
-\item Number of hypothesis created = \\
-sentence length $\times$ stack size $\times$ applicable translation options
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Pruning Parameters}
-\begin{itemize}
-\item Regular beam search
-\begin{itemize}
-\item \littlecode{--stack NUM} max. number of hypotheses contained in each stack
-\item \littlecode{--ttable-limit NUM} max. num. of translation options per input phrase
-\vspace{2mm}
-\item search time roughly linear with respect to each number
-\end{itemize}
-\item Cube pruning\\
-(fixed number of hypotheses are added to each stack)
-\begin{itemize}
-\item \littlecode{--search-algorithm 1} turns on cube pruning
-\item \littlecode{--cube-pruning-pop-limit NUM} number of hypotheses added to each stack
-\vspace{2mm}
-\item search time roughly linear with respect to pop limit
-\vspace{2mm}
-\item note: stack size and translation table limit have little impact in speed
-\end{itemize}
-\end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Syntax Hypothesis Stacks}
-\begin{center} 
-\includegraphics[scale=1.5]{chart-stacks.pdf}
-\end{center}
-\vspace{-5mm}
-\begin{itemize} \itemsep -2mm
-\item One stack per input word span
-\item Number of hypothesis created = \\
-sentence length$^2$ $\times$  number of hypotheses added to each stack\\
-\littlecode{--cube-pruning-pop-limit NUM} number of hypotheses added to each stack
-\end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Trade-Off Speed vs Quality}
-\vspace{5mm}
-\begin{center} 
-\includegraphics[scale=1.4]{quality-vs-speed.pdf}\vspace{-20mm}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-\item Data and domain adaptation
-\item Speed vs. quality
-\item \currenttopic{Speed vs. memory use}
-\item Language models
-\item Instructions to decoder
-\item Input formats
-\item Output formats
-\item Minimum Bayes risk decoding
-\item Translation models
-\item Experiment management system
-\end{itemize}
-}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -757,6 +924,177 @@ Change ini file \\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\slide{IRSTLM: Binary Format}
+\vspace{20mm}
+\begin{itemize}
+\item Create binary format: \\
+\begin{SaveVerbatim}{myverb} 
+compile-lm language-model.srilm language-model.blm
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+
+\item Load-on-demand: \\
+\begin{SaveVerbatim}{myverb} 
+rename file .mm  
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{IRSTLM in Moses}
+\vspace{20mm}
+\begin{itemize}
+\item Compile Moses with IRSTLM library \\
+\begin{SaveVerbatim}{myverb} 
+./bjam --with-irstlm=[root dir of the IRSTLM toolkit] 
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+
+\item Change ini file to use IRSTLM implementation \\
+\begin{SaveVerbatim}{myverb} 
+[lmodel-file]
+1 0 3 file/path
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{KenLM}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Speed vs. Quality}
+\begin{center} 
+\includegraphics[scale=0.95]{decoding-step5.pdf}
+\end{center}
+\begin{itemize} \itemsep -1mm
+\item Decoder search creates very large number of partial translations ("hypotheses")
+\item Decoding time $\sim$ number of hypotheses created
+\item Translation quality $\sim$ number of hypothesis created
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Hypothesis Stacks}
+\begin{center} 
+\includegraphics[scale=1]{hypothesis-stacks-fw.pdf}
+\end{center}
+\vspace{-2mm}
+\begin{itemize} \itemsep -2mm
+\item Phrase-based: One stack per number of input words covered
+\item Number of hypothesis created = \\
+sentence length $\times$ stack size $\times$ applicable translation options
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Pruning Parameters}
+\begin{itemize}
+\item Regular beam search
+\begin{itemize}
+\item \littlecode{--stack NUM} max. number of hypotheses contained in each stack
+\item \littlecode{--ttable-limit NUM} max. num. of translation options per input phrase
+\vspace{2mm}
+\item search time roughly linear with respect to each number
+\end{itemize}
+\item Cube pruning\\
+(fixed number of hypotheses are added to each stack)
+\begin{itemize}
+\item \littlecode{--search-algorithm 1} turns on cube pruning
+\item \littlecode{--cube-pruning-pop-limit NUM} number of hypotheses added to each stack
+\vspace{2mm}
+\item search time roughly linear with respect to pop limit
+\vspace{2mm}
+\item note: stack size and translation table limit have little impact in speed
+\end{itemize}
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Syntax Hypothesis Stacks}
+\begin{center} 
+\includegraphics[scale=1.5]{chart-stacks.pdf}
+\end{center}
+\vspace{-5mm}
+\begin{itemize} \itemsep -2mm
+\item One stack per input word span
+\item Number of hypothesis created = \\
+sentence length$^2$ $\times$  number of hypotheses added to each stack\\
+\littlecode{--cube-pruning-pop-limit NUM} number of hypotheses added to each stack
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Trade-Off Speed vs Quality}
+\vspace{5mm}
+\begin{center} 
+\includegraphics[scale=1.4]{quality-vs-speed.pdf}\vspace{-20mm}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Data}
+\vspace{15mm}
+\begin{itemize}
+\item Parallel corpora $\rightarrow$ translation model
+\begin{itemize}
+\item sentence-aligned translated texts
+\item translation memories are parallel corpora
+\item dictionaries are parallel corpora
+\end{itemize}
+\item Monolingual corpora $\rightarrow$ language model
+\begin{itemize}
+\item text in the target language
+\item billions of words easy to handle
+\end{itemize}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Domain Adaptation}
+\vspace{10mm}
+\begin{itemize}
+\item The more data, the better
+\item The more in-domain data, the better\\
+(even in-domain monolingual data very valuable)
+\item Multiple models 
+\begin{itemize}
+\item train a translation model for each domain corpus
+\item train a language model for each domain corpus
+\item use all, tune weights for each model
+\item alternative: interpolate language model
+\end{itemize}
+\item Always tune towards target domain
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Advanced Features}
+\vspace{-5mm}
+\textcolor{darkgrey}{
+\begin{itemize} \itemsep -1mm
+\item Data and domain adaptation
+\item Speed vs. quality
+\item \currenttopic{Speed vs. memory use}
+\item Language models
+\item Instructions to decoder
+\item Input formats
+\item Output formats
+\item Minimum Bayes risk decoding
+\item Translation models
+\item Experiment management system
+\end{itemize}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \slide{Advanced Features}
 \vspace{-5mm}
 \textcolor{darkgrey}{
@@ -818,82 +1156,7 @@ Change ini file \\
 %  
 %  . But do it in different way
   
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{IRSTLM}
-\vspace{20mm}
-\begin{itemize}
-\item Developed by FBK-irst, Trento, Italy
-\item Create a binary format which can be read from disk as needed
-	\begin{itemize}
-	\item reduces memory but slower decoding 
-	\end{itemize}
-\item Quantization of probabilities
-	\begin{itemize}
-	\item reduces memory but lose accuracy
-	\item probability stored in 1 byte instead of 4 bytes
-	\end{itemize}
-\end{itemize}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{IRSTLM in Moses}
-\vspace{20mm}
-\begin{itemize}
-\item Compile the decoder with IRSTLM library \\
-\begin{SaveVerbatim}{myverb} 
-./configure --with-irstlm=[root dir of the IRSTLM toolkit] 
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\item Change ini file to use IRSTLM implementation \\
-\begin{SaveVerbatim}{myverb} 
-[lmodel-file]
-1 0 3 file/path
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{IRSTLM: Training}
-\vspace{10mm}
-\begin{itemize}
-\item Specialized training for large corpora
-	\begin{itemize}
-	\item parallelization
-	\item reduce memory usage
-	\end{itemize}
-\item Training: \\
-\begin{SaveVerbatim}{myverb} 
-build-lm.sh -i "gunzip -c corpus.gz" -n 3 
-      -o train.irstlm.gz -k 10
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\begin{itemize}
-\item \littlecode{-n 3} = n-gram order
-\item \littlecode{-k 10} = split training procedure into 10 steps
-\end{itemize}
-
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{IRSTLM: Binary Format}
-\vspace{20mm}
-\begin{itemize}
-\item Create binary format: \\
-\begin{SaveVerbatim}{myverb} 
-compile-lm language-model.srilm language-model.blm
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\item Load-on-demand: \\
-\begin{SaveVerbatim}{myverb} 
-rename file .mm  
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \slide{Randomized language model}
@@ -1986,152 +2249,6 @@ mteval-v13.pl ...
 \colorbox{gray}{\BUseVerbatim{myverb}}
 \end{center}
 }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Experiment Management System}
-\begin{itemize}
-\item One configuration file for all settings: record of all experimental details
-\item Scheduler of individual steps in pipeline
-\begin{itemize}
-\item automatically keeps track of dependencies
-\item on single machine, multi-core machines, GridEngine clusters
-\item parallel execution 
-\item crash detection
-\item automatic re-use of prior results
-\end{itemize}
-\item Fast to use
-\begin{itemize}
-\item set up a new experiments in minutes
-\item set up a variation of an experiment in seconds
-\end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{}
-\begin{center} \vspace{-5mm}
-\includegraphics[scale=1.41]{ems-agenda-composite.pdf}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{How does it work?}
-\vspace{30mm}
-\begin{itemize}
-\item Write a configuration file
-(typically by adapting an existing file)
-\vspace{15mm}
-\item Execute:
-\vspace{-10mm}
-\begin{center}
-\littlecode{\normalsize experiment.perl -config config}
-\end{center}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Web Interface}
-\begin{center}
-\includegraphics[scale=1]{web-interface-experiments.png}\\[5mm]
-List of experiments
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{List of Runs}
-\begin{center}\vspace{-9mm}
-\includegraphics[scale=1]{web-interface-runs}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Analysis: Basic Statistics}
-\begin{center}
-\includegraphics[scale=1]{analysis-stats.png}
-\end{center}
-\begin{itemize}
-\item Basic statistics
-\begin{itemize}
-\item n-gram precision
-\item evaluation metrics
-\item coverage of the input in corpus and translation model
-\item phrase segmentations used
-\end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Analysis: Unknown Words}
-\begin{center}
-grouped by frequency in test set\\[5mm]
-\includegraphics[scale=1]{analysis-unknown.png}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Analysis: Output Annotation}
-\vspace{30mm}
-\begin{center}
-\includegraphics[scale=1.5]{analysis-bleu.png}\\[20mm]
-Color highlighting to indicate n-gram overlap with reference translation\\[5mm]
-darker bleu = word is part of larger n-gram match
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Analysis: Input Annotation}
-\vspace{10mm}
-\begin{center}
-\includegraphics[scale=1.5]{analysis-coverage.png}\\[20mm]
-\end{center}
-\begin{itemize}
-\item For each word and phrase, color coding and stats on
-\begin{itemize}
-\item number of occurrences in training corpus
-\item number of distinct translations in translation model
-\item entropy of conditional translation probability distribution $\phi(e|f)$ (normalized)
-\end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Analysis: Bilingual Concordancer}
-\vspace{-5mm}
-\begin{center}
-\includegraphics[scale=0.75]{biconcor1.png}\\[5mm]
-\includegraphics[scale=0.75]{biconcor2.png}\\
-translation of input phrase in training data context
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Analysis: Alignment}
-\vspace{30mm}
-\begin{center}
-\includegraphics[scale=1.5]{analysis-alignment.png}\\[10mm]
-Phrase alignment of the decoding process\\[5mm]
-(red border, interactive)
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Analysis: Tree Alignment}
-\vspace{15mm}
-\begin{center}
-\includegraphics[scale=1.2]{analysis-tree-alignment.png}\\[10mm]
-Uses nested boxes to indicate tree structure\\[3mm]
-(red border, yellow shaded spans in focus, interactive)\\[3mm]
-for syntax model, non-terminals are also shown
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Analysis: Comparison of 2 Runs}
-\begin{center}
-\includegraphics[scale=1]{analysis-comparison.png}\\[10mm]
-Different words are highlighted\\[3mm]
-sortable by most improvement, deterioration
-\end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \slide{Acknowledgements}
