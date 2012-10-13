@@ -438,14 +438,6 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 \item Experiment management system
 \end{itemize}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{}
-\vspace{50mm}
-\begin{center}
-\Huge \bf Hands-On Session
-\end{center}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \slide{}
 \vspace{50mm}
@@ -498,17 +490,41 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{How do I get started?}
+{\small
+
+\begin{center}
+\textcolor{red}{Execute a lot of scripts} \\
+\begin{SaveVerbatim}{myverb}
+tokenize < corpus.en > corpus.en.tok
+lowercase < corpus.en.tok > corpus.en.lc
+...
+mert.perl ....
+moses ...
+mteval-v13.pl ...
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+
+\vspace{10mm}
+\textcolor{red}{Change a part of the process, execute everything again} \\
+\begin{SaveVerbatim}{myverb}
+tokenize < corpus.en > corpus.en.tok
+lowercase < corpus.en.tok > corpus.en.lc
+...
+mert.perl ....
+moses ...
+mteval-v13.pl ...
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+\end{center}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{How do I get started?}
 
 \begin{itemize} \itemsep -1mm
 
-\item{Run manually} 
-   \\ Clean, lowercase data
-   \\ Run word alignment
-   \\ Train phrase-tables, language models, lexicalized reordering models
-   \\ Tune
-   \\ Test
-
-\item{Use the EMS (Experiment Management System) } 
+\item{Use the {\bf Experiment Management System (EMS)} } 
    \\ Automate entire process
    \\ Support for multi-core servers. And Sun Grid Engines (SGE)
    \\ Reuse existing alignments or models
@@ -664,6 +680,13 @@ sortable by most improvement, deterioration
 \end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{}
+\vspace{50mm}
+\begin{center}
+\Huge \bf Hands-On Session
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Advanced Features}
 \vspace{-5mm}
@@ -798,6 +821,28 @@ build-lm.sh -i "gunzip -c corpus.gz" -n 3
 
 \item Trade speed for quality - (more) difficult
 
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Moses Server}
+
+\begin{itemize}
+
+\item Moses command line:
+     \\ .../moses -f {[}ini{]} \textless {[}input file{]} \textgreater {[}output file{]}
+\item Not practical for commercial use
+
+\item Moses Server:
+    \\ Accept HTTP input. XML SOAP format
+    \\ .../mosesserver -f {[}ini{]} {\bf --server-port {[}PORT{]} --server-log {[}LOG{]} }
+
+\item Client:
+    \\ Communicate via http
+    \\ Example clients in Java and Perl
+    \\ Write your own client
+	\\ Integrate into your own application
+    
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1193,8 +1238,7 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
       \\ 0.20
       \\ 0.20
       \\
-
-      \\ [mapping]
+      \\ {[}mapping{]}
       \\ 0 T 0
       \\ 1 T 1
 
@@ -1203,30 +1247,59 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% \slide{Incremental training}
+% \begin{itemize}
+% \item Retrain everything
+% \item Secondary phrase-table
+% \item \currenttopic{Incremental GIZA++ and dynamic suffix arrays}
+% \item TM-MT integration
+% 
+% \end{itemize}
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% \slide{Incremental GIZA++ and Dynamic Suffix Arrays}
+% 
+% \begin{itemize}
+% \item Don't extract phrase-table
+% \item Store entire parallel corpus in memory
+% 	\\ Suffix Array
+% \item Add new parallel data to suffix array
+% \\
+% \item Need word alignment
+%   \\ Use customized version of GIZA++
+%   \\ Reuse word-alignment model from primary parallel data
+% 
+% \item Bleeding edge. Not integrated into EMS
+% \end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Incremental training}
 \begin{itemize}
 \item Retrain everything
 \item Secondary phrase-table
-\item \currenttopic{Incremental GIZA++ and dynamic suffix arrays}
-\item TM-MT integration
+\item Incremental GIZA++ and dynamic suffix arrays
+\item \currenttopic{TM-MT integration}
 
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Incremental GIZA++ and Dynamic Suffix Arrays}
+\slide{TM-MT integration}
 
-\item Don't extract phrase-table
-\item Store entire parallel corpus in memory
-	\\ Suffix Array
-\item Add new parallel data to suffix array
-\\
-\item Need word alignment
-  \\ Use customized version of GIZA++
-  \\ Reuse word-alignment model from primary parallel data
+\begin{itemize}
+\item Translation memory-style fuzzy match
+\item Create long translation rule 'templates'
+\item Best for use with parallel corpus with lots of repetition
 
-\item Bleeding edge. Not integrated into EMS
+\item Use in addition to normal phrase table
+\item Add TM and word alignment as a special phrase-table
+   \\ {[}ttable-file{]}
+   \\ 11 0 0 3 source.path;target.path;alignment 
+
+\end{itemize}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1284,7 +1357,7 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 	\item large memory requirement during decoding
 	\item large load time
 	\end{itemize}
-\item IRSTLM and RandLM especially designed to tackle large data issues
+\item IRSTLM and KenLM especially designed to tackle large data issues
 \end{itemize}
 
 %As philipp described
@@ -1314,63 +1387,63 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Randomized language model}
-\vspace{5mm}
-\begin{itemize}
-\item For huge corpora (e.g. 100 billion words)
-\item Lossy compression
-	\begin{itemize}
-	\item Makes false positive mistakes
-	\item frequency of mistakes can be varied with a parameter
-	\end{itemize}	
-\item Typically $\frac{1}{10}$ size of SRI / IRST language model
-\item Maybe use as secondary LM to complement conventional LM
-	\begin{itemize}
-	\item out-of-domain data scraped from the web
-	\item high-order n-gram, eg. 6-7 gram
-	\end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{RandLM: Use in Moses}
-\vspace{10mm}
-\begin{itemize}
-\item Compile the decoder with RandLM library \\
-\begin{SaveVerbatim}{myverb} 
-./configure --with-randlm=[root dir of the RandLM toolkit] 
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\item Change ini file to use RandLM implementation \\
-\begin{SaveVerbatim}{myverb} 
-[lmodel-file]
-0 0 3 /path/to/file   # conventional lm
-5 0 7 /path/to/file   # rand lm
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{RandLM: Training}
-\vspace{10mm}
-\begin{itemize}
-\item Train from text corpus \\
-\begin{SaveVerbatim}{myverb} 
-./buildlm -struct BloomMap -falsepos 8 -values 8 -order 3
-   -output-prefix model  
-   < corpus.txt
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\item Convert SRILM language model \\
-\begin{SaveVerbatim}{myverb} 
-./buildlm -struct BloomMap -falsepos 8 -values 8 -order 3 
-   -output-prefix model
-   -input-path lm.srilm -input-type arpa
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{itemize}
+% \slide{Randomized language model}
+% \vspace{5mm}
+% \begin{itemize}
+% \item For huge corpora (e.g. 100 billion words)
+% \item Lossy compression
+% 	\begin{itemize}
+% 	\item Makes false positive mistakes
+% 	\item frequency of mistakes can be varied with a parameter
+% 	\end{itemize}	
+% \item Typically $\frac{1}{10}$ size of SRI / IRST language model
+% \item Maybe use as secondary LM to complement conventional LM
+% 	\begin{itemize}
+% 	\item out-of-domain data scraped from the web
+% 	\item high-order n-gram, eg. 6-7 gram
+% 	\end{itemize}
+% \end{itemize}
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% \slide{RandLM: Use in Moses}
+% \vspace{10mm}
+% \begin{itemize}
+% \item Compile the decoder with RandLM library \\
+% \begin{SaveVerbatim}{myverb} 
+% ./configure --with-randlm=[root dir of the RandLM toolkit] 
+% \end{SaveVerbatim}
+% \colorbox{gray}{\BUseVerbatim{myverb}}
+% 
+% \item Change ini file to use RandLM implementation \\
+% \begin{SaveVerbatim}{myverb} 
+% [lmodel-file]
+% 0 0 3 /path/to/file   # conventional lm
+% 5 0 7 /path/to/file   # rand lm
+% \end{SaveVerbatim}
+% \colorbox{gray}{\BUseVerbatim{myverb}}
+% \end{itemize}
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% \slide{RandLM: Training}
+% \vspace{10mm}
+% \begin{itemize}
+% \item Train from text corpus \\
+% \begin{SaveVerbatim}{myverb} 
+% ./buildlm -struct BloomMap -falsepos 8 -values 8 -order 3
+%    -output-prefix model  
+%    < corpus.txt
+% \end{SaveVerbatim}
+% \colorbox{gray}{\BUseVerbatim{myverb}}
+% \item Convert SRILM language model \\
+% \begin{SaveVerbatim}{myverb} 
+% ./buildlm -struct BloomMap -falsepos 8 -values 8 -order 3 
+%    -output-prefix model
+%    -input-path lm.srilm -input-type arpa
+% \end{SaveVerbatim}
+% \colorbox{gray}{\BUseVerbatim{myverb}}
+% \end{itemize}
 
 
 %
@@ -1948,64 +2021,64 @@ Argument to command line\\[2mm]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-\item Data and domain adaptation
-\item Speed vs. quality
-\item Speed vs. memory use
-\item Language models
-\item Instructions to decoder
-\item Input formats
-\item Output formats
-\item \currenttopic{Minimum Bayes risk decoding}
-\item Translation models
-\item Experiment management system
-\end{itemize}
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Minimum Bayes Risk Decoding}
-\begin{itemize}
-\item Normal (MAP) decoding: \vspace{-5mm}
-\begin{center}
-\maths{$ \hat{t} = argmax_t \; p (t | s ) $}
-\end{center} \vspace{-5mm}
-\item MBR decoding: \vspace{-5mm}
-\begin{center}
-\maths{$ \hat{t} = argmax_t \sum_{t' \in T} \; p (t' | s ) \times bleu(t', t) $}
-
-\vspace{5mm}
-\includegraphics[scale=1.2]{minimum-bayes-risk.pdf}
-\end{center}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Minimum Bayes Risk Decoding}
-\vspace{10mm}
-\begin{itemize}
-\item Set of translations \textcolor{red}{$t' \in T$}
-\begin{center}
-\maths{$ \hat{t} = argmax_t \sum_\text{\textcolor{red}{{$t' \in T$}}} \; p (t' | s ) \times bleu(t', t) $}
-\end{center}
-
-\item Using n-best list:
-\begin{center}
-\begin{SaveVerbatim}{myverb}
-moses -f moses.ini -i in.txt -mbr 
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
-
-\item Using lattice:
-\begin{center}
-\begin{SaveVerbatim}{myverb}
-lmbrgrid ... -f moses.ini -i input.txt
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
-\end{itemize}
+% \slide{Advanced Features}
+% \vspace{-5mm}
+% \textcolor{darkgrey}{
+% \begin{itemize} \itemsep -1mm
+% \item Data and domain adaptation
+% \item Speed vs. quality
+% \item Speed vs. memory use
+% \item Language models
+% \item Instructions to decoder
+% \item Input formats
+% \item Output formats
+% \item \currenttopic{Minimum Bayes risk decoding}
+% \item Translation models
+% \item Experiment management system
+% \end{itemize}
+% }
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \slide{Minimum Bayes Risk Decoding}
+% \begin{itemize}
+% \item Normal (MAP) decoding: \vspace{-5mm}
+% \begin{center}
+% \maths{$ \hat{t} = argmax_t \; p (t | s ) $}
+% \end{center} \vspace{-5mm}
+% \item MBR decoding: \vspace{-5mm}
+% \begin{center}
+% \maths{$ \hat{t} = argmax_t \sum_{t' \in T} \; p (t' | s ) \times bleu(t', t) $}
+% 
+% \vspace{5mm}
+% \includegraphics[scale=1.2]{minimum-bayes-risk.pdf}
+% \end{center}
+% \end{itemize}
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \slide{Minimum Bayes Risk Decoding}
+% \vspace{10mm}
+% \begin{itemize}
+% \item Set of translations \textcolor{red}{$t' \in T$}
+% \begin{center}
+% \maths{$ \hat{t} = argmax_t \sum_\text{\textcolor{red}{{$t' \in T$}}} \; p (t' | s ) \times bleu(t', t) $}
+% \end{center}
+% 
+% \item Using n-best list:
+% \begin{center}
+% \begin{SaveVerbatim}{myverb}
+% moses -f moses.ini -i in.txt -mbr 
+% \end{SaveVerbatim}
+% \colorbox{gray}{\BUseVerbatim{myverb}}
+% \end{center}
+% 
+% \item Using lattice:
+% \begin{center}
+% \begin{SaveVerbatim}{myverb}
+% lmbrgrid ... -f moses.ini -i input.txt
+% \end{SaveVerbatim}
+% \colorbox{gray}{\BUseVerbatim{myverb}}
+% \end{center}
+% \end{itemize}
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2164,15 +2237,15 @@ Disadvantages
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Moses Tree Representation}
-\vspace{10mm}
-\begin{center}
-\Tree [.TOP [.NP [.NE Musharrafs ] [.ADJA letzter ] [.NN Akt ]  ]  [.PUNC  ? ]  ]  \\
-
-\vspace{10mm}
-
-\includegraphics[scale=1]{tree-xml.png} 
- \end{center}
+% \slide{Moses Tree Representation}
+% \vspace{10mm}
+% \begin{center}
+% \Tree [.TOP [.NP [.NE Musharrafs ] [.ADJA letzter ] [.NN Akt ]  ]  [.PUNC  ? ]  ]  \\
+% 
+% \vspace{10mm}
+% 
+% \includegraphics[scale=1]{tree-xml.png} 
+%  \end{center}
 
 %
 %Training and input data is embellished with parse information
@@ -2222,16 +2295,27 @@ General Musharraf betrat am ||| general Musharraf appeared on ||| 1 1 1 1 2.718 
 %  /Users/hieuhoang/workspace/sourceforge/trunk/scripts/training/train-model.perl -first-step 5 -last-step 6 --corpus corpus.1.0-0 -f de -e en -alignment-file /Users/hieuhoang/workspace/data/syntax-de-en-nc/10/aligned.1 -alignment  grow-diag-final-and -lexical-file lex 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Hierarchical Model Training}
+\slide{Hierarchical Model}
 \vspace{5mm}
 \begin{itemize}
-\item Command line
+\item Training
 \begin{center}
 \begin{SaveVerbatim}{myverb} 
 train-model.perl ... -hierarchical
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
 \end{center}
+
+\item Decoding
+\begin{center}
+\begin{SaveVerbatim}{myverb} 
+./moses-chart -f moses.ini -i in.txt > out.txt
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{Hierarchical Model}
 
 \item Example rule from model \vspace{-12mm}
 \begin{center}
@@ -2248,112 +2332,113 @@ train-model.perl ... -hierarchical
 
 %  /Users/hieuhoang/workspace/sourceforge/trunk/scripts/training/train-model.perl -first-step 5 -last-step 6 --corpus corpus.1.0-0 -f de -e en -alignment-file /Users/hieuhoang/workspace/data/syntax-de-en-nc/10/aligned.1 -alignment  grow-diag-final-and -lexical-file lex  -hierarchical
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Tree-to-String Model Training}
-\begin{itemize}
-\item Command line
-\begin{center}
-\begin{SaveVerbatim}{myverb} 
-train-model.perl ... -source-syntax
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
-
-\item Example rule from model \vspace{-7mm}
-\begin{center}
-\littlecode{\tiny B\"undnisse [PP][X] [NP] ||| alliances [PP][X] [X] ||| 1 1 1 1 2.718 ||| 1-1 ||| 1 1}
-\end{center}
-
-\item Visualization of rule
-\begin{center}
-\tikzset{level distance=72pt}
-\Tree [.NP [. B\"undnisse ]  [.PP$_1$ ] ] $\Rightarrow$ \Tree [.X [. alliances ]  [.X$_1$ ]  ]
-\end{center}
-\end{itemize}
-
-% /Users/hieuhoang/workspace/sourceforge/trunk/scripts/training/train-model.perl -first-step 5 -last-step 6 --corpus t2s -f de -e en -alignment-file /Users/hieuhoang/workspace/data/syntax-de-en-nc/10/aligned.1 -alignment  grow-diag-final-and -lexical-file lex -source-syntax
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{String to Tree Model Training}
-\begin{itemize}
-\item Command line
-\begin{center}
-\begin{SaveVerbatim}{myverb} 
-train-model.perl ... -target-syntax
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
-
-\item Example rule from model \vspace{-7mm}
-\begin{center}
-\footnotesize
-\begin{SaveVerbatim}{myverb}
-von [X][NPB] und [X][NPB] [X] ||| with [X][NPB] and [X][NPB] [PP] ||| ...
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
-
-\item Visualization of rule
-\begin{center}
-\tikzset{level distance=72pt}
-\Tree [.X von [.X$_1$ ] und [.X$_2$ ] ] $\Rightarrow$ \Tree [.PP with [.NPB$_1$ ] and  [.NPB$_2$ ]  ]
-\end{center}
-\end{itemize}
-% /Users/hieuhoang/workspace/sourceforge/trunk/scripts/training/train-model.perl -first-step 5 -last-step 6 --corpus s2t -f de -e en -alignment-file /Users/hieuhoang/workspace/data/syntax-de-en-nc/10/aligned.1 -alignment  grow-diag-final-and -lexical-file lex -target-syntax
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Tree-to-Tree Model Training}
-\begin{itemize}
-\item Command line
-\begin{center}
-\begin{SaveVerbatim}{myverb} 
-train-model.perl ... -source-syntax -target-syntax
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
-
-\item Example rule from model \vspace{-7mm}
-\begin{center}
-\footnotesize
-\begin{SaveVerbatim}{myverb}
-seine Stellung und Maßnahmen [CNP] ||| his position and actions [NPB] ||| ...
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
-
-\item Visualization of rule
-\begin{center}
-\tikzset{level distance=72pt}
-\Tree [.CNP seine Stellung und Massnahmen ] $\Rightarrow$ \Tree [.NPB his position and actions ]
-\end{center}
-\end{itemize}
+% \slide{Tree-to-String Model Training}
+% \begin{itemize}
+% \item Command line
+% \begin{center}
+% \begin{SaveVerbatim}{myverb} 
+% train-model.perl ... -source-syntax
+% \end{SaveVerbatim}
+% \colorbox{gray}{\BUseVerbatim{myverb}}
+% \end{center}
+% 
+% \item Example rule from model \vspace{-7mm}
+% \begin{center}
+% \littlecode{\tiny B\"undnisse [PP][X] [NP] ||| alliances [PP][X] [X] ||| 1 1 1 1 2.718 ||| 1-1 ||| 1 1}
+% \end{center}
+% 
+% \item Visualization of rule
+% \begin{center}
+% \tikzset{level distance=72pt}
+% \Tree [.NP [. B\"undnisse ]  [.PP$_1$ ] ] $\Rightarrow$ \Tree [.X [. alliances ]  [.X$_1$ ]  ]
+% \end{center}
+% \end{itemize}
+% 
+% % /Users/hieuhoang/workspace/sourceforge/trunk/scripts/training/train-model.perl -first-step 5 -last-step 6 --corpus t2s -f de -e en -alignment-file /Users/hieuhoang/workspace/data/syntax-de-en-nc/10/aligned.1 -alignment  grow-diag-final-and -lexical-file lex -source-syntax
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \slide{String to Tree Model Training}
+% \begin{itemize}
+% \item Command line
+% \begin{center}
+% \begin{SaveVerbatim}{myverb} 
+% train-model.perl ... -target-syntax
+% \end{SaveVerbatim}
+% \colorbox{gray}{\BUseVerbatim{myverb}}
+% \end{center}
+% 
+% \item Example rule from model \vspace{-7mm}
+% \begin{center}
+% \footnotesize
+% \begin{SaveVerbatim}{myverb}
+% von [X][NPB] und [X][NPB] [X] ||| with [X][NPB] and [X][NPB] [PP] ||| ...
+% \end{SaveVerbatim}
+% \colorbox{gray}{\BUseVerbatim{myverb}}
+% \end{center}
+% 
+% \item Visualization of rule
+% \begin{center}
+% \tikzset{level distance=72pt}
+% \Tree [.X von [.X$_1$ ] und [.X$_2$ ] ] $\Rightarrow$ \Tree [.PP with [.NPB$_1$ ] and  [.NPB$_2$ ]  ]
+% \end{center}
+% \end{itemize}
+% % /Users/hieuhoang/workspace/sourceforge/trunk/scripts/training/train-model.perl -first-step 5 -last-step 6 --corpus s2t -f de -e en -alignment-file /Users/hieuhoang/workspace/data/syntax-de-en-nc/10/aligned.1 -alignment  grow-diag-final-and -lexical-file lex -target-syntax
+% 
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% \slide{Tree-to-Tree Model Training}
+% \begin{itemize}
+% \item Command line
+% \begin{center}
+% \begin{SaveVerbatim}{myverb} 
+% train-model.perl ... -source-syntax -target-syntax
+% \end{SaveVerbatim}
+% \colorbox{gray}{\BUseVerbatim{myverb}}
+% \end{center}
+% 
+% \item Example rule from model \vspace{-7mm}
+% \begin{center}
+% \footnotesize
+% \begin{SaveVerbatim}{myverb}
+% seine Stellung und Maßnahmen [CNP] ||| his position and actions [NPB] ||| ...
+% \end{SaveVerbatim}
+% \colorbox{gray}{\BUseVerbatim{myverb}}
+% \end{center}
+% 
+% \item Visualization of rule
+% \begin{center}
+% \tikzset{level distance=72pt}
+% \Tree [.CNP seine Stellung und Massnahmen ] $\Rightarrow$ \Tree [.NPB his position and actions ]
+% \end{center}
+% \end{itemize}
 
 % /Users/hieuhoang/workspace/sourceforge/trunk/scripts/training/train-model.perl -first-step 5 -last-step 6 --corpus nc.truecased.1 -f de -e en -alignment-file /Users/hieuhoang/workspace/data/syntax-de-en-nc/10/aligned.1 -alignment  grow-diag-final-and -lexical-file lex -target-syntax -source-syntax
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Syntax Models Decoding in Moses}
-\vspace{15mm}
-\begin{itemize}
-\item String-to-string (hierarchical) or string-to-tree \\
-\begin{center}
-\begin{SaveVerbatim}{myverb}
-./moses-chart -f moses.ini -i in.txt > out.txt
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
-
-\item Tree-to-string or tree-to-tree  \\
-\begin{center}
-\begin{SaveVerbatim}{myverb}
-./moses-chart -f moses.ini -i in.txt -inputtype 3 > out.txt
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
-\end{itemize}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% \slide{Syntax Models Decoding in Moses}
+% \vspace{15mm}
+% \begin{itemize}
+% \item String-to-string (hierarchical) or string-to-tree \\
+% \begin{center}
+% \begin{SaveVerbatim}{myverb}
+% ./moses-chart -f moses.ini -i in.txt > out.txt
+% \end{SaveVerbatim}
+% \colorbox{gray}{\BUseVerbatim{myverb}}
+% \end{center}
+% 
+% \item Tree-to-string or tree-to-tree  \\
+% \begin{center}
+% \begin{SaveVerbatim}{myverb}
+% ./moses-chart -f moses.ini -i in.txt -inputtype 3 > out.txt
+% \end{SaveVerbatim}
+% \colorbox{gray}{\BUseVerbatim{myverb}}
+% \end{center}
+% \end{itemize}
 	 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2372,37 +2457,6 @@ seine Stellung und Maßnahmen [CNP] ||| his position and actions [NPB] ||| ...
 \item Translation models
 \item \currenttopic{Experiment management system}
 \end{itemize}
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Running Experiments}
-{\small
-
-\begin{center}
-\textcolor{red}{Execute a lot of scripts} \\
-\begin{SaveVerbatim}{myverb}
-tokenize < corpus.en > corpus.en.tok
-lowercase < corpus.en.tok > corpus.en.lc
-...
-mert.perl ....
-moses ...
-mteval-v13.pl ...
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\vspace{10mm}
-\textcolor{red}{Change a part of the process, execute everything again} \\
-\begin{SaveVerbatim}{myverb}
-tokenize < corpus.en > corpus.en.tok
-lowercase < corpus.en.tok > corpus.en.lc
-...
-mert.perl ....
-moses ...
-mteval-v13.pl ...
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
