@@ -748,6 +748,10 @@ sortable by most improvement, deterioration
   \begin{center}
     \littlecode{.../tokenizer.perl -threads NUM}
   \end{center}      
+    EMS: 
+  \begin{center}
+    \littlecode{input-tokenizer  = " \$moses-script-dir/tokenizer/tokenizer.perl -threads NUM " }
+  \end{center}      
   
   
 \end{itemize}
@@ -759,36 +763,46 @@ sortable by most improvement, deterioration
 \begin{itemize} \itemsep -1mm
 
 \item {Word Alignment}
-  \\    Use MGIZA, not GIZA++
-  \\    .../train-model.perl -mgiza -mgiza-cpus NUM
-  \\    EMS: training-options = ``-mgiza -mgiza-cpus 8``
-\item {MGIZA on memory-limited machines}
-  \\ snt2cooc program requires 6GB+ memory
-  \\ Reimplementation uses 10MB, but take longer to run
-       .../train-model.perl -snt2cooc snt2cooc.pl
-       EMS: training-options = ``-snt2cooc snt2cooc.pl``
-       
+\item {Multi-threaded}
+  \begin{itemize}
+  \item    Use MGIZA, not GIZA++
+  \begin{center}
+    \littlecode{.../train-model.perl -mgiza -mgiza-cpus NUM} 
+  \end{center}      
+  EMS: 
+  \begin{center}
+    \littlecode{training-options = " -mgiza -mgiza-cpus NUM " } 
+  \end{center}      
+  \end{itemize}
+
+\item {memory-limited machines}
+  \begin{itemize}
+  \item snt2cooc program requires 6GB+ memory
+  \item Reimplementation uses 10MB, but take longer to run
+  \begin{center}
+    \littlecode{.../train-model.perl -snt2cooc snt2cooc.pl} 
+  \end{center}      
+  EMS:
+  \begin{center}
+    \littlecode{training-options = "-snt2cooc snt2cooc.pl"}
+  \end{center}      
+
+  \end{itemize}
 \end{itemize}
        
- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Faster Training}
 
 \begin{itemize} \itemsep -1mm
 
 \item {Parallel Extraction}
-  \\ Split training data into NUM equal parts, extract concurrently
-  \\ .../train-model.perl -cores NUM
-  \\ Relly heavily on Unix 'sort' command. Optimized for speed
-  \\ Example:
-  \\     .../train-model.perl  -sort-buffer-size 10G -sort-batch-size 253 -sort-compress gzip -sort-parallel 5
-  \\   will call always sort with arguments
-  \\     sort  -S 10G --batch-size 253 --compress-program gzip --parallel 5
-  \\ Dependent on
-  \\      sort version
-  \\      Unix version
-  \\      available memory
-
+  \begin{itemize}
+  \item Split training data into NUM equal parts, extract concurrently
+  \end{itemize}
+  \begin{center}
+    \littlecode{.../train-model.perl -cores NUM}
+  \end{center}      
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -796,13 +810,28 @@ sortable by most improvement, deterioration
 \slide{Faster Training}
 
 \begin{itemize} \itemsep -1mm
+\item {Sorting}
+  \begin{itemize}
+  \item Rely heavily on Unix 'sort' command
+    \item 50\%+ time 
+  \item Optimized for speed \& disk usage
+  \begin{center}
+    \littlecode{sort --buffer-size 10G --batch-size 253 --compress-program gzip --parallel 5}
+  \end{center}      
+  In Moses:
+    \begin{SaveVerbatim}{myverb}
+    .../train-model.perl  -sort-buffer-size 10G 
+      -sort-batch-size 253 -sort-compress gzip -sort-parallel 5
+    \end{SaveVerbatim}
+    \colorbox{gray}{\BUseVerbatim{myverb}}
 
-\item {LM Training}
-  \\ Use IRST toolkit for training
-  \\ EMS: irst-dir = [IRST path]
-  \\      lm-training = ''$moses-script-dir/generic/trainlm-irst.perl -cores NUM -irst-dir $irst-dir``
-  \\ Train with more data, in parallel
-  \\ Output to SRI-compatible file
+  \item Dependent on
+    \begin{itemize}
+    \item      sort version
+    \item      Unix version
+    \item      available memory
+    \end{itemize}
+  \end{itemize}
 
 \end{itemize}
 
@@ -818,6 +847,19 @@ sortable by most improvement, deterioration
 	\item parallelization
 	\item reduce memory usage
 	\end{itemize}
+
+\item Quantization of probabilities
+	\begin{itemize}
+	\item reduces memory but lose accuracy
+	\item probability stored in 1 byte instead of 4 bytes
+	\end{itemize}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{IRSTLM: Training}
+
+\begin{itemize}
+
 \item Training: \\
 \begin{SaveVerbatim}{myverb} 
 build-lm.sh -i "gunzip -c corpus.gz" -n 3 
@@ -830,11 +872,13 @@ build-lm.sh -i "gunzip -c corpus.gz" -n 3
 \item \littlecode{-k 10} = split training procedure into 10 steps
 \end{itemize}
 
-\item Quantization of probabilities
-	\begin{itemize}
-	\item reduces memory but lose accuracy
-	\item probability stored in 1 byte instead of 4 bytes
-	\end{itemize}
+\item EMS: 
+  \begin{SaveVerbatim}{myverb} 
+  irst-dir = [IRST path]
+  lm-training = "$moses-script-dir/generic/trainlm-irst.perl 
+		  -cores NUM -irst-dir $irst-dir"
+  \end{SaveVerbatim}
+  \colorbox{gray}{\BUseVerbatim{myverb}}
 
 \end{itemize}
 
