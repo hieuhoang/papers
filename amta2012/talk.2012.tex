@@ -710,21 +710,54 @@ sortable by most improvement, deterioration
 \slide{Faster Training}
 
 \begin{itemize} \itemsep -1mm
-\item {Crucial steps:} 
-  \\ Tokenization
-  \\ Alignment
-  \\ Extraction
-  \\ Phrase-table creation
-  \\ Train LM
+\item {Bottlenecks:} 
+  \begin{itemize}
+  \item Tokenization
+  \item Alignment
+  \item Extraction
+  \item Phrase-table creation
+  \item Train language model
+  \item Tuning
+  \end{itemize}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Faster Training}
+
+\begin{itemize} \itemsep -1mm
 
 \item {Multicore Parallelization} 
-  \\ Run in parallel all steps that can be run concurrently
-  \\ .../train-model.perl -parallel
-  \\ EMS: [TRAINING] 
-  \\      parallel = yes
+  \begin{center}
+    \littlecode{.../train-model.perl -parallel}
+  \end{center}      
+    EMS: 
+  \begin{center}
+    \littlecode{[TRAINING] } \\
+    \littlecode{parallel = yes}
+  \end{center}      
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Faster Training}
+
+\begin{itemize} \itemsep -1mm
 
 \item {Tokenization}
-  \\    tokenizer.perl -threads NUM
+  \begin{center}
+    \littlecode{.../tokenizer.perl -threads NUM}
+  \end{center}      
+  
+  
+\end{itemize}
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Faster Training}
+
+\begin{itemize} \itemsep -1mm
+
 \item {Word Alignment}
   \\    Use MGIZA, not GIZA++
   \\    .../train-model.perl -mgiza -mgiza-cpus NUM
@@ -734,10 +767,19 @@ sortable by most improvement, deterioration
   \\ Reimplementation uses 10MB, but take longer to run
        .../train-model.perl -snt2cooc snt2cooc.pl
        EMS: training-options = ``-snt2cooc snt2cooc.pl``
+       
+\end{itemize}
+       
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Faster Training}
+
+\begin{itemize} \itemsep -1mm
+
 \item {Parallel Extraction}
   \\ Split training data into NUM equal parts, extract concurrently
   \\ .../train-model.perl -cores NUM
-  \\ Relly heavily on Unix 'sort' command. Optimizat for speed
+  \\ Relly heavily on Unix 'sort' command. Optimized for speed
   \\ Example:
   \\     .../train-model.perl  -sort-buffer-size 10G -sort-batch-size 253 -sort-compress gzip -sort-parallel 5
   \\   will call always sort with arguments
@@ -746,6 +788,14 @@ sortable by most improvement, deterioration
   \\      sort version
   \\      Unix version
   \\      available memory
+
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Faster Training}
+
+\begin{itemize} \itemsep -1mm
 
 \item {LM Training}
   \\ Use IRST toolkit for training
