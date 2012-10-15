@@ -918,28 +918,6 @@ build-lm.sh -i "gunzip -c corpus.gz" -n 3
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Moses Server}
-
-\begin{itemize}
-
-\item Moses command line:
-     \\ .../moses -f {[}ini{]} \textless {[}input file{]} \textgreater {[}output file{]}
-\item Not practical for commercial use
-
-\item Moses Server:
-    \\ Accept HTTP input. XML SOAP format
-    \\ .../mosesserver -f {[}ini{]} {\bf --server-port {[}PORT{]} --server-log {[}LOG{]} }
-
-\item Client:
-    \\ Communicate via http
-    \\ Example clients in Java and Perl
-    \\ Write your own client
-	\\ Integrate into your own application
-    
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \slide{Speed vs. Memory Use}
 \begin{center} 
 \includegraphics[scale=1.4]{less-memory.pdf}
@@ -980,9 +958,9 @@ Typical Europarl file sizes:
 \begin{itemize}
 \item Load into memory
 	\begin{itemize}
-  	\item fast decoding
+	\item long load time
 	\item large memory usage
-	\item large load time
+	\item fast decoding
 	\end{itemize}
 \end{itemize}
 & \includegraphics[scale=0.8]{less-memory-europarl.pdf} \\[1cm]
@@ -1110,11 +1088,19 @@ rename file .mm
   \\ Built into Moses. No need to compile separate library
   \\ Faster than IRSTLM and SRILM
   \\ Multi-threadable
+
 \item {Create binary LM}
-  \\  build\_binary lm.arpa lm.binlm
+\begin{SaveVerbatim}{myverb} 
+  build_binary lm.arpa lm.binlm
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+
 \item {Use in Moses}
-  \\ {[}lmodel-file{]}
-  \\ 9 0 5 lm.binlm
+\begin{SaveVerbatim}{myverb} 
+  [lmodel-file]
+  9 0 5 lm.binlm
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
 
 \end{itemize}
 
@@ -1191,6 +1177,28 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\slide{Moses Server}
+
+\begin{itemize}
+
+\item Moses command line:
+     \\ .../moses -f {[}ini{]} \textless {[}input file{]} \textgreater {[}output file{]}
+\item Not practical for commercial use
+
+\item Moses Server:
+    \\ Accept HTTP input. XML SOAP format
+    \\ .../mosesserver -f {[}ini{]} {\bf --server-port {[}PORT{]} --server-log {[}LOG{]} }
+
+\item Client:
+    \\ Communicate via http
+    \\ Example clients in Java and Perl
+    \\ Write your own client
+	\\ Integrate into your own application
+    
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \slide{Advanced Features}
 \vspace{-5mm}
 \textcolor{darkgrey}{
@@ -1206,6 +1214,7 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 \item Experiment management system
 \end{itemize}
 }
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
