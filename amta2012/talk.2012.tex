@@ -417,33 +417,6 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 \includegraphics[scale=1.15]{chart-parsing.pdf}
 \end{center}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Advanced Topics}
-\begin{itemize} \itemsep -1mm
-
-\item How do I get started?
-\item Training
-\item Decoding
-\item Data and domain adaptation
-
-\item Speed vs. quality
-\item Speed vs. memory use
-\item Language models
-\item Instructions to decoder
-\item Input formats
-\item Output formats
-\item Minimum Bayes risk decoding
-\item Translation models
-\item Experiment management system
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{}
-\vspace{50mm}
-\begin{center}
-\Huge \bf Advanced Topics
-\end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -452,18 +425,6 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
 \item \currenttopic{How do I get started?}
-\item Training
-\item Decoding
-\item Data and domain adaptation
-\item Speed vs. quality
-\item Speed vs. memory use
-\item Language models
-\item Instructions to decoder
-\item Input formats
-\item Output formats
-\item Minimum Bayes risk decoding
-\item Translation models
-\item Experiment management system
 \end{itemize}
 }
 
@@ -520,22 +481,34 @@ mteval-v13.pl ...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{How do I get started?}
+% \slide{How do I get started?}
+% 
+% \begin{itemize} \itemsep -1mm
+% 
+% \item{Use the {\bf Experiment Management System (EMS)} } 
+%   \begin{itemize}
+%   \item Automate entire process
+%   \item Support for multi-core servers. And Sun Grid Engines (SGE)
+%   \item Reuse existing alignments or models when running multiple, similar experiments
+%   \item Example config files available in Moses
+%   \item Disadvantage --- not all features are implemented
+%   \end{itemize}
+% 
+% \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Advanced Features}
+\vspace{-5mm}
+\textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
-
-\item{Use the {\bf Experiment Management System (EMS)} } 
-   \\ Automate entire process
-   \\ Support for multi-core servers. And Sun Grid Engines (SGE)
-   \\ Reuse existing alignments or models
-   \\ Example config files available in Moses
-   \\ Disadvantage --- not all features are implemented
-
+\item \currenttopic{Experiment Management System}
 \end{itemize}
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \slide{Experiment Management System}
-\begin{itemize}
+\begin{itemize} \itemsep -1mm
 \item One configuration file for all settings: record of all experimental details
 \item Scheduler of individual steps in pipeline
 \begin{itemize}
@@ -550,6 +523,9 @@ mteval-v13.pl ...
 \item set up a new experiments in minutes
 \item set up a variation of an experiment in seconds
 \end{itemize}
+
+\item Disadvantage --- not all features are implemented
+
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -692,16 +668,7 @@ sortable by most improvement, deterioration
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
-\item Data and domain adaptation
 \item \currenttopic{Faster Training}
-\item Speed vs. quality
-\item Speed vs. memory use
-\item Language models
-\item Instructions to decoder
-\item Input formats
-\item Output formats
-\item Translation models
-\item Experiment management system
 \end{itemize}
 }
 
@@ -728,14 +695,18 @@ sortable by most improvement, deterioration
 \begin{itemize} \itemsep -1mm
 
 \item {Multicore Parallelization} 
-  \begin{center}
-    \littlecode{.../train-model.perl -parallel}
-  \end{center}      
-    EMS: 
-  \begin{center}
-    \littlecode{[TRAINING] } \\
-    \littlecode{parallel = yes}
-  \end{center}      
+\begin{SaveVerbatim}{myverb} 
+  .../train-model.perl -parallel
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+
+\item EMS: 
+\begin{SaveVerbatim}{myverb} 
+  [TRAINING]
+  parallel = yes
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -745,13 +716,17 @@ sortable by most improvement, deterioration
 \begin{itemize} \itemsep -1mm
 
 \item {Tokenization}
-  \begin{center}
-    \littlecode{.../tokenizer.perl -threads NUM}
-  \end{center}      
-    EMS: 
-  \begin{center}
-    \littlecode{input-tokenizer  = " \$moses-script-dir/tokenizer/tokenizer.perl -threads NUM " }
-  \end{center}      
+\begin{SaveVerbatim}{myverb} 
+  .../tokenizer.perl -threads NUM
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+
+\item EMS: 
+\begin{SaveVerbatim}{myverb} 
+  input-tokenizer  = "\$moses-script-dir/tokenizer/tokenizer.perl 
+		    -threads NUM " 
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
   
   
 \end{itemize}
@@ -813,16 +788,11 @@ sortable by most improvement, deterioration
   \begin{itemize}
   \item Rely heavily on Unix 'sort' command
     \item 50\%+ time 
-  \item Optimized for speed \& disk usage
-  \begin{center}
-    \littlecode{sort --buffer-size 10G --batch-size 253 --compress-program gzip --parallel 5}
-  \end{center}      
-  In Moses:
-    \begin{SaveVerbatim}{myverb}
-    .../train-model.perl  -sort-buffer-size 10G 
-      -sort-batch-size 253 -sort-compress gzip -sort-parallel 5
-    \end{SaveVerbatim}
-    \colorbox{gray}{\BUseVerbatim{myverb}}
+  \item Need to optimize for
+     \begin{itemize}
+      \item speed
+      \item disk usage
+     \end{itemize}
 
   \item Dependent on
     \begin{itemize}
@@ -831,7 +801,41 @@ sortable by most improvement, deterioration
     \item      available memory
     \end{itemize}
   \end{itemize}
+\end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Faster Training}
+\begin{itemize} \itemsep -1mm
+\item Example:
+  \begin{itemize}
+  \item Plain sorted
+  \begin{SaveVerbatim}{myverb}
+ sort < extract.txt > extract.sorted.txt
+  \end{SaveVerbatim}
+  \colorbox{gray}{\BUseVerbatim{myverb}}
+
+  \item Optimized for large server
+  \begin{SaveVerbatim}{myverb}
+ sort --buffer-size 10G --parallel 5
+	  --batch-size 253 --compress-program gzip ...
+  \end{SaveVerbatim}
+  \colorbox{gray}{\BUseVerbatim{myverb}}
+    \begin{itemize}
+    \item Use 10GB of RAM
+    \item 5 CPUs
+    \item merge\-sort at most 253 files
+    \item compress intermediate files
+    \end{itemize}
+
+\item In Moses:
+    \begin{SaveVerbatim}{myverb}
+ .../train-model.perl -sort-buffer-size 10G -sort-parallel 5 
+      -sort-batch-size 253 -sort-compress gzip 
+    \end{SaveVerbatim}
+    \colorbox{gray}{\BUseVerbatim{myverb}}
+
+  \end{itemize}
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -887,15 +891,7 @@ build-lm.sh -i "gunzip -c corpus.gz" -n 3
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
-\item Data and domain adaptation
-\item \currenttopic{Speed vs. quality}
-\item Speed vs. memory use
-\item Language models
-\item Instructions to decoder
-\item Input formats
-\item Output formats
-\item Translation models
-\item Experiment management system
+\item \currenttopic{Faster Decoding}
 \end{itemize}
 }
 
@@ -905,14 +901,23 @@ build-lm.sh -i "gunzip -c corpus.gz" -n 3
 
 \vspace{15mm}
 \begin{itemize}
-\item Multi-threaded decoding - easy speed-up
+\item Multi-threaded decoding 
+  \begin{itemize}
+  \item easy speed-up
+  \end{itemize}
 \begin{center}
 \littlecode{--threads NUM}
 \end{center}
 
-\item Minimize memory usage - difficult speed-up
+\item Speed vs. Memory Use
+  \begin{itemize}
+  \item difficult speed-up
+  \end{itemize}
 
-\item Trade speed for quality - (more) difficult
+\item Speed vs. Quality
+  \begin{itemize}
+  \item (more) difficult
+  \end{itemize}
 
 \end{itemize}
 
@@ -1106,7 +1111,7 @@ rename file .mm
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Trade-Off Speed vs Quality}
+\slide{Speed vs. Quality}
 \vspace{5mm}
 \begin{center} 
 \includegraphics[scale=1.4]{quality-vs-speed.pdf}\vspace{-20mm}
@@ -1177,6 +1182,16 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\slide{Advanced Features}
+\vspace{-5mm}
+\textcolor{darkgrey}{
+\begin{itemize} \itemsep -1mm
+\item \currenttopic{Moses Server}
+\end{itemize}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \slide{Moses Server}
 \begin{itemize} \itemsep -1mm
 \item Moses command line:
@@ -1215,14 +1230,6 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
 \item \currenttopic{Data and domain adaptation}
-\item Speed vs. quality
-\item Speed vs. memory use
-\item Language models
-\item Instructions to decoder
-\item Input formats
-\item Output formats
-\item Translation models
-\item Experiment management system
 \end{itemize}
 }
 
@@ -1265,40 +1272,14 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Incremental training}
+\slide{Domain Adaptation}
 \begin{itemize}
-\item \currenttopic{Retrain everything}
+\item Retrain everything
 \item Secondary phrase-table
-  \\ backoff
 \item  incremental GIZA++ and dynamic suffix arrays
 \item TM-MT integration
 
 \end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Retrain everything}
-EMS:
-    \begin{SaveVerbatim}{myverb} 
-      [CORPUS]
-      [CORPUS:existing-data]
-      raw-stem = ....
-      
-      [CORPUS:new-data]
-      raw-stem = ....
-    \end{SaveVerbatim}
-    \colorbox{gray}{\BUseVerbatim{myverb}}
-
-   \begin{SaveVerbatim}{myverb} 
-      [LM]
-      [LM:existing-data]
-      raw-corpus = ....
-      
-      [LM:new-data]
-      raw-corpus = ....
-    \end{SaveVerbatim}
-    \colorbox{gray}{\BUseVerbatim{myverb}}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1316,6 +1297,34 @@ EMS:
   \item Slower training for large amount of data
   \item Cannot weight old and new data separately
   \end{itemize}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Retrain everything}
+EMS:
+\begin{itemize} \itemsep -1mm
+\item Phrase-table
+    \begin{SaveVerbatim}{myverb} 
+      [CORPUS]
+      [CORPUS:existing-data]
+      raw-stem = ....
+      
+      [CORPUS:new-data]
+      raw-stem = ....
+    \end{SaveVerbatim}
+    \colorbox{gray}{\BUseVerbatim{myverb}}
+
+\item LM
+   \begin{SaveVerbatim}{myverb} 
+      [LM]
+      [LM:existing-data]
+      raw-corpus = ....
+      
+      [LM:new-data]
+      raw-corpus = ....
+    \end{SaveVerbatim}
+    \colorbox{gray}{\BUseVerbatim{myverb}}
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
