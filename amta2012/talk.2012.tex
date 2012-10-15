@@ -1278,30 +1278,44 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Retrain everything}
-\begin{itemize}
-\item Very easy
-\item Concatenate new data with existing data
-\item Retrain
-\item EMS 
-      \\ {[}CORPUS{]}
-      \\ {[}CORPUS:existing-data{]}
-      \\ raw-stem = ....
-      \\
-      \\ {[}CORPUS:new-data{]}
-      \\ raw-stem = ....
-      \\
-      \\ {[}LM{]}
-      \\ {[}LM:existing-data{]}
-      \\ raw-corpus = ....
-      \\
-      \\ {[}LM:new-data{]}
-      \\ raw-corpu = ....
+EMS:
+    \begin{SaveVerbatim}{myverb} 
+      [CORPUS]
+      [CORPUS:existing-data]
+      raw-stem = ....
+      
+      [CORPUS:new-data]
+      raw-stem = ....
+    \end{SaveVerbatim}
+    \colorbox{gray}{\BUseVerbatim{myverb}}
 
+   \begin{SaveVerbatim}{myverb} 
+      [LM]
+      [LM:existing-data]
+      raw-corpus = ....
+      
+      [LM:new-data]
+      raw-corpus = ....
+    \end{SaveVerbatim}
+    \colorbox{gray}{\BUseVerbatim{myverb}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Retrain everything}
+
+\begin{itemize} \itemsep -1mm
+ 
 \item Easy to implement
+  \begin{itemize}
+  \item Concatenate new data with existing data
+  \item Retrain
+  \end{itemize}
 \item Disadvantages: 
-    \\ Slower training for large amount of data
-    \\ Cannot weight old and new data separately
-
+  \begin{itemize}
+  \item Slower training for large amount of data
+  \item Cannot weight old and new data separately
+  \end{itemize}
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1318,42 +1332,44 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Secondary phrase-table}
-\begin{itemize}
+\begin{itemize} \itemsep -1mm
 \item Train initial phrase-table and LM on baseline data
 
 \item Train secondary phrase-table and LM new/in-domain data
 
 \item Use both in Moses
-  \item Secondary LM
-      \\ {[}lmodel-file{]}
-      \\ 9 0 5 .../path.1
-      \\ 9 0 5 .../path.2
-      \\
-      \\ {[}weight-l{]}
-      \\ 0.5000
-      \\ 0.5000
-  \\
+  \begin{itemize}
+
   \item Secondary phrase-table
-      \\ {[}ttable-file{]}
-      \\ 1 0 0 5 .../path.1
-      \\ 1 0 0 5 .../path.2
-      \\
-      \\ {[}weight-t{]}
-      \\ 0.20
-      \\ 0.20
-      \\ 0.20
-      \\ 0.20
-      \\ 0.20
-      \\ 0.20
-      \\ 0.20
-      \\ 0.20
-      \\ 0.20
-      \\ 0.20
-      \\ 0.20
-      \\
-      \\ {[}mapping{]}
-      \\ 0 T 0
-      \\ 1 T 1
+  \begin{SaveVerbatim}{myverb} 
+    [ttable-file]
+    1 0 0 5 .../path.1
+    1 0 0 5 .../path.2
+    
+    [mapping]
+    0 T 0
+    1 T 1
+  \end{SaveVerbatim}
+  \colorbox{gray}{\BUseVerbatim{myverb}}
+
+  \end{itemize}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Secondary phrase-table}
+\begin{itemize} \itemsep -1mm
+  \item
+  \begin{itemize}
+  \item Secondary LM
+  \begin{SaveVerbatim}{myverb} 
+    [lmodel-file]
+    9 0 5 .../path.1
+    9 0 5 .../path.2
+  \end{SaveVerbatim}
+  \colorbox{gray}{\BUseVerbatim{myverb}}
+
+  \end{itemize}
 
   \item Can give different weights for primary and secondary tables
   \item Not integrated into the EMS
@@ -1402,15 +1418,25 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 
 \slide{TM-MT integration}
 
-\begin{itemize}
+\begin{itemize} \itemsep -1mm
 \item Translation memory-style fuzzy match
-\item Create long translation rule 'templates'
-\item Best for use with parallel corpus with lots of repetition
+  \begin{itemize}
+  \item For hiearchical decoding
+  \item Create long translation rule 'templates'
+  \item Best for use with parallel corpus with lots of repetition
+  \end{itemize}
 
-\item Use in addition to normal phrase table
 \item Add TM and word alignment as a special phrase-table
-   \\ {[}ttable-file{]}
-   \\ 11 0 0 3 source.path;target.path;alignment 
+  \begin{itemize}
+    \item Use in addition to normal phrase table
+  \end{itemize}
+  \begin{SaveVerbatim}{myverb} 
+   [ttable-file]
+   11 0 0 3 source.path;target.path;alignment 
+   2 0 0 3 phrase-table
+   6 0 0 3 glue-rules
+  \end{SaveVerbatim}
+  \colorbox{gray}{\BUseVerbatim{myverb}}
 
 \end{itemize}
 
