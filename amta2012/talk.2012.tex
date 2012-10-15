@@ -1178,22 +1178,33 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Moses Server}
-
-\begin{itemize}
-
+\begin{itemize} \itemsep -1mm
 \item Moses command line:
-     \\ .../moses -f {[}ini{]} \textless {[}input file{]} \textgreater {[}output file{]}
-\item Not practical for commercial use
+\begin{SaveVerbatim}{myverb} 
+  .../moses -f [ini] < [input file] > [output file]
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+    \begin{itemize}
+      \item Not practical for commercial use
+    \end{itemize}
+
 
 \item Moses Server:
-    \\ Accept HTTP input. XML SOAP format
-    \\ .../mosesserver -f {[}ini{]} {\bf --server-port {[}PORT{]} --server-log {[}LOG{]} }
+    \begin{SaveVerbatim}{myverb} 
+ .../mosesserver -f [ini] --server-port [PORT] --server-log [LOG]
+    \end{SaveVerbatim}
+    \colorbox{gray}{\BUseVerbatim{myverb}}
+    \begin{itemize}
+      \item Accept HTTP input. XML SOAP format
+    \end{itemize}
 
 \item Client:
-    \\ Communicate via http
-    \\ Example clients in Java and Perl
-    \\ Write your own client
-	\\ Integrate into your own application
+    \begin{itemize}
+      \item Communicate via http
+      \item Example clients in Java and Perl
+      \item Write your own client
+      \item Integrate into your own application
+    \end{itemize}
     
 \end{itemize}
 
