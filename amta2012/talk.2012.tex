@@ -712,8 +712,7 @@ sortable by most improvement, deterioration
   \begin{itemize}
   \item Tokenization
   \item Alignment
-  \item Extraction
-  \item Phrase-table creation
+  \item Phrase-Table Extraction
   \item Train language model
   \item Tuning
   \end{itemize}
@@ -759,8 +758,7 @@ sortable by most improvement, deterioration
   \begin{itemize}
   \item \currenttopic{Tokenization}
   \item Alignment
-  \item Extraction
-  \item Phrase-table creation
+  \item Phrase-Table Extraction
   \item Train language model
   \item Tuning
   \end{itemize}
@@ -803,8 +801,7 @@ sortable by most improvement, deterioration
   \begin{itemize}
   \item {Tokenization}
   \item Alignment
-  \item Extraction
-  \item Phrase-table creation
+  \item Phrase-Table Extraction
   \item Train language model
   \item \currenttopic{Tuning}
   \end{itemize}
@@ -817,10 +814,41 @@ sortable by most improvement, deterioration
 \slide{Faster Training}
 
 \begin{itemize} \itemsep -1mm
-
 \item {Tuning}
 
+\begin{SaveVerbatim}{myverb} 
+  .../mert -threads NUM
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+
+\item EMS: 
+\begin{SaveVerbatim}{myverb} 
+  tuning-settings = " -threads NUM" 
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+
 \end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Advanced Features}
+\vspace{-5mm}
+\textcolor{darkgrey}{
+\begin{itemize} \itemsep -1mm
+\item {How do I get started?}
+\item {Experiment Management System}
+\item {Faster Training}
+  \begin{itemize}
+  \item {Tokenization}
+  \item \currenttopic{Alignment}
+  \item Phrase-Table Extraction
+  \item Train language model
+  \item {Tuning}
+  \end{itemize}
+\end{itemize}
+...
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -856,15 +884,37 @@ sortable by most improvement, deterioration
   \end{itemize}
 \end{itemize}
        
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Advanced Features}
+\vspace{-5mm}
+\textcolor{darkgrey}{
+\begin{itemize} \itemsep -1mm
+\item {How do I get started?}
+\item {Experiment Management System}
+\item {Faster Training}
+  \begin{itemize}
+  \item {Tokenization}
+  \item {Alignment}
+  \item \currenttopic{Phrase-Table Extraction}
+  \item Train language model
+  \item {Tuning}
+  \end{itemize}
+\end{itemize}
+...
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Faster Training}
 
 \begin{itemize} \itemsep -1mm
 
-\item {Parallel Extraction}
+\item {Phrase-Table Extraction}
   \begin{itemize}
-  \item Split training data into NUM equal parts, extract concurrently
+  \item Split training data into NUM equal parts
+  \item Extract concurrently
   \end{itemize}
   \begin{center}
     \littlecode{.../train-model.perl -cores NUM}
@@ -928,6 +978,27 @@ sortable by most improvement, deterioration
 
   \end{itemize}
 \end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Advanced Features}
+\vspace{-5mm}
+\textcolor{darkgrey}{
+\begin{itemize} \itemsep -1mm
+\item {How do I get started?}
+\item {Experiment Management System}
+\item {Faster Training}
+  \begin{itemize}
+  \item {Tokenization}
+  \item {Alignment}
+  \item {Phrase-Table Extraction}
+  \item \currenttopic{Train language model}
+  \item {Tuning}
+  \end{itemize}
+\end{itemize}
+...
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \slide{IRSTLM: Training}
