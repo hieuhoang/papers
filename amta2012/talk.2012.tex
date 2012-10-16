@@ -1047,14 +1047,62 @@ build-lm.sh -i "gunzip -c corpus.gz" -n 3
 
 \end{itemize}
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Advanced Features}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
+\item {How do I get started?}
+\item {Experiment Management System}
+\item {Faster Training}
 \item \currenttopic{Faster Decoding}
+\item {Moses Server}
+\item {Data and domain adaptation}
+\item {Instructions to decoder}
+\item {Input formats}
+\item {Output formats}
+\item {Translation models}
 \end{itemize}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Advanced Features}
+\vspace{-5mm}
+\textcolor{darkgrey}{
+\begin{itemize} \itemsep -1mm
+\item {How do I get started?}
+\item {Experiment Management System}
+\item {Faster Training}
+\item \currenttopic{Faster Decoding}
+  \begin{itemize}
+  \item Multi-threading
+  \item Speed vs. Memory
+  \item Speed vs. Quality
+  \end{itemize}
+\end{itemize}
+...
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Advanced Features}
+\vspace{-5mm}
+\textcolor{darkgrey}{
+\begin{itemize} \itemsep -1mm
+\item {How do I get started?}
+\item {Experiment Management System}
+\item {Faster Training}
+\item {Faster Decoding}
+  \begin{itemize}
+  \item \currenttopic{Multi-threading}
+  \item Speed vs. Memory
+  \item Speed vs. Quality
+  \end{itemize}
+\end{itemize}
+...
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1064,24 +1112,32 @@ build-lm.sh -i "gunzip -c corpus.gz" -n 3
 \vspace{15mm}
 \begin{itemize}
 \item Multi-threaded decoding 
-  \begin{itemize}
-  \item easy speed-up
-  \end{itemize}
 \begin{center}
-\littlecode{--threads NUM}
+\littlecode{.../moses --threads NUM}
 \end{center}
-
-\item Speed vs. Memory Use
-  \begin{itemize}
-  \item difficult speed-up
-  \end{itemize}
-
-\item Speed vs. Quality
-  \begin{itemize}
-  \item (more) difficult
-  \end{itemize}
+\item Easy speed-up
 
 \end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Advanced Features}
+\vspace{-5mm}
+\textcolor{darkgrey}{
+\begin{itemize} \itemsep -1mm
+\item {How do I get started?}
+\item {Experiment Management System}
+\item {Faster Training}
+\item {Faster Decoding}
+  \begin{itemize}
+  \item {Multi-threading}
+  \item \currenttopic{Speed vs. Memory}
+  \item Speed vs. Quality
+  \end{itemize}
+\end{itemize}
+...
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1273,6 +1329,25 @@ rename file .mm
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\slide{Advanced Features}
+\vspace{-5mm}
+\textcolor{darkgrey}{
+\begin{itemize} \itemsep -1mm
+\item {How do I get started?}
+\item {Experiment Management System}
+\item {Faster Training}
+\item {Faster Decoding}
+  \begin{itemize}
+  \item {Multi-threading}
+  \item {Speed vs. Memory}
+  \item \currenttopic{Speed vs. Quality}
+  \end{itemize}
+\end{itemize}
+...
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \slide{Speed vs. Quality}
 \vspace{5mm}
 \begin{center} 
@@ -1348,7 +1423,16 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
+\item {How do I get started?}
+\item {Experiment Management System}
+\item {Faster Training}
+\item {Faster Decoding}
 \item \currenttopic{Moses Server}
+\item {Data and domain adaptation}
+\item {Instructions to decoder}
+\item {Input formats}
+\item {Output formats}
+\item {Translation models}
 \end{itemize}
 }
 
@@ -1391,8 +1475,19 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
+\item {How do I get started?}
+\item {Experiment Management System}
+\item {Faster Training}
+\item {Faster Decoding}
+\item {Moses Server}
 \item \currenttopic{Data and domain adaptation}
+  \begin{itemize}
+  \item Train everything together
+  \item Secondary phrase-table
+  \item TM-MT integration
+  \end{itemize}
 \end{itemize}
+...
 }
 
 
@@ -1445,8 +1540,28 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Retrain everything}
+\slide{Advanced Features}
+\vspace{-5mm}
+\textcolor{darkgrey}{
+\begin{itemize} \itemsep -1mm
+\item {How do I get started?}
+\item {Experiment Management System}
+\item {Faster Training}
+\item {Faster Decoding}
+\item {Moses Server}
+\item {Data and domain adaptation}
+  \begin{itemize}
+  \item \currenttopic{Train everything together}
+  \item Secondary phrase-table
+  \item TM-MT integration
+  \end{itemize}
+\end{itemize}
+...
+}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Train everything together}
 \begin{itemize} \itemsep -1mm
  
 \item Easy to implement
@@ -1463,10 +1578,11 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Retrain everything}
+\slide{Train everything together}
+\vspace{-5mm}
 EMS:
-\begin{itemize} \itemsep -1mm
-\item Phrase-table
+\begin{itemize} \itemsep -2mm
+\item Phrase-table \small
     \begin{SaveVerbatim}{myverb} 
       [CORPUS]
       [CORPUS:existing-data]
@@ -1476,8 +1592,7 @@ EMS:
       raw-stem = ....
     \end{SaveVerbatim}
     \colorbox{gray}{\BUseVerbatim{myverb}}
-
-\item LM
+\item LM \small
    \begin{SaveVerbatim}{myverb} 
       [LM]
       [LM:existing-data]
@@ -1491,14 +1606,24 @@ EMS:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Incremental training}
-\begin{itemize}
-\item Retrain everything
-\item \currenttopic{Secondary phrase-table}
-\item  incremental GIZA++ and dynamic suffix arrays
-\item TM-MT integration
-
+\slide{Advanced Features}
+\vspace{-5mm}
+\textcolor{darkgrey}{
+\begin{itemize} \itemsep -1mm
+\item {How do I get started?}
+\item {Experiment Management System}
+\item {Faster Training}
+\item {Faster Decoding}
+\item {Moses Server}
+\item {Data and domain adaptation}
+  \begin{itemize}
+  \item {Train everything together}
+  \item \currenttopic{Secondary phrase-table}
+  \item TM-MT integration
+  \end{itemize}
 \end{itemize}
+...
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1574,16 +1699,27 @@ EMS:
 % \item Bleeding edge. Not integrated into EMS
 % \end{itemize}
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Incremental training}
-\begin{itemize}
-\item Retrain everything
-\item Secondary phrase-table
-\item Incremental GIZA++ and dynamic suffix arrays
-\item \currenttopic{TM-MT integration}
-
+\slide{Advanced Features}
+\vspace{-5mm}
+\textcolor{darkgrey}{
+\begin{itemize} \itemsep -1mm
+\item {How do I get started?}
+\item {Experiment Management System}
+\item {Faster Training}
+\item {Faster Decoding}
+\item {Moses Server}
+\item {Data and domain adaptation}
+  \begin{itemize}
+  \item {Train everything together}
+  \item {Secondary phrase-table}
+  \item \currenttopic{TM-MT integration}
+  \end{itemize}
 \end{itemize}
+...
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1807,7 +1943,16 @@ EMS:
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
+\item {How do I get started?}
+\item {Experiment Management System}
+\item {Faster Training}
+\item {Faster Decoding}
+\item {Moses Server}
+\item {Data and domain adaptation}
 \item \currenttopic{Instructions to decoder}
+\item {Input formats}
+\item {Output formats}
+\item {Translation models}
 \end{itemize}
 }
 
@@ -1919,7 +2064,16 @@ I really like to $<$b$>$eat$<$/b$>$ chicken!}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
+\item {How do I get started?}
+\item {Experiment Management System}
+\item {Faster Training}
+\item {Faster Decoding}
+\item {Moses Server}
+\item {Data and domain adaptation}
+\item {Instructions to decoder}
 \item \currenttopic{Input formats}
+\item {Output formats}
+\item {Translation models}
 \end{itemize}
 }
 
@@ -2112,7 +2266,16 @@ Command line argument & Input to Moses {\tiny (PLF format - Python Lattice Forma
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
+\item {How do I get started?}
+\item {Experiment Management System}
+\item {Faster Training}
+\item {Faster Decoding}
+\item {Moses Server}
+\item {Data and domain adaptation}
+\item {Instructions to decoder}
+\item {Input formats}
 \item \currenttopic{Output formats}
+\item {Translation models}
 \end{itemize}
 }
 
@@ -2365,10 +2528,20 @@ Argument to command line\\[2mm]
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 \slide{Advanced Features}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
+\item {How do I get started?}
+\item {Experiment Management System}
+\item {Faster Training}
+\item {Faster Decoding}
+\item {Moses Server}
+\item {Data and domain adaptation}
+\item {Instructions to decoder}
+\item {Input formats}
+\item {Output formats}
 \item \currenttopic{Translation models}
 \end{itemize}
 }
