@@ -2783,6 +2783,30 @@ train-model.perl ... -hierarchical
 
 %  /Users/hieuhoang/workspace/sourceforge/trunk/scripts/training/train-model.perl -first-step 5 -last-step 6 --corpus corpus.1.0-0 -f de -e en -alignment-file /Users/hieuhoang/workspace/data/syntax-de-en-nc/10/aligned.1 -alignment  grow-diag-final-and -lexical-file lex  -hierarchical
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{Hierarchical Model}
+
+Comparison with phrase-based model:
+
+\begin{table}[ht]
+\begin{tabular}{| c c | c c |}
+\hline 
+		& 	& Phrase-based & Hierarchical \\
+\hline
+BLEU (Europarl) & fr-en & 25.10 & 24.58 \\
+		& de-en & 18.11 & 17.99 \\
+		& es-en & 25.81 & 25.17 \\
+		& de-en & 18.11 & 17.99 \\
+		& cs-en & 18.00 & 17.86 \\
+\hline
+Phrase-table size & fr-en & 2.5GB & 20.0GB \\
+\hline
+Decoding time (sec) & per sentence & 2.27 & 6.45 \\
+		    & per word & 0.09 & 0.26 \\
+\hline
+\end{tabular}
+
+\end{table}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \slide{Tree-to-String Model Training}
