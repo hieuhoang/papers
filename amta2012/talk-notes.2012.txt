@@ -1,0 +1,540 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Faster Training
+
+Training may take a day to week.
+  - depends on size of the data.
+  - to speed it it up, we are looking to make the most use of all the cores on our server
+     - currents servers have at least 2 cores or more. Our edinburgh server, for instance has 16 cores.
+ 	 - as you can imagine, being able to use 16 cores results in a significant speedup.
+%%%
+These are the time consuming processes
+   - focus on reduce the runnning time for these
+%%&
+the first thing you should do is add the argument 'parallel' to the Moses script.
+  - If you're using the EMS, 
+       parallel=yes in the does TRAINING stanza
+     does the same thing
+this tell the script to allow processes that don't depend on each other to run concurrently
+
+For example, training the language model and the phrase table can be run in parallel.
+
+%%%
+multithreading tokenization is easy.
+   - just add the argument 
+       threads
+    to the tokenization script, with the number of cores you have
+
+%%%
+multithreading the tuning is also very easy.
+   - just add the argument 
+       threads
+    to the tuning script
+
+%%%
+Instead of using GIZA, use MGIZA. Also freely available and integrated into the Moses training script
+
+Specify the argument -mgiza, and number of CPUs, like so
+%
+If you're running on a laptop with little memory, alignment can be a problem.
+
+One of the process in the alignment step uses a lot lot of memory
+   - ~6GB when aligning the Europarl corpus
+   - crash your laptop
+This process has been rewritten to use less memory but take more time
+
+To use it, specify the
+  source-to-target cooccurence program should be like so
+%%%
+Phrase-Table extraction
+
+Again, easy
+  - just add the argument 
+       cores
+    to the training script 
+%%%
+Another way of speeding the extraction is to optimize the Unix sort argument
+   - which alphabetically sorts various intermediate files during training
+   - rely heavily on this command
+        - 50% of the extraction time goes to sorting
+This is more difficult than the other cases 'cos
+   - maximise the cores you use
+   - and minimize the disk read/writes
+   - AND the amount of disk space required 
+       - if you have very large dataset
+       - the sorting could fill your entire disk space
+And to make it more difficult
+  - what you can do is dependant on 
+     - sort version on your computer
+     - the Unix version
+     - available memory
+%%%     
+This is type of command that Moses typically executes
+  - takes in a large unsorted file and output a sorted file
+  
+The 2nd line does exactly exactly the same thing
+  - optimized for a server with at least 10GB
+  - it will use 5 cores if required
+  - merging writes intermediate files
+  - during merge of intermedeate files, it will merge 253 files in parallel
+       - whereas default is 6 files
+  - compress intermdiate files with gzip to save space & reduce IO
+
+3rd line - the switches you give Moses if you want it to do the same when it sorts it's files during training
+%%%
+Training Language Model
+
+The default toolkit in Moses for creating a language is SRILM
+  - has several disadvantages
+  - it's not free for commercial use
+  - need lots of memory with training large amount of data
+  - can't use multiple cores
+  
+The IRST toolkit was designed to solve these problems.
+%%%
+If you want to train a language model with IRST manually
+  - execute this command.
+IRST LM training is also available in the EMS
+  - specify these in the config file, instead of the SRI verion
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Now that you've trained your translation system
+
+You want to use it to traslate
+Want to do that as fast as possible.
+%%%
+The 1st thing you should do
+  - specify how many threads you want the decoder to run with
+
+That's easy. 
+The next parts isn't, but arguably more important
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Speed v Memory
+
+
+memory 
+  - critical variables when running systems
+  - using too much memory
+  - brings your to a halt
+  
+  - easiest way
+  		- instead of loading the whole phrase-table and language model into memory
+  		- keep it on disk
+  		- like a database
+  		- load only what you need to translate each sentence
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Speed v Memory
+  		
+Typical file sizes when trained on Europarl corpus
+  - language model = 200MB - 500MB, depending on order
+  - phrase-table = 11GB
+  - lexicalised reordering model = 9.4GB
+  
+  Load all into memory = 20GB
+	- translate 1 sentence only
+  - most of the entries in models won't be used.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Speed v Memory
+
+Why load everything into memory?
+	- if you have a server with 20GB
+	- fast decoding
+	- but long load-up time
+	- do this if you want moses just to run & run for months
+	
+However, most servers don't have that memory
+  - have to create database-type files on disk
+  - load on demand
+  - slower decoding but fast to boot it
+  
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Speed v Memory
+
+To binarize a phrase table or lexical reordering table
+   - this is what your type
+   - different format for phrase-based and hierachical/syntax models
+   
+   - don't forget this export
+   - utf8 handling
+   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Speed v Memory
+
+In this ini file
+  - change the 1st number in the [ttable-file]
+      - 1 or 2
+      - depending on which model
+      
+for lexicalised reordering
+	- also need to binary lex. reordering table too.
+	- don't have to do anything
+
+Speed v Quality
+
+If you're prepared to sacrifice some quality for speed 
+   - reduce the number of partial translation, or hypothoses, created
+   - More hypotheses is better translation
+   - But more decodng time
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Speed v Quality
+
+Philipp has showed you how the phrase-based decoding works.
+
+Number of hypothses created is roughly
+  sentence-length
+  stack size
+  translation options per span
+  
+Can't do anything about the sentence length
+Can do something about the other 2.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Speed v Quality
+
+Set the stack size
+  - privide this argument to moses 
+      - on the command line 
+      - ini file
+   		- default = 200
+   		
+Reduce the numer of trans. opt per span
+  - ttable-limit
+  - default 20
+  
+- also drastically reduce the memory consumption
+
+Alternatively, use cube pruning
+  - technique came from syntax based system
+  - 3-4 time faster with small loss in quality
+  - default = 1000
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Speed v Quality
+
+For syntax and hierarchical model
+  - no choice but use cube pruning
+  - too slow without it
+	- Number of hypotheses is proportional to the square of sentence length
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Speed v Quality
+
+What you'll find when you turn up everything to try & improve translation is that there's a diminishing rate of return.
+
+So you're usually better off having a workable system, rather than 1 with good bleu scores. The difference between a 'practical' system and the 'best system' isn't qualatively noticeable.
+
+To get better systems, you need more data or better models
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Single best thing you can do to improve translation quality is to train with more data. Especially data in the same domain as your test set.
+
+If you don't understand anything else, just remember that.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+What kind of data do you need?
+   - 1. parallel data, which goes to create your translation rules
+   				- scrap of the web, like europarl
+   				- if you're a language service provider, you'll have translation memories that can also be used. Likely to be in the correct domain.
+   				- Similarly, if you're translating specialist text, like medical domain, you may need to buy or create a specialist dictinary of terms. Without it, unknown terms won't be translated properly
+    - 2. Need lots of data in just target language to create language model. This improves the fluency of your output. 
+    
+    Monolingual data for most languages is easy to get scape of the web. Like parallel data it best if it in-domain.
+
+		always improve if you have more data. Only time I seen language model hurt performance was 1 trained on twitter data.
+		
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Domain Adaptation
+
+If you have lots of data from lots of source
+   - 1 way is just to concatenate them into 1 large file and use it in train.
+    - however, better to keep them separate & train them indepenetly. Use all the models all during translation.
+
+    - Moses supports using multiple phrase-tables and multiple languages.
+
+   For example, if you wants to build an MT system to translate marketing material, and you already have lots of translation memories in the same domain. 
+      - By all means europarl corpus and train a translation model with that. However, train a separate translation just from your marketing memories.
+      - The same goes for language models.
+      
+Essential that you tune in the same domain as your test set. If you create a system to translation marketing material, don't tune with a Europarl tuning sentences, otherwise your translation will come out like it was written by a politician!
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Language Model
+
+Doesn't tell you how like the translation is
+   - how likely the output sentence
+   - very important to improve fluency
+
+Only requirement monolingual data to create LM
+   - easy to collect
+   - can collect lots of data
+   
+Like phrase table
+  - long load time
+  - large memory requirement
+  - also, takes a long time to train a LM
+  
+Where these 2 special LM libraries comes in. Both work with Moses
+   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+IRSTLM
+
+Like phrase table
+   - convert the LM into a db-like format
+   - load on demand
+   
+Also, this LM can quantize probabilities. 
+   - reduce memory
+   - 1 byte instead of 4
+   - small degradation in translation quality
+   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+IRSTLM
+
+to use it in the decoder
+   - compile the IRST library separately
+   - link moses decoder with it
+   
+When you want to use IRSTLM implementation instead of SRI
+  - change the 1st number to 1
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+IRSTLM
+
+Need to not only reduce memory usage when using the trained LM during decoding.
+
+Also during training
+   - train faster
+   - need to reduce memory 
+   
+	 - break training into multiple parts
+	 - run on multiple machines
+	 
+Other good thing about IRSTLM
+  - complete training & LM library like  
+  - open source, unlike SRI
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+IRSTLM
+
+TO create the binary version
+   - run this
+
+TO tell the decoder only to load-on-demand as it's translating
+   - rename to file to .mm = memory mapped
+   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RANDLM
+
+For very large corpora
+   - not even load on demand
+   - quantization is enough
+   
+   - don't have the disk space to store the LM
+   
+Like quantization
+	- lossy compression
+	- makes particular type of mistake
+	- false postive mistake
+			- may give you a probability for an n-gram when it doesn't exist
+	- LM much smaller than SRI or IRST on similar data
+
+Too approximate
+	- shouldn't use as the only LM
+	- secondary LM to complement conventional LM
+	
+	- perhaps trained with gigabytes of data scraped from the web
+	- high-order n-gram
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RANDLM
+
+Like with IRST:
+
+to use it in the decoder
+   - compile RandLM library separately
+   - link moses decoder with it
+   
+When you want to use RandLM 
+  - change the 1st number to 5
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RANDLM
+
+Usually, too much data
+	- requires specialised programs to do it
+	
+However, can convert a normal ARPA file to RandLM
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Conclude LM
+
+Any questions?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Specifying Translations with XML
+
+Force a word or to be translated a particular way
+
+MT is very bad @ translating certain things
+   - numbers
+   - dates
+   - names
+   
+   - the number 2003 can be translated as
+   		- 2003
+   		- 2000
+   		- year ...
+Bad alignment, non-literal translation in the corpus
+
+Don't rely on MT alone
+   - preprocess your input. Identify numbers, dates, names
+   - add XML tags to force the decoder to translate words a particular way
+   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Walls and Zones
+
+Restrict reordering.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Walls and Zones
+
+Better to show with examples:
+
+Zone - if you start translating a word in a zone, you translate the entire zone before translating anything else.
+
+In this example, " yes " has to be translated together
+
+Wall - must translate everything behind the wall, before translating anything in front of the wall
+
+The phrase "Number 1" has to be completely translated before the phrase 'The beginning" can be translated.
+
+Something that often happens in MT output is that the phrase inside brackets is broken up & partially moved outside of the bracket. This is almost always wrong.
+
+Use walls and zone to ensure that once you begin translating inside the brackets, it's completed before the closing brackets
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Preserving Markup
+
+Zones and walls are great for translating marked up text where you want the translation to be formatted in the same way as the input
+
+In this case instead of brackets like before
+	- want the same phrases enclosed in the markup
+
+Ensure the translation 'My Home Page' is all contained with the <H1> markup
+   - add walls just after the opening markup
+   - just before the closing markup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Preserving Markup
+   
+The other solution 
+	- discard the markup during decoding
+	- track the word positions while decoding
+	- re-insert the markup after decoding
+	
+Has issues 
+	- eg. when markup surround multiple word which are are broken up during translations.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Concludes XML part of moses.
+
+Any questions?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Input formats
+
+Usually, a sentence of words is translated. However, the decoder can also translate graphs.
+
+Take an example, trying to translate sentences with spelling mistakes
+   - 2 mistakes here
+   
+1st strategy 
+	- correct the error
+	- translate
+	- However, error correction isn't perfect, may introduce more errors 
+	
+2nd strategy
+	- create many different sentences with corrections
+	- translate them all
+	- Slow
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Confusion network
+
+Better strategy
+
+Encode the possible error correction in a graph
+
+Let the decoder decide which correction to use during decoding
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Confusion network
+
+Another use case for confusion network
+
+Imagine trying to create a translation system for English-speaking person to translation Vietnamese
+
+1st line 
+   - correct Vietnamese. Lots of diacritiques / accents
+2nd line
+	 - English speaking person - Doesn't understand the importance of the diatricics
+   
+   - types sentence without any accent
+   
+To be able to translate the 2nd line
+  - need to add back the diacritique
+	- the good way of doing this
+			- build a confusion
+			- each edge between two nodes have the same words
+			- different accent
+			
+Then let the decoder decide
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Confusion network
+
+To decode a lattice. Just add args on the command line or in the ini file
+
+This is the format of a confusion network input
+Each line contains alternative words from which to choose
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Lattice
+
+Another input type to the decoder is a lattice
+
+Taking an example a Chinese sentence. 
+  - we don't know the word boundaries
+  - important to get good results
+  - many different segmentation for this sentence
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Output format
+
+Done input format
+	- usually a sentence, can be
+			- confusion network
+			- lattice
+			- tree - later on
+
+Output format
+	- usually the best translation of the input
+	- list of good translation, n-best list
+	- search graph
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MBR
+
+The maximum a pos- teriori translation may be an outlyer. Most of the probability mass may be concentrated in a different area of the search space. Given the uncertainties with our probability estimates, why risk on betting on that outlier, if we are more confident that the best translation is somewhere in the dense area?
+Formally, the decision rule for minimum Bayes risk decoding is embr = argmax	􏰆 L((e, a), (e′, a′)) p(e′, a′|f)	(9.38)
+best	e
+e′ ,a′ The translation embr that is selected by this decision rule can be viewed
+best
+as a consensus translation, since it is not only very probable but also very similar to the other most probable translations.
