@@ -1281,13 +1281,22 @@ Change ini file \\
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
 
-\textcolor{red}{Lexical Reordering Table} \\
-\begin{SaveVerbatim}{myverb} 
-[distortion-file]
-0-0 wbe-msd-bidirectional-fe-allff 6 out.file
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
+%\textcolor{red}{Lexical Reordering Table} \\
+%\begin{SaveVerbatim}{myverb} 
+%[distortion-file]
+%0-0 wbe-msd-bidirectional-fe-allff 6 out.file
+%\end{SaveVerbatim}
+%\colorbox{gray}{\BUseVerbatim{myverb}}
 \end{center}
+
+EMS \\
+\begin{center}
+\begin{SaveVerbatim}{myverb} 
+ttable-binarizer = $moses-src-dir/bin/processPhraseTable
+\end{SaveVerbatim}
+\end{center}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1544,13 +1553,13 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 \item The more data, the better
 \item The more in-domain data, the better\\
 (even in-domain monolingual data very valuable)
-\item Multiple models 
-\begin{itemize}
-\item train a translation model for each domain corpus
-\item train a language model for each domain corpus
-\item use all, tune weights for each model
-\item alternative: interpolate language model
-\end{itemize}
+%\item Multiple models 
+%\begin{itemize}
+%\item train a translation model for each domain corpus
+%\item train a language model for each domain corpus
+%\item use all, tune weights for each model
+%\item alternative: interpolate language model
+%\end{itemize}
 \item Always tune towards target domain
 \end{itemize}
 

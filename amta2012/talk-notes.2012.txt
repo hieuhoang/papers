@@ -111,11 +111,6 @@ The next parts isn't, but arguably more important
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Speed v Memory
 
-
-memory 
-  - critical variables when running systems
-  - using too much memory
-  - brings your to a halt
   
   - easiest way
   		- instead of loading the whole phrase-table and language model into memory
@@ -125,130 +120,195 @@ memory
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Speed v Memory
+
+having enough memory to run the decoder
+  - critical 
+  - don't have enough memory
+  	 - likely entire server will crash
   		
-Typical file sizes when trained on Europarl corpus
+Typical when trained on Europarl corpus
   - language model = 200MB - 500MB, depending on order
   - phrase-table = 11GB
-  - lexicalised reordering model = 9.4GB
+  - lexicalised reordering model = 9.4GB  
+Load all into memory 
+  - need 21GB
   
-  Load all into memory = 20GB
-	- translate 1 sentence only
-  - most of the entries in models won't be used.
+%%%  
+  - takes a long time to load
+  - server many not have that much memory
+On the plus side, once it's loaded, it runs very fast
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Speed v Memory
-
-Why load everything into memory?
-	- if you have a server with 20GB
-	- fast decoding
-	- but long load-up time
-	- do this if you want moses just to run & run for months
-	
-However, most servers don't have that memory
-  - have to create database-type files on disk
-  - load on demand
-  - slower decoding but fast to boot it
-  
-  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In most cases, better
+  - convert the model files into a kind of database which can stay on the disk
+  - load on demand when a sentence is being translated
+  - slower decoding, but
+       - near instantaneous startup time
+       - server won't crash due to running out of memory.
+         
+%%%
 Speed v Memory
 
 To binarize a phrase table or lexical reordering table
-   - this is what your type
-   - different format for phrase-based and hierachical/syntax models
-   
-   - don't forget this export
-   - utf8 handling
-   
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   - this is what you execute
+   - different for phrase-based and hierachical/syntax models
+
+%%%
 Speed v Memory
 
-In this ini file
+In the ini file
   - change the 1st number in the [ttable-file]
-      - 1 or 2
-      - depending on which model
+      - tells the decoder what type of phrase-table it is
       
-for lexicalised reordering
-	- also need to binary lex. reordering table too.
-	- don't have to do anything
+It is, of course, integrated into the EMS
 
-Speed v Quality
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+IRSTLM
 
-If you're prepared to sacrifice some quality for speed 
-   - reduce the number of partial translation, or hypothoses, created
-   - More hypotheses is better translation
-   - But more decodng time
+As well as language model training, the irst toolkit also contains a language model implementation during training
+
+Like phrase table
+   - convert the LM into a db-like format
+   - make sure the name of the file is ends with .mm
+      - which tells the Moses decoder to load it on demand
+      
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+IRSTLM
+
+to use it in the decoder
+   - compile the IRST library separately
+   - link moses decoder with it
+   
+When you want to use IRSTLM implementation instead of SRI
+  - change the 1st number to 1
+  - to tell the decoder to use IRST LM
+  
+%%%
+KenLM
+
+Another implementation of a binary, load-on-demand language model
+
+Advantage of KenLM
+  - built right into Moses
+      - no need to download + compile a separate library
+  - Faster than IRST & SRI
+  - threadable. 
+  	  - decoder will crash if running multiple threads when using IRST
+
+Want to use kenlm during decoding
+  - convert the language model file into a binary format
+  - tell the decoder that you want to use kenlm during decoding via the ini file
+  		- 9 in the 1st position
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Speed v Quality
 
-Philipp has showed you how the phrase-based decoding works.
+Talk about how to speed up decoding by reducing quality 
+  - not as bad as it sounds
+  - reduction in quality unlikely to be severe
+There is a rapidly diminishing rate of return after a relatively short time
+  - more CPU time results in a tiny increase in BLEU score
+  - qualitively, not noticeable
+  
+What you want to do
+  - set decoding parameters so that it's fast and good enough for practical use
+%%%
+Philipp gave a general overview of how phrase-based decoding works.
+
+Decoding create a large number of hypotheses. More hypotheses means
+  - more time required
+  - better translation quality
+%%%
+What we need to know
+  - where are the choke points that we can use to reduce the number of hypotheses?
 
 Number of hypothses created is roughly
   sentence-length
   stack size
-  translation options per span
-  
+  translation options, ie. phrase pairs for each contingous span 
+
 Can't do anything about the sentence length
-Can do something about the other 2.
+Can do something about the other stack size and translation option.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+Default stack size = 200
+  - make decoding faster by decreasing this with
+     stack
+    switch
+
+Default for number of trans. opt per span = 20
+Use 
+   ttable-limit 
+to adjust this parameter
+ 
+Moses also implements algorithm called cube pruning
+  - limits the number of hypothese created for each stack
+  - decoding is 3-4 time faster with small loss in quality
+  
+%%%
 Speed v Quality
 
-Set the stack size
-  - privide this argument to moses 
-      - on the command line 
-      - ini file
-   		- default = 200
-   		
-Reduce the numer of trans. opt per span
-  - ttable-limit
-  - default 20
-  
-- also drastically reduce the memory consumption
+Cube-pruning is a technique that was developed for hierachical and syntax models
 
-Alternatively, use cube pruning
-  - technique came from syntax based system
-  - 3-4 time faster with small loss in quality
-  - default = 1000
-  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Speed v Quality
-
-For syntax and hierarchical model
+For those models
   - no choice but use cube pruning
   - too slow without it
-	- Number of hypotheses is proportional to the square of sentence length
+	- Number of hypotheses created is proportional to the square of sentence length
+	   - therefore, much bigger number of hypothesis compared to the phrase-based model.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Speed v Quality
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Moses Server
 
-What you'll find when you turn up everything to try & improve translation is that there's a diminishing rate of return.
+The decoder is usually run from the command line, with 
+   - plain text input file, and
+   - plain output file
+Useful for us academics
+  - difficult for companies to integrate with existing CAT systems
 
-So you're usually better off having a workable system, rather than 1 with good bleu scores. The difference between a 'practical' system and the 'best system' isn't qualatively noticeable.
+Therefore, we provide another executable
+  - moses server
+  - when it's running
+  - listens to a particular network port for it's input, and output to the same port.
+	- takes care of all the network port contention and request queuing
+  - all you have to use Moses in your own applications,
+      - write a client that open the network port, send it the input and receive the output
+	
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-To get better systems, you need more data or better models
+Single best thing you can do to improve translation quality is to train with more data. 
+Especially data in the same domain as your test set.
 
+All the gizmos to make Moses better pales into insignifcaint compare to more, good data.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+However, what you do with all this data can affect
+   - quality
+   - speed that you can train your model
 
-Single best thing you can do to improve translation quality is to train with more data. Especially data in the same domain as your test set.
+In this section in we look at techniques you use for dealing with
+   - with new data that comes in
+   - data in different domains
+   - high quality TM data that you want to prioritize
 
-If you don't understand anything else, just remember that.
+%%%%
+First of all:
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 What kind of data do you need?
    - 1. parallel data, which goes to create your translation rules
-   				- scrap of the web, like europarl
-   				- if you're a language service provider, you'll have translation memories that can also be used. Likely to be in the correct domain.
-   				- Similarly, if you're translating specialist text, like medical domain, you may need to buy or create a specialist dictinary of terms. Without it, unknown terms won't be translated properly
+   		- scrap of the web, like europarl
+   		- if you're a language service provider, you'll have translation memories that can also be used. 
+   			- Likely to be high quality
+   				- in the correct domain.
+ 		
     - 2. Need lots of data in just target language to create language model. This improves the fluency of your output. 
-    
-    Monolingual data for most languages is easy to get scape of the web. Like parallel data it best if it in-domain.
-
-		always improve if you have more data. Only time I seen language model hurt performance was 1 trained on twitter data.
+    		- Monolingual data easier to get
+    		- also best if in the right domain
 		
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%
+The general overview
+  - get as much data as possible
+  - in the same domain as what you're translating
+  
+%%%%
 Domain Adaptation
 
 If you have lots of data from lots of source
@@ -282,53 +342,7 @@ Like phrase table
   
 Where these 2 special LM libraries comes in. Both work with Moses
    
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-IRSTLM
 
-Like phrase table
-   - convert the LM into a db-like format
-   - load on demand
-   
-Also, this LM can quantize probabilities. 
-   - reduce memory
-   - 1 byte instead of 4
-   - small degradation in translation quality
-   
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-IRSTLM
-
-to use it in the decoder
-   - compile the IRST library separately
-   - link moses decoder with it
-   
-When you want to use IRSTLM implementation instead of SRI
-  - change the 1st number to 1
-  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-IRSTLM
-
-Need to not only reduce memory usage when using the trained LM during decoding.
-
-Also during training
-   - train faster
-   - need to reduce memory 
-   
-	 - break training into multiple parts
-	 - run on multiple machines
-	 
-Other good thing about IRSTLM
-  - complete training & LM library like  
-  - open source, unlike SRI
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-IRSTLM
-
-TO create the binary version
-   - run this
-
-TO tell the decoder only to load-on-demand as it's translating
-   - rename to file to .mm = memory mapped
-   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 RANDLM
 
