@@ -307,8 +307,11 @@ What kind of data do you need?
 The general overview
   - get as much data as possible
   - in the same domain as what you're translating
+Also, always tune your system with held-out data in the same domain as the data you're translating
   
 %%%%
+
+
 Domain Adaptation
 
 If you have lots of data from lots of source
