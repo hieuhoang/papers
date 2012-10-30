@@ -611,7 +611,82 @@ To get the search graph
       output-search-graph
       the file you want to output to
       
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Translation Model
+
+Moses supports 3 different types of translation model
+  - phrase-based model
+  - hierarchical
+  - syntax
+What is the difference between them, 
+	- and how do you use it?
+%%%%
+Phrase-based model
+  - very fast
+  - and doesn't use much memory
+  - out-performs other models for all but some language pairs
+To run
+  - give it the ini file and the input
+  - output to standard error
+%%%%
+Hierarchical models 
+  - known to do better for chinese-english
+  - for other languages 
+      - same as phrase-based, or slightly worse quality
+However, 
+   - slower
+   - uses more memory
+   - uses more disk space
+to run 
+  - use a different executable
+  - also give the decoder an ini file and input sentence   
+
+%%%%
+Syntax models
+
+Syntax models are similar to hierarchical
+  - make use of syntactic information from linguistic parsers
+A promising area of research
+
+For various reasons, 
+   - quality is still significantly below phrase-based and hiero
       
+%%%%
+Training pb
+
+Moses was originally built for phrase-based
+To train, execute the 
+  train-model.perl script
+OR use the EMS
+%%%%
+Training hiero
+
+To train, execute the 
+  train-model.perl 
+script as before, 
+  - but give it the 
+  	 -hierarchical 
+  	switch
+%%%%
+SKIP
+%%%%
+I said that the hierarchical model is 
+  - bigger, 
+  - slower, 
+  - and worse 
+than the phrase-based model
+  - for most languages
+Here are some numbers to back this up
+  - in most cases, there's not much difference in quality
+  - however, the size of the phrase-table and speed means it's often a challenge to run
+If this was a talk to acadmemics, i'l say use it
+  - it's the frontier of MT
+  - since most people here want to commercialise MT
+     - advice is more circumspect
+     - use it if you see gains
+        - especially if you're using the TMX fuzzy match
+	    - otherwise stick with pb for now
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
