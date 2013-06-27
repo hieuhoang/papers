@@ -1,14 +1,32 @@
+philipss has described the theories and models used in machine translation.
+
+And I hope that the hands-on session has given you the appetite to go away and create your own engines.
+
+Now i'm gonna spend about an hour going through some of the more advanced details of Moses
+
+I'm gonna show you how to 
+  - create an engine faster,
+  - translate faster
+  - how you can build Moses into your existing applications
+  - and tricks to produce better translation
+There's a lot of information
+  - it might be confusing
+  - so please interrupt if you don't understand something
+  - i'll try & deal with them there & then
+  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Faster Training
 
 Training may take a day to week.
   - depends on size of the data.
+  - and the machine you're running on
+  
   - to speed it it up, we are looking to make the most use of all the cores on our server
      - currents servers have at least 2 cores or more. Our edinburgh server, for instance has 16 cores.
  	 - as you can imagine, being able to use 16 cores results in a significant speedup.
 %%%
-These are the time consuming processes
-   - focus on reduce the runnning time for these
+This is a list of the time consuming steps
+   - focus on reducing the runnning time for these processes
 %%&
 the first thing you should do is add the argument 'parallel' to the Moses script.
   - If you're using the EMS, 

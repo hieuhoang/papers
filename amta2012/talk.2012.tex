@@ -1264,8 +1264,8 @@ Language Models (later)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Speed vs. Memory Use}
-
-Change ini file \\
+\small
+Change ini file 
 \begin{center}
 \textcolor{red}{Phrase-based} \\
 \begin{SaveVerbatim}{myverb} 
@@ -1289,14 +1289,17 @@ Change ini file \\
 %\colorbox{gray}{\BUseVerbatim{myverb}}
 \end{center}
 
-EMS \\
-\begin{center}
-\begin{SaveVerbatim}{myverb} 
-ttable-binarizer = $moses-src-dir/bin/processPhraseTable
-\end{SaveVerbatim}
-\end{center}
+EMS:  phrase-based\\[3mm]
+  \begin{SaveVerbatim}{myverb} 
+  ttable-binarizer = $moses-src-dir/bin/processPhraseTable
+  \end{SaveVerbatim}
+  \colorbox{gray}{\BUseVerbatim{myverb}}
 
-
+EMS:  Hierachical/Syntax\\[3mm]
+  \begin{SaveVerbatim}{myverb} 
+  ttable-binarizer = "$moses-src-dir/bin/CreateOnDiskPt 1 1 5 100 2"
+  \end{SaveVerbatim}
+  \colorbox{gray}{\BUseVerbatim{myverb}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1561,20 +1564,6 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 %\item alternative: interpolate language model
 %\end{itemize}
 \item Always tune towards target domain
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Domain Adaptation}
-\vspace{20mm}
-\begin{itemize}\itemsep 5mm
-\item Retrain everything
-\item Secondary phrase table
-\item Domain indicator features
-\item Interpolated language models
-%\item Incremental GIZA++ and dynamic suffix arrays
-\item TM-MT integration
-
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
