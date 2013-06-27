@@ -231,7 +231,7 @@ CDEC and Joshua both have modern feature function frameworks similar to the Mose
 The types of feature functions were hardcoded when evaluating the scores of translation rules and hypotheses. For example, a translation rule is scored according to Equation (1)
 
 \begin{equation}
-  score = \sum_{i \in T}(weight_i * score_i) + \sum_{i  \in L} (weight_i * score_i) + weight_{wp} * word-penalty
+  score = \sum_{i \in T}(\lambda_i * score_i) + \sum_{i  \in L} (\lambda_i * score_i) + \lambda_{wp} * words
 \end{equation}
 
 where $T$ is the set of translation models, and $L$ is the set of sequence models.
@@ -239,15 +239,15 @@ where $T$ is the set of translation models, and $L$ is the set of sequence model
 Similarly, when evaluating a hypothesis, the score is calculated as follows:
 
 \begin{equation}
-% score =  Sum_i _member_T(weight_i * score_i)
-%    + Sum_i _member_L(weight_i * score_i)
-%    + weight_wp * word-penalty
-%    + weight_d * score_d
-%    + Sum_i _member_R(weight_i * score_i)
-%    + future_score
+ score =  \sum_{i \in T} (\lambda_i * score_i)
+    + \sum_{i \in L} (\lambda_i * score_i)
+    + \lambda_{wp} * words
+    + \lambda_d * score_d
+    + \sum_{i \in R}(\lambda_i * score_i)
+    + score_{future}
 \end{equation}
 
-where $weight_d$ and $score_d$ is the distortion weight and score respectively, R is the set of lexicalized reordering models.
+where $\lambda_d$ and $score_d$ is the distortion weight and score respectively, $R$ is the set of lexicalized reordering models.
 
 When adding a new feature function, it would not be included in the scoring of the translation rule and hypotheses until Equation (1) and (2) are update.
 
@@ -256,19 +256,18 @@ Translation rule always evaluated occurs before decoding, either during loading 
 Hypotheses are evaluated when they are created during the search process.
 
 \subsection{New Framework}
-The new framework better supports the creation of arbitary feature functions by generalizing all code that deals with feature functions.
+The new framework better supports the creation of arbitrary feature functions by generalizing all code that deals with feature functions.
 
 Equation (1) becomes Equation (...)
 \begin{equation}
-%  score = Sum_i _member_FF(weight_i * score_i)
+  score = \sum_{i \in FF}(\lambda_i * score_i)
 \end{equation}
-
-where FF is the set of feature functions.
+where $FF$ is the set of feature functions.
 
 Equation (2) becomes Equation (...)
 \begin{equation}
-%  score =  Sum_i _member_FF(weight_i * score_i)
-%  + future_score
+  score =  \sum_{i \in FF}(\lambda_i * score_i)
+	  + score_{future}
 \end{equation}
 
 Furthermore, there are three places where each feature function can be evaluated. At each place, a different range of information is available to the feature function to access for information.
