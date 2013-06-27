@@ -106,7 +106,13 @@
 % part of the article. PLEASE, do not use your own macros in abstract, if possible.
 
 \begin{abstract}
-The abstract of the article...
+Best practises for developing a SMT decoder has progressed enormously since the initial release of the Moses decoder in 2006. The emergence of syntax-inspired models, sparse features and more features, have been the driver for the major changes in the framework of the decoder.
+
+In this paper, we describe the changes in the Moses decoder to support such changes. How we have updated the decoder, and dependent programs, while preserving the rich features in the toolkit. Particular emphasis will be place in describing the feature function framework.
+
+The open-source community has also changed from the dominance of phrase-based model and virtual Moses monopoly, to a situation where syntactic models are leading the research agenda, and other projects such as cdec and Joshua have equal prominance.
+We take this opportunity to compare the implementations of these other decoders with Moses. We find that there are many similarities between the decoders, but also some surprising differences in implementation of even very fundamental features in each decoder.
+
 \end{abstract}
 
 \section{Introduction}
@@ -119,18 +125,109 @@ The abstract of the article...
 
 % In addition to the \cite command, you can use natbib style of citations.
 % PLEASE, use \citet instead of \cite if the author names are part of the sentence.
-\citet{PDT2} show \ldots \\ % This renders as "Hajič et al. (2006) show" instead of "(Hajič et al., 2006) show".
-\ldots tree-based annotation (e.g.~\citealp{PDT2}).
+%\citet{PDT2} show \ldots \\ % This renders as "Hajič et al. (2006) show" instead of "(Hajič et al., 2006) show".
+%\ldots tree-based annotation (e.g.~\citealp{PDT2}).
+
+The Moses decoder was initially created for the phrase-based model. It was a vast improvement over its immediate predecessor, Pharoah, in being extensible. It allowed phrase-tables and language models. It allowed multiple phrase-table and language model implementations. The first has enabled researchers to combine multiple datasets in novel ways, as well as the use of secondary models on linguistic information (???). The second has spurred on improvements in the implementation of language models and phrase tables, which are ever faster, while using less memory (RandLM, KenLM, Compact PT).
+
+Over time, Moses also required other search algorithms and formalisms. Cube pruning was implemented for phrase-based models in 2???. Hierarchical phrase-based and syntactic models were introduced in 2???.
+
+However, MT research had also pushing in the direction of being able to create your own ad-hoc feature functions, and of using sparse features. Interest in incorporating syntactic features has been the most biggest driver for this, for example, (Chiang, 2009 - 11,001 features) presented a decoder able to cope with many sparse features.
+
+This required a more general framework for incorporating feature functions into the decoder. That would make adding new features easier and more transparent. However, the new framework must be able to incorporate the existing features efficiently.
+
+It also required tuning algorithms which are able to deal with a large number of features. It is generally known that MERT is unstable with a large number of features.
+
+Moses now implements a new feature function framework which will allow researchers to add new feature functions much more easily. Other tuning algorithms such as MIRA, kbMIRA, and PRO have been added in order to better support a large number of sparse features  Of course, these algorithms will also work with the standard features, and MERT is still available.
+
+This paper describes the new feature function framework.
+
+\section{Feature Function Framework}
+\subsection{Old Framework}
+The built-in feature functions in the phrase-based models are:
+
+i. Phrase-table
+
+ii. Language model
+
+iii. Distortion model
+
+iii. Lexicalized Reordering model
+
+    iv. Word penalty
+
+    v. Unknown word penalty
+
+The hierarchical and syntax model also uses these models, except for the distortion and lexicalized reordering model.
+
+Each feature function was implemented in a separate class, with no common class hierarchy. The initialisation and evaluation of each feature function was entirely bespoked.
+
+There is also no centralized store of feature functions. A new feature function requires a new variable to store the object.
+
+Feature function state information is an essential component of the search procedure in decoding. State information control hypothesis recombination, enabling the decoder to effectively search through many more hypotheses than it actually has. State information is emitted from stateful feature functions.
+
+The state information in Moses has evolved since inception. Initially, state information was only available from language models, therefore, only language models states were compare, Figure (1).
+
+    CompareHypotheses(a, b)
+
+       if Coverage(a) != Coverage(b)
+
+         return not equal
+
+        for each language model state s
+
+          if (state type s for hypothesis a) != (state type s for hypothesis b)
+
+             return not equal
+
+        end-for
+        return equal
+
+\subsection{New Framework}        
+ All feature functions inherit indirectly from the class
+
+    FeatureFunction
+
+which provides basic services to all feature functions such as storing the name and number of dense features, and providing a central repository of all feature functions.
+
+A feature function can be stateless or stateful, depending on whether it inherits from
+
+StatelessFeatureFunction
+
+StatefulFeatureFunction
+
+The state comparison routine of Figure (1) evolved to a more general comparison of states from all stateful feature functions, Figure (2).
+
+    CompareHypotheses(a, b)
+
+       if Coverage(a) != Coverage(b)
+
+         return not equal
+
+        for each feature function state s
+
+          if (state type s for hypothesis a) != (state type s for hypothesis b)
+
+             return not equal
+
+        end-for
+        return equal
+        
+\subsection{CDEC and Joshua}
+CDEC and Joshua both have modern feature function frameworks similar to the Moses new framework. CDEC has no distinction between stateful and stateless features; stateless features have zero size states.
+
+\section{Scoring}
+\subsection{Old Framework}
 
 
 % For figures and tables always use "figure" resp. "table" floating environments
 % and always supply a caption. See the paragraph about color images below.
-\begin{figure}
- \begin{center}
-  \includegraphics[width=\textwidth]{example_figure}
-  \caption{Example figure}\label{fig:example}
- \end{center}
-\end{figure}
+%\begin{figure}
+% \begin{center}
+%  \includegraphics[width=\textwidth]{example_figure}
+%  \caption{Example figure}\label{fig:example}
+% \end{center}
+%\end{figure}
 
 \section*{Acknowledgements}
 This research is supported by \ldots
