@@ -231,10 +231,10 @@ CDEC and Joshua both have modern feature function frameworks similar to the Mose
 The types of feature functions were hardcoded when evaluating the scores of translation rules and hypotheses. For example, a translation rule is scored according to Equation (1)
 
 \begin{equation}
-%  score = Sum_i _member_T(weight_i * score_i) + Sum_i _member_L(weight_i * score_i) + weight_wp * word-penalty
+  score = \sum_{i \in T}(weight_i * score_i) + \sum_{i  \in L} (weight_i * score_i) + weight_{wp} * word-penalty
 \end{equation}
 
-where T is the set of translation models, and L is the set of sequence models.
+where $T$ is the set of translation models, and $L$ is the set of sequence models.
 
 Similarly, when evaluating a hypothesis, the score is calculated as follows:
 
