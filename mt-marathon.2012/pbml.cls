@@ -1017,7 +1017,7 @@ xetex]{hyperref}
 % (Unfortunately, ifxetex package is not available in LaTeX by default, which makes it almost useless.)
 \expandafter\ifx\csname XeTeXrevision\endcsname\relax
   \RequirePackage[T1]{fontenc}
-  \RequirePackage[utf8x]{inputenc}
+  \RequirePackage[utf8]{inputenc}
    % Don't warn if fonts are not available - LaTeX wouldn't produce the same output anyway
   \IfFileExists{tgpagella.sty}{\RequirePackage{tgpagella}}{}
   \IfFileExists{tgheros.sty}{\RequirePackage{tgheros}}{}
