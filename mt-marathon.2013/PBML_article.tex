@@ -235,9 +235,9 @@ The state comparison routine of Figure~\ref{algo:CompareHypoStates} evolved to c
 \subsection{cdec and Joshua}
 cdec and Joshua both have modern feature function frameworks similar to the Moses new framework. cdec has no distinction between stateful and stateless features; stateless features have zero size states.
 
-\section{Hypothesis Evaluation}
+\section{Hypothesis and Translation Rule Evaluation}
 \subsection{Old Framework}
-The types of feature functions were hardcoded when evaluating the scores of translation rules and hypotheses. For example, a translation rule is scored according to Equation (1)
+The range of feature functions were hardcoded when evaluating the scores of hypotheses and translation rules. For example, a translation rule is scored according to Equation (1)
 
 \begin{equation}
   score = \sum_{i \in T}(\lambda_i * score_i) + \sum_{i  \in L} (\lambda_i * score_i) + \lambda_{wp} * words
