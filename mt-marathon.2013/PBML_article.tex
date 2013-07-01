@@ -150,19 +150,15 @@ We take this opportunity to compare the implementations of these other decoders 
 
 In terms of extensibility, the Moses\cite{koehn-EtAl:2007:PosterDemo} decoder was a vast improvement over its immediate predecessor, Pharoah\cite{Koehn:Pharaoh:2004}. 
 
-Moses allows multiple phrase-tables and language models instances and implementations. The first has enabled researchers to combine multiple datasets in novel ways, as well as the use of secondary models on linguistic information\cite{Koehn:Philipp:2007, Sennrich:Rico:2011,Koehn:Philipp:2012}. The second has spurred on improvements in the implementation of language models and phrase tables, which are ever faster, while using less memory (RandLM, KenLM, Compact PT).
+Moses allows multiple translation models and language models instances and implementations. Allowing multiple instances has enabled researchers to combine multiple datasets in novel ways, as well as the use of secondary models on linguistic information\cite{Koehn:Philipp:2007, Sennrich:Rico:2011,Koehn:Philipp:2012}. Allowing multiple implementations has spurred on the developments of smaller, faster, better implementation of language models and phrase tables\cite{talbot-osborne:2007:ACLMain, Heafield-kenlm, Junczys-Dowmunt:Marcin:2012}.
 
-Over time, Moses also required other search algorithms and formalisms. Cube pruning was implemented for phrase-based models in 2???. Hierarchical phrase-based and syntactic models were introduced in 2???.
+However, a direction of machine translation research in the last few years has been improving translation quality with the addition of ad-hoc feature functions outside of the translation model and language model types. Also, the use of sparse features during decoding has also been popular. Research such as \cite{chiang-knight-wang:2009:NAACLHLT09, cherry:2013:NAACL-HLT} typifies this approach.
 
-However, MT research had also pushing in the direction of being able to create your own ad-hoc feature functions, and of using sparse features. Interest in incorporating syntactic features has been the most biggest driver for this, for example, (Chiang, 2009 - 11,001 features) presented a decoder able to cope with many sparse features.
-
-This required a more general framework for incorporating feature functions into the decoder. That would make adding new features easier and more transparent. However, the new framework must be able to incorporate the existing features efficiently.
+Enabling ad-hoc features and sparse features requires a more extensible framework that incorporate feature functions into the decoder.
 
 It also required tuning algorithms which are able to deal with a large number of features. It is generally known that MERT is unstable with a large number of features.
 
-Moses now implements a new feature function framework which will allow researchers to add new feature functions much more easily. Other tuning algorithms such as MIRA, kbMIRA, and PRO have been added in order to better support a large number of sparse features  Of course, these algorithms will also work with the standard features, and MERT is still available.
-
-This paper describes the new feature function framework.
+This paper describes this new feature function framework as implemented in the Moses decoder, a compares it with that implemented in cdec\cite{Dyer_etal_2010} and Joshua\cite{Joshua-Decoder}.
 
 \section{Feature Function Framework}
 \subsection{Old Framework}
