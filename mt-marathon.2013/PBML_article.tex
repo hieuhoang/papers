@@ -25,6 +25,7 @@
 % natbib   (for bibliography citations)
 % amssymb  (for various symbols)
 % If XeLaTeX is used, fontspec and xltxtra are loaded as well.
+\usepackage{algorithmic}
 
 % Definitions
 % ===========
@@ -158,48 +159,50 @@ Enabling ad-hoc features and sparse features requires a more extensible framewor
 
 It also required tuning algorithms which are able to deal with a large number of features. It is generally known that MERT is unstable with a large number of features.
 
-This paper describes this new feature function framework as implemented in the Moses decoder, and compares it with that implemented in cdec\cite{Dyer_etal_2010} and Joshua\cite{Joshua-Decoder}.
+This paper describes the changes to the Moses decoder in order to incorporate more feature functions, and compares it with that implemented in cdec\cite{Dyer_etal_2010} and Joshua\cite{Joshua-Decoder}.
 
 \section{Feature Function Framework}
 \subsection{Old Framework}
+
 The built-in feature functions in the phrase-based models are:
 
-i. Phrase-table
+\begin{itemize}
+  \item Translation model
+  \item Language model
+  \item Distortion model
+  \item Lexicalized reordering model
+  \item Word penalty
+  \item Unknown word penalty
+\end{itemize}
 
-ii. Language model
+The hierarchical and syntax model also uses these feature functions, except for the distortion and lexicalized reordering model.
 
-iii. Distortion model
-
-iii. Lexicalized Reordering model
-
-    iv. Word penalty
-
-    v. Unknown word penalty
-
-The hierarchical and syntax model also uses these models, except for the distortion and lexicalized reordering model.
-
-Each feature function was implemented in a separate class, with no common class hierarchy. The initialisation and evaluation of each feature function was entirely bespoked.
-
-There is also no centralized store of feature functions. A new feature function requires a new variable to store the object.
+Each feature function is implemented in a separate class, with no common class hierarchy. The initialisation and evaluation of each feature function was entirely bespoked.
 
 Feature function state information is an essential component of the search procedure in decoding. State information control hypothesis recombination, enabling the decoder to effectively search through many more hypotheses than it actually has. State information is emitted from stateful feature functions.
 
-The state information in Moses has evolved since inception. Initially, state information was only available from language models, therefore, only language models states were compare, Figure (1).
+The state information in Moses has evolved since inception. Initially, state information was only available from language models, therefore, only language models states are compared, Figure~\ref{algo:CompareHypoStates}.
 
-    CompareHypotheses(a, b)
+\begin{figure} [h!]
+\small 
+\begin{algorithmic}
+\REQUIRE hypothesis $a$, hypothesis b
 
-       if Coverage(a) != Coverage(b)
+       \IF {coverage of a != coverage of b }
+	\RETURN not equal
+       \ENDIF
+       
+        \FORALL {LM state s}
+          \IF {state s of hypothesis a != state s for hypothesis b}
+	    \RETURN not equal
+	 \ENDIF
+        \ENDFOR
+        \RETURN equal
 
-         return not equal
-
-        for each language model state s
-
-          if (state type s for hypothesis a) != (state type s for hypothesis b)
-
-             return not equal
-
-        end-for
-        return equal
+\end{algorithmic}
+\caption{Comparing Hypothesis States (old framework}
+\label{algo:CompareHypoStates}
+\end{figure} 
 
 \subsection{New Framework}        
  All feature functions inherit indirectly from the class
