@@ -237,16 +237,14 @@ cdec and Joshua both have modern feature function frameworks similar to the Mose
 
 \section{Hypothesis and Translation Rule Evaluation}
 \subsection{Old Framework}
-The range of feature functions were hardcoded when evaluating the scores of hypotheses and translation rules. For example, a translation rule is scored according to Equation (1)
-
+The range of feature functions were hardcoded when evaluating the scores of hypotheses and translation rules. Translation rules are evaluated according to Equation~\ref{eq:translation rule score}
 \begin{equation}
-  score = \sum_{i \in T}(\lambda_i * score_i) + \sum_{i  \in L} (\lambda_i * score_i) + \lambda_{wp} * words
+  score = \sum_{m \in T} \sum_{i \in m} (\lambda_{m,i} * score_i) + \sum_{l  \in L} (\lambda_l * score_i) + \lambda_{wp} * words
+\label{eq:translation rule score}
 \end{equation}
+where $T$ is the set of translation models, and $L$ is the set of sequence models, $\lambda_{m,i}$ is the i'th weight for translation model $m$, $\lambda_l$ is the weight for language model $l$, $\lambda_{wp}$ is the word penalty weight.
 
-where $T$ is the set of translation models, and $L$ is the set of sequence models.
-
-Similarly, when evaluating a hypothesis, the score is calculated as follows:
-
+Similarly, hypotheses are evaluated as follows, Equation~\ref{hypothesis rule score}:
 \begin{equation}
  score =  \sum_{i \in T} (\lambda_i * score_i)
     + \sum_{i \in L} (\lambda_i * score_i)
@@ -254,6 +252,7 @@ Similarly, when evaluating a hypothesis, the score is calculated as follows:
     + \lambda_d * score_d
     + \sum_{i \in R}(\lambda_i * score_i)
     + score_{future}
+\label{hypothesis rule score}
 \end{equation}
 
 where $\lambda_d$ and $score_d$ is the distortion weight and score respectively, $R$ is the set of lexicalized reordering models.
