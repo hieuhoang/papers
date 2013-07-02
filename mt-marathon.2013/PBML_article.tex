@@ -370,13 +370,13 @@ The intuition behind this is that most systems will still contain dense features
 
 A sparse feature map was added to handle sparse scores.
 
-\subsection{CDEC}
-CDEC eschew the dense and sparse hybrid approach and implement only sparse maps. Dense features can still be modelled in the framework with sparse features, with some loss of efficiency.
+\subsection{cdec}
+cdec eschew the dense and sparse hybrid approach and implement only sparse maps. Dense features can still be modelled in the framework with sparse features, with some loss of efficiency.
 
 To improve speed and memory usage, hypotheses only store deltas of feature differences with antecedent hypotheses.
 
 \subsection{Joshua}
-As with CDEC, Joshua only supports sparse features, however, it uses a different strategy to improve efficiency.
+As with cdec, Joshua only supports sparse features, however, it uses a different strategy to improve efficiency.
 
 Hypotheses only retain the weighted sum of the feature scores. They do not retain the individual score components unless required, for example, in the n-best list. The intuition behind this approach is that the score breakdown is only required in some situations such as producing n-best lists for tuning. In most other circumstances, they can be traded for better performance.
   
@@ -388,6 +388,10 @@ Hypotheses only retain the weighted sum of the feature scores. They do not retai
 %  \caption{Example figure}\label{fig:example}
 % \end{center}
 %\end{figure}
+
+\section{Results}
+
+Given the same formalism and 
 
 \section*{Acknowledgements}
 
