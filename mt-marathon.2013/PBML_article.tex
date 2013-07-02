@@ -27,7 +27,7 @@
 % If XeLaTeX is used, fontspec and xltxtra are loaded as well.
 \usepackage{algorithmic}
 \usepackage{amsmath}
-\usepackage{tikz,gnuplot-lua-tikz}
+\usepackage{tikz,gnuplot-lua-tikz} 
 
 % Definitions
 % ===========
@@ -381,17 +381,36 @@ As with cdec, Joshua only supports sparse features, however, it uses a different
 
 Hypotheses only retain the weighted sum of the feature scores. They do not retain the individual score components unless required, for example, in the n-best list. The intuition behind this approach is that the score breakdown is only required in some situations such as producing n-best lists for tuning. In most other circumstances, they can be traded for better performance.
   
-% For figures and tables always use "figure" resp. "table" floating environments
-% and always supply a caption. See the paragraph about color images below.
-\begin{figure}%
-%run report.gnuplot to update these.
-\input{1111-8/model.tex}\input{1111-8/bleu.tex}%
-\caption{\label{model}Model scores using cube pruning with pop limits ranging from 5 to 1000.}%
-\end{figure}
-
 \section{Results}
 
-Given the same formalism and 
+Given the same formalism and model data, the results from each decoder is comparable, after adjusting for scaling differences and constants. Figure~\ref{fig:model} shows the comparison of model scores and BLEU scores for a hierarchical model. Moses and cdec are roughly comparable in terms of speed. Also, Moses and cdec converges to roughly the same model scores, while Joshua makes more search errors. This is due to two issues that have been resolved in Moses and cdec, but not yet in Joshua.
+
+\begin{figure}
+%run report.gnuplot to update these.
+\input{1111-8/model.tex}\input{1111-8/bleu.tex}
+\caption{\label{fig:model}Model scores and BLEU using cube pruning with pop limits ranging from 5 to 1000.}
+\end{figure} 
+
+Firstly, the language model state is delegated to the language model implementation by Moses and cdec, which uses the internal data-structure of the language model to determine state, in a similar manner to (??? Ney paper from yrs ago). Joshua, on the other hand, uses the words in the left and right context to determine language model state. This results in more aggressive hypothesis recombination in Moses and cdec, leading to better model score.
+
+Secondly, the glue rule formulation in Moses and cdec is different from Joshua's. In Moses and cdec, the glue rule grammar is:
+\begin{verbatim}
+   S -> <s>
+   S -> S X
+   GOAL -> S </s> 
+\end{verbatim}
+where <s> and </s> are first-class words like any other.  
+
+In this formulation, glued hypotheses know that they are bound to the beginning of sentence <s>.  Therefore, their left language model state is empty and more hypotheses can recombine.  This is better than Joshua, where hypotheses are informed about <s> and </s> only after forming a complete sentence, so the left states are spuriously ambiguous.  Moreover, hypothesis score estimates are more accurate when they know about <s> earlier. Figure~\ref{fig:glue} shows the improvement in cdec by changing the glue rule formulation. This improvement was the result of the comparison between the three decoders.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=0.50]{glue.pdf}
+\end{center}
+\caption{Affect on model score by changing glue-rule formulation}
+\label{fig:glue}
+\end{figure}
+
 
 \section*{Acknowledgements}
 
