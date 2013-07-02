@@ -310,52 +310,54 @@ cdec also supports an arbitrary number of passes, feature functions exactly to a
 \section{File Format}
 \subsection{Old Framework}
 Each feature function also required a separate section in the configuration (moses.ini) file to be created, along with the code to read the new section. For example, translation models are specified in the section
-
-  [ttable-file]
-
+\begin{verbatim}
+     [ttable-file]
+\end{verbatim}
 Language models in
-
-  [lmodel-file]
-
+\begin{verbatim}
+     [lmodel-file]
+\end{verbatim}
 Furthermore, feature function also need a separate weight section, for example, for translation models:
-
-  [weight-t]
-
+\begin{verbatim}
+     [weight-t]
+\end{verbatim}
 and language models:
-
- [weight-l]
-
+\begin{verbatim}
+     [weight-l]
+\end{verbatim}
 New feature functions need to create and manage their own specification and sections.
 
 The features that can be tuned by MERT is also hardcoded in the tuning script. The MERT script has to be altered every time a new feature function is integrated into Moses.
 
 \subsection{New Framework}
 The configuration file format has been changed to minimize the amount of boilerplate code necessary when adding new feature functions. All feature functions are declared in the configuration file in the section
-
+\begin{verbatim}
   [feature]
-
+\end{verbatim}
 In the fixed format
-
+\begin{verbatim}
   Feature-Name [key=value]*
-
+\end{verbatim}
 For example,
-
+\begin{verbatim}
   KENLM factor=0 path=lm.arpa order=5
-
-All dense weights are put into the section
-
+\end{verbatim}
+Similarly, all dense \emph{weights} are put into the section
+\begin{verbatim}
   [weight]
-
+\end{verbatim}
 In the fixed format
-
+\begin{verbatim}
   Feature-Instance= [value]*
-
-Similarly, weights for sparse features are in separate file referenced by the section
-
+\end{verbatim}
+Weights for sparse features are in separate file referenced by the section
+\begin{verbatim}
   [weight-file]
-
+\end{verbatim}
 in the format
-  Feature-Instance\_feature value
+\begin{verbatim}
+  Feature-Instance feature value
+\end{verbatim}
   
 \section{Sparse Feature Function}
 
