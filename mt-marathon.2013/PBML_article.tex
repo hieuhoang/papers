@@ -26,6 +26,7 @@
 % amssymb  (for various symbols)
 % If XeLaTeX is used, fontspec and xltxtra are loaded as well.
 \usepackage{algorithmic}
+\usepackage{amsmath}
 
 % Definitions
 % ===========
@@ -239,25 +240,27 @@ cdec and Joshua both have modern feature function frameworks similar to the Mose
 \subsection{Old Framework}
 The range of feature functions were hardcoded when evaluating the scores of hypotheses and translation rules. Translation rules are evaluated according to Equation~\ref{eq:translation rule score}
 \begin{equation}
-  score = \sum_{m \in T} \sum_{i \in m} (\lambda_{m,i} * score_i) + \sum_{l  \in L} (\lambda_l * score_i) + \lambda_{wp} * words
+  score = \sum_{m \in T} \sum_{i \in m} (\lambda_{m,i} * score_{m,i}) + \sum_{l  \in L} (\lambda_l * score_i) + \lambda_{wp} * words
 \label{eq:translation rule score}
 \end{equation}
 where $T$ is the set of translation models, and $L$ is the set of sequence models, $\lambda_{m,i}$ is the i'th weight for translation model $m$, $\lambda_l$ is the weight for language model $l$, $\lambda_{wp}$ is the word penalty weight.
 
-Similarly, hypotheses are evaluated as follows, Equation~\ref{hypothesis rule score}:
+Similarly, hypotheses are evaluated as follows, Equation~\ref{eq:hypothesis rule score}:
 \begin{equation}
- score =  \sum_{i \in T} (\lambda_i * score_i)
-    + \sum_{i \in L} (\lambda_i * score_i)
-    + \lambda_{wp} * words
-    + \lambda_d * score_d
-    + \sum_{i \in R}(\lambda_i * score_i)
-    + score_{future}
-\label{hypothesis rule score}
+\begin{split}
+ score & =  \sum_{m \in T} \sum_{i \in m} (\lambda_{m,i} * score_{m,i}) \\
+    & + \sum_{l \in L} (\lambda_l * score_l) \\
+    & + \lambda_{wp} * words \\
+    & + \lambda_d * score_d \\
+    & + \sum_{m \in R} \sum_{i \in m} (\lambda_{m,i} * score_{m,i}) %\\
+%    & + score_{future} \\
+\label{eq:hypothesis rule score}
+\end{split}
 \end{equation}
+where $\lambda_d$ is the distortion weight, and $R$ is the set of lexicalized reordering models.
+%, and $score_{future}$ is the estimate of the future score for the hypothesis.
 
-where $\lambda_d$ and $score_d$ is the distortion weight and score respectively, $R$ is the set of lexicalized reordering models.
-
-When adding a new feature function, it would not be included in the scoring of the translation rule and hypotheses until Equation (1) and (2) are update.
+When adding a new feature function, its scores would not be included in the translation rule or hypothesis scores until the implementation of Equation~\ref{eq:translation rule score} and Equation~\ref{eq:hypothesis rule score} are update.
 
 Translation rule always evaluated occurs before decoding, either during loading of the feature function, or just before the translation rule is used in decoding.
 
