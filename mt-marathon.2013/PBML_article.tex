@@ -27,6 +27,7 @@
 % If XeLaTeX is used, fontspec and xltxtra are loaded as well.
 \usepackage{algorithmic}
 \usepackage{amsmath}
+\usepackage{tikz,gnuplot-lua-tikz}
 
 % Definitions
 % ===========
@@ -382,12 +383,11 @@ Hypotheses only retain the weighted sum of the feature scores. They do not retai
   
 % For figures and tables always use "figure" resp. "table" floating environments
 % and always supply a caption. See the paragraph about color images below.
-%\begin{figure}
-% \begin{center}
-%  \includegraphics[width=\textwidth]{example_figure}
-%  \caption{Example figure}\label{fig:example}
-% \end{center}
-%\end{figure}
+\begin{figure}%
+%run report.gnuplot to update these.
+\input{1111-8/model.tex}\input{1111-8/bleu.tex}%
+\caption{\label{model}Model scores using cube pruning with pop limits ranging from 5 to 1000.}%
+\end{figure}
 
 \section{Results}
 
