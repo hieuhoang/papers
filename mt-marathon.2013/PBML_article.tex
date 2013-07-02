@@ -238,7 +238,7 @@ cdec and Joshua both have modern feature function frameworks similar to the Mose
 
 \section{Hypothesis and Translation Rule Evaluation}
 \subsection{Old Framework}
-The range of feature functions are hardcoded when evaluating the scores of hypotheses and translation rules. Translation rules are evaluated according to Equation~\ref{eq:translation rule score}
+The range of feature functions are hardcoded when evaluating the scores of hypotheses and translation rules. Translation rules are evaluated according to Equation~\ref{eq:translation rule score}:
 \begin{equation}
   score = \sum_{m \in T} \sum_{i \in m} (\lambda_{m,i} * score_{m,i}) + \sum_{l  \in L} (\lambda_l * score_i) + \lambda_{wp} * words
 \label{eq:translation rule score}
@@ -252,61 +252,60 @@ Similarly, hypotheses are evaluated as follows, Equation~\ref{eq:hypothesis rule
     & + \sum_{l \in L} (\lambda_l * score_l) \\
     & + \lambda_{wp} * words \\
     & + \lambda_d * score_d \\
-    & + \sum_{m \in R} \sum_{i \in m} (\lambda_{m,i} * score_{m,i}) %\\
-%    & + score_{future} \\
+    & + \sum_{m \in R} \sum_{i \in m} (\lambda_{m,i} * score_{m,i})  \\
+    & + score_{future} \\
 \label{eq:hypothesis rule score}
 \end{split}
 \end{equation}
-where $\lambda_d$ is the distortion weight, and $R$ is the set of lexicalized reordering models.
-%, and $score_{future}$ is the estimate of the future score for the hypothesis.
+where $\lambda_d$ is the distortion weight, and $R$ is the set of lexicalized reordering models, and $score_{future}$ is the estimate of the score to completion for the hypothesis.
 
 When adding a new feature function, its scores would not be included in the translation rule or hypothesis scores until the implementation of Equation~\ref{eq:translation rule score} and Equation~\ref{eq:hypothesis rule score} are update.
 
-Translation rule always evaluated occurs before decoding, either during loading of the feature function, or just before the translation rule is used in decoding.
+%Translation rule always evaluated occurs before decoding, either during loading of the feature function, or just before the translation rule is used in decoding.
 
-Hypotheses are evaluated when they are created during the search process.
+%Hypotheses are evaluated when they are created during the search process.
 
 \subsection{New Framework}
 The new framework better supports the creation of arbitrary feature functions by generalizing all code that deals with feature functions.
 
-Equation (1) becomes Equation (...)
+Equation~\ref{eq:translation rule score} becomes Equation~\ref{eq:translation rule score.new}
 \begin{equation}
-  score = \sum_{i \in FF}(\lambda_i * score_i)
+  score = \sum_{m \in FF} \sum_{i \in m} (\lambda_{m,i} * score_{m,i})
+\label{eq:translation rule score.new}
 \end{equation}
 where $FF$ is the set of feature functions.
 
-Equation (2) becomes Equation (...)
+Similarly, Equation~\ref{eq:hypothesis rule score} becomes Equation~\ref{eq:hypothesis rule score.new}:
 \begin{equation}
-  score =  \sum_{i \in FF}(\lambda_i * score_i)
+  score =  \sum_{m \in FF} \sum_{i \in m} (\lambda_{m,i} * score_{m,i})
 	  + score_{future}
+\label{eq:hypothesis rule score.new}
 \end{equation}
 
-Furthermore, there are three places where each feature function can be evaluated. At each place, a different range of information is available to the feature function to access for information.
+Furthermore, there are three stages during decoding where each feature function can be evaluated:
+\begin{enumerate}
+    \item During creation of translation rules. Access to the words in the source and target side of translation rule.
+    \item Just before decoding. Access to the entire source sentence to be decoded.
+    \item During decoding. Access to the context information is available, containing the hypotheses create to translate the sentence so far. The exact information contained in the hypotheses is dependent on whether the formalism used.
+\end{enumerate}
+At each stage, a different range of information is available to the feature function to access for information. Scores that are evaluated at stage (1) can be cached and reused inter-sentence. Scores evaluted during stage (2) and (3) cannot be cached as they depend on the entire source sentence. Therefore, it is more efficient to evaluate as early as possible.
 
-    1. During creation of translation rules. Access to the words in the source and target side of translation rule.
-
-    2. Just before decoding. Access to the entire source sentence to be decoded.
-
-    3. During decoding. Access to the context information is available, containing the hypotheses create to translate the sentence so far. The exact information contained in the hypotheses is dependent on whether the formalism used.
-
-Scores that are evaluated at stage one can be cached and reused inter-sentence. Scores evaluted during stage (2) and (3) cannot be cached as they depend on the entire source sentence. Therefore, it is more efficient to evaluate as early as possible.
-
-Each feature function can override any or all of the method to evaluate at each of these stage. For example. a simple word penalty feature would typically implement its evaluation in stage (1) as access to the translation rule is sufficient information to allow it to evaluate the word penalty score.
+Each feature function can override any or all of the methods to evaluate at each of these stage. For example. a simple word penalty feature would typically implement its evaluation in stage (1) as access to the translation rule is sufficient information to allow it to evaluate the word penalty score.
 
 On the other hand, a feature that depends on the bag of words of the input sentence would override the method for stage (2).
 
-Stateful features, and features that depend on the segmentation of the input sentence, need to override stage (3).
+Stateful features need to override stage (3). Features that depend on the segmentation of the input sentence also need to override this stage. 
 
 The most efficient way to implement language models is to override stage (1) and (3). As a stateful feature, it must override stage (3) to access adjacent target words to score overlapping n-grams. However, it is able to score the n-grams within each translation rule, and also calculate the estimated future cost, without the context. By evaluating the stateless portion of the language model score during stage (1) mitigate these score from having to be re-evaluated each time the translation rule is applied. This behaviour codify the existing practises by building the framework to support it, alllowing other feature function to take advantage of this efficient mechanism.
 
 Additionally, some feature functions do not override any of the stages. These feature is so intertwined with the search operation that their scores are set by search operation themselves. The feature function exist as an identifier to locate the score. Features functions such as the translation models, unknown word penalty, and generation models score fall into this category.
 
-\subsection{CDEC and Joshua}
+\subsection{cdec and Joshua}
 Moses implements a one-pass search strategy. All feature functions are evaluated when a hypothesis is created.
 
-Joshua and CDEC employs a multi-pass search strategy to translate each sentence. Each pass creates a hypergraph that is used as the input for the next pass. Both decoders evaluates stateless feature functions in the first pass, then stateful feature functions in the second.
+Joshua and cdec employs a multi-pass search strategy to translate each sentence. Each pass creates a hypergraph that is used as the input for the next pass. Both decoders evaluates stateless feature functions in the first pass, then stateful feature functions in the second.
 
-CDEC also supports an arbitary number of passes and split the feature functions between those passes.
+cdec also supports an arbitrary number of passes, feature functions exactly to a particular pass.
 
 \section{File Format}
 \subsection{Old Framework}
