@@ -166,7 +166,6 @@ This paper describes the changes to the Moses decoder in order to incorporate mo
 \subsection{Old Framework}
 
 The built-in feature functions in the phrase-based models are:
-
 \begin{itemize}
   \item Translation model
   \item Language model
@@ -361,23 +360,23 @@ in the format
   
 \section{Sparse Feature Function}
 
-Sparse features contain scores that may only be present occasionally. Also, there may be many more sparse features than dense features. There are typically 12 scores in a standard phrase-based model and 8 scores in a hierarchical phrase-based model. There may be millions of sparse score in a system with sparse features. However, only a few will be present in a particular hypothesis.
+Sparse features contain scores that may only be present occasionally. Also, there may be many more sparse features than dense features. There are typically 14 scores from five feature functions in a standard phrase-based model and 7 scores in a hierarchical phrase-based model. There may be millions of sparse score in a system with sparse features. However, only a few will be present in a particular hypothesis.
 
 This presents efficiency challenges which each decoder has attempted to solve in a different way.
 
 \subsection{Moses}
-Moses explicitly implements both dense and sparse features, and each score must be identifiable as one or the other.
+Moses explicitly implements both dense and sparse features. Each score must be identifiable as one or the other.
 The intuition behind this is that most systems will still contain dense features. Therefore, it would be more efficient to use dedicated dense vectors for these scores.
 
 A sparse feature map was added to handle sparse scores.
 
 \subsection{CDEC}
-CDEC eschew the dense and sparse hybrid approach and implement only sparse maps. Dense features can still be modelled in the framework, with some loss of efficiency.
+CDEC eschew the dense and sparse hybrid approach and implement only sparse maps. Dense features can still be modelled in the framework with sparse features, with some loss of efficiency.
 
-To improve speed and memory usage, hypotheses only store deltas of sparse features differences with antecedent hypotheses.
+To improve speed and memory usage, hypotheses only store deltas of feature differences with antecedent hypotheses.
 
 \subsection{Joshua}
-As with CDEC, Joshua only supports sparse features, however, it uses a different tack to improve efficiency.
+As with CDEC, Joshua only supports sparse features, however, it uses a different strategy to improve efficiency.
 
 Hypotheses only retain the weighted sum of the feature scores. They do not retain the individual score components unless required, for example, in the n-best list. The intuition behind this approach is that the score breakdown is only required in some situations such as producing n-best lists for tuning. In most other circumstances, they can be traded for better performance.
   
@@ -391,7 +390,8 @@ Hypotheses only retain the weighted sum of the feature scores. They do not retai
 %\end{figure}
 
 \section*{Acknowledgements}
-This research is supported by \ldots
+
+The research leading to these results has received funding from the European Union Seventh Framework Programme (FP7/2007-2013) under grant agreement 288487 (MosesCore).
 
 % Bibliography
 % ============
