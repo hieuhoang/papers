@@ -406,13 +406,13 @@ where <s> and </s> are first-class words like any other. In Joshua, the glue rul
    S -> S X
    GOAL -> <s> S </s> 
 \end{verbatim}
-In Moses and cdec formulation, glued hypotheses know that they are bound to the beginning of sentence <s>.  Therefore, their left language model state is empty and more hypotheses can recombine.  This is better than Joshua, where hypotheses are informed about <s> and </s> only after forming a complete sentence, so the left states are spuriously ambiguous.  Moreover, hypothesis score estimates are more accurate when they know about <s> earlier. Figure~\ref{fig:glue} shows the improvement in cdec by changing the glue rule formulation. This improvement was the direct result of research comparing the three decoders.
+In the Moses and cdec formulation, glued hypotheses know that they are bound to the beginning of sentence <s>.  Therefore, their left language model state is empty and more hypotheses can recombine.  This is better than Joshua, where hypotheses are informed about <s> and </s> only after forming a complete sentence, so the left states are spuriously ambiguous.  Moreover, hypothesis score estimates are more accurate when they know about <s> earlier. Figure~\ref{fig:glue} shows the improvement in cdec by changing the glue rule formulation. This improvement was the direct result of research comparing the three decoders.
 
 \begin{figure}[h]
 \begin{center}
 \input{1111-8/glue_model.tex}
 \end{center}
-\caption{Affect on model score by changing glue-rule formulation}
+\caption{Effect on model score by changing glue-rule formulation}
 \label{fig:glue}
 \end{figure}
 
