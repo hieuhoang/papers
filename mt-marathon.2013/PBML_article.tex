@@ -56,7 +56,7 @@
 
 \institute{label1}{University of Edinburgh}
 \institute{label2}{Center for Language and Speech Processing, Johns Hopkins University}
-%\institute{label3}{Carnegie Mellon University}
+\institute{label3}{Carnegie Mellon University}
 
 \author{
   firstname=Hieu,
@@ -73,11 +73,6 @@
   surname=Heafield,
   institute=label1,
 }
-%\author{
-%  firstname=Chris,
-%  surname=Dyer,
-%  institute=label3,
-%}
 \author{
   firstname=Eva,
   surname=Hasler,
@@ -92,6 +87,11 @@
   firstname=Barry,
   surname=Haddow,
   institute=label1,
+}
+\author{
+  firstname=Chris,
+  surname=Dyer,
+  institute=label3,
 }
 \author{
   firstname=Philipp,
@@ -391,7 +391,7 @@ Given the same formalism and model data, the results from the decoders are compa
 \caption{\label{fig:model}Model scores and BLEU using cube pruning with pop limits ranging from 5 to 1000.}
 \end{figure} 
 
-Firstly, in Moses and cdec, the calculation of language model state is delegated to the language model implementation (??? Kenlm) which uses the internal data-structure of the language model to determine state (??? Ney paper from yrs ago). Joshua, on the other hand, uses the words in the left and right context to determine language model state. This results in more aggressive hypothesis recombination in Moses and cdec, leading to better model score.
+Firstly, in Moses and cdec, the calculation of language model state is delegated to the language model implementation~\cite{Heafield-left} which uses the internal data-structure of the language model to determine state (??? Ney paper from yrs ago). Joshua, on the other hand, uses the words in the left and right context to determine language model state. This results in more aggressive hypothesis recombination in Moses and cdec, leading to better model score.
 
 Secondly, the glue rule formulation in Moses and cdec is different from Joshua's. In Moses and cdec, the glue rule grammar is:
 \begin{verbatim}
