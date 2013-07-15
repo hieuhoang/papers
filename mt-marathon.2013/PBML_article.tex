@@ -157,14 +157,14 @@ Allowing multiple instances has enabled researchers to combine multiple datasets
 
 However, a direction of machine translation research in the last few years has been on improving translation quality with the addition of ad-hoc feature functions to soft-constrain the search process. The use of sparse features during decoding has also been popular. Research such as \cite{chiang-knight-wang:2009:NAACLHLT09, cherry:2013:NAACL-HLT} typifies this approach.
 
-Enabling ad-hoc features in Moses requires a framework where new feature functions can be easily added. Adding support for sparse features entails fundamental changes in the way features function scores are stored and calculated. It is generally known that MERT ??? is unstable with a large number of scores, using sparse features will also require tuning algorithms which are able to deal with a large, non-predetermined number of feature scores. 
+Enabling ad-hoc features in Moses requires a framework where new feature functions can be easily added. Adding support for sparse features entails fundamental changes in the way features function scores are stored and calculated. It is generally known that MERT\cite{Och:MERT} is unstable with a large number of scores, using sparse features will also require tuning algorithms which are able to deal with a large, non-predetermined number of feature scores. 
 
 This paper describes the changes to the Moses decoder in order to incorporate more feature functions, sparse feature scores, and compares it with that implemented in cdec\cite{Dyer_etal_2010} and Joshua\cite{Joshua-Decoder}.
 
 \section{Feature Function Framework}
 \subsection{Old Framework}
 
-The built-in feature functions in the phrase-based models are:
+The standard feature functions in the phrase-based models are:
 \begin{itemize}
   \item Translation model
   \item Language model
@@ -173,7 +173,6 @@ The built-in feature functions in the phrase-based models are:
   \item Word penalty
   \item Unknown word penalty
 \end{itemize}
-
 The hierarchical and syntax model also uses these feature functions, except for the distortion and lexicalized reordering model.
 
 Each feature function is implemented in a separate class, with no common class hierarchy. The initialisation and evaluation of each feature function was entirely bespoked.
