@@ -65,14 +65,14 @@
   institute=label1,
 }
 \author{
-  firstname=Matt,
-  surname=Post,
-  institute=label2,
-}
-\author{
   firstname=Kenneth,
   surname=Heafield,
   institute=label1,
+}
+\author{
+  firstname=Matt,
+  surname=Post,
+  institute=label2,
 }
 \author{
   firstname=Eva,
@@ -400,19 +400,23 @@ This is likely due to the fact that in Moses and cdec, the calculation of langua
 
 \subsection{Glue Rules}
 
-The glue rule formulation in Moses and cdec is different from Joshua's. In Moses and cdec, the glue rule grammar is:
+The glue grammar can be constructed in a number of ways. In formulation (1), the grammar is:
  \begin{verbatim}
     S -> <s>
     S -> S X
     GOAL -> S </s> 
  \end{verbatim}
- where <s> and </s> are first-class words like any other. In Joshua, the glue rule grammar is:
+ where <s> and </s> are first-class words like any other. In this formulation, glued hypotheses know that they are bound to the beginning of sentence <s>.  Therefore, their left language model state is empty and more hypotheses can recombine.  
+ 
+The grammar for formulation (2) is:
  \begin{verbatim}
     S -> X
     S -> S X
     GOAL -> <s> S </s> 
  \end{verbatim}
- In Moses and cdec formulation, glued hypotheses know that they are bound to the beginning of sentence <s>.  Therefore, their left language model state is empty and more hypotheses can recombine.  This is better than Joshua, where hypotheses are informed about <s> and </s> only after forming a complete sentence, so the left states are spuriously ambiguous.  Moreover, hypothesis score estimates are more accurate when they know about <s> earlier. Figure~\ref{fig:glue} shows the improvement in cdec by changing the glue rule formulation. This improvement was the direct result of research comparing the three decoders.
+Glued hypotheses are informed about <s> and </s> only after forming a complete sentence, so the left states are spuriously ambiguous.  Moreover, hypothesis score estimates are more accurate in (1) as they know about <s> earlier. 
+
+Figure~\ref{fig:glue} shows the improvement in cdec by changing the glue rule formulation. The glue grammar for each decoder had varied since their inception but the convergence on formulation (1) is the direct result of research comparing the three decoders.
 
  \begin{figure}[h]
  \begin{center}
@@ -421,7 +425,7 @@ The glue rule formulation in Moses and cdec is different from Joshua's. In Moses
  \caption{Affect on model score by changing glue-rule formulation}
  \label{fig:glue}
  \end{figure}
->>>>>>> e417a6adcf4f1e49954836b14799509fecdea11c
+
 
 \section{Conclusion}
 
