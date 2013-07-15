@@ -175,11 +175,11 @@ The standard feature functions in the phrase-based models are:
 \end{itemize}
 The hierarchical and syntax model also uses these feature functions, except for the distortion and lexicalized reordering model.
 
-Each feature function is implemented in a separate class, with no common class hierarchy. The initialisation and evaluation of each feature function was entirely bespoked.
+Each feature function is implemented as a separate class, with no common class hierarchy. The initialisation and evaluation of each feature function was entirely bespoked.
 
 Feature function state information is an essential component of the search procedure in decoding. State information control hypothesis recombination, enabling the decoder to effectively search through many more hypotheses than it actually has. State information is emitted from stateful feature functions.
 
-The state information in Moses has evolved since inception. Initially, state information was only available from language models, therefore, only language models states are compared, Figure~\ref{algo:CompareHypoStates}.
+The state information in Moses has evolved since its inception. Initially, state information was only available for language models, therefore, only language models states are compared, Figure~\ref{algo:CompareHypoStates}.
 
 \begin{figure} [h!]
 \small 
@@ -207,7 +207,7 @@ The state information in Moses has evolved since inception. Initially, state inf
 
 A feature function can be stateless or stateful, depending on whether it inherits from \emph{StatelessFeatureFunction} or \emph{StatefulFeatureFunction}, respectively.
 
-The state comparison routine of Figure~\ref{algo:CompareHypoStates} evolved to compare the state of all stateful feature functions, Figure~\ref{algo:CompareHypoStates.new}.
+The state comparison routine of Figure~\ref{algo:CompareHypoStates} was generalised to compare the state of all stateful feature functions, Figure~\ref{algo:CompareHypoStates.new}.
 
 \begin{figure} [h!]
 \small 
@@ -235,7 +235,7 @@ cdec and Joshua both have modern feature function frameworks similar to the Mose
 
 \section{Hypothesis and Translation Rule Evaluation}
 \subsection{Old Framework}
-The range of feature functions are hardcoded when evaluating the scores of hypotheses and translation rules. Translation rules are evaluated according to Equation~\ref{eq:translation rule score}:
+The set of feature functions are hardcoded when evaluating the scores of hypotheses and translation rules. Translation rules are evaluated according to Equation~\ref{eq:translation rule score}:
 \begin{equation}
   score = \sum_{m \in T} \sum_{i \in m} (\lambda_{m,i} * score_{m,i}) + \sum_{l  \in L} (\lambda_l * score_i) + \lambda_{wp} * words
 \label{eq:translation rule score}
@@ -270,7 +270,7 @@ Equation~\ref{eq:translation rule score} becomes Equation~\ref{eq:translation ru
   score = \sum_{m \in FF} \sum_{i \in m} (\lambda_{m,i} * score_{m,i})
 \label{eq:translation rule score.new}
 \end{equation}
-where $FF$ is the set of feature functions.
+where $FF$ is the set of all feature functions.
 
 Similarly, Equation~\ref{eq:hypothesis rule score} becomes Equation~\ref{eq:hypothesis rule score.new}:
 \begin{equation}
@@ -279,23 +279,25 @@ Similarly, Equation~\ref{eq:hypothesis rule score} becomes Equation~\ref{eq:hypo
 \label{eq:hypothesis rule score.new}
 \end{equation}
 
-Furthermore, there are three stages during decoding where each feature function can be evaluated:
+Furthermore, there are three juncture during decoding where each feature function can be evaluated. At each point, a different range of information is available to the feature function. 
 \begin{enumerate}
-    \item During creation of translation rules. Access to the words in the source and target side of translation rule.
-    \item Just before decoding. Access to the entire source sentence to be decoded.
-    \item During decoding. Access to the context information is available, containing the hypotheses create to translate the sentence so far. The exact information contained in the hypotheses is dependent on whether the formalism used.
+    \item During creation of translation rules. Has access to the words in the source and target side of translation rule, but not the entire input sentence.
+    \item Just before decoding. Has access to the entire source sentence to be decoded.
+    \item During decoding. Access to the context information is possible, containing the current and antecedent hypotheses. The exact information contained in the hypotheses is dependent on the formalism used.
 \end{enumerate}
-At each stage, a different range of information is available to the feature function to access for information. Scores that are evaluated at stage (1) can be cached and reused inter-sentence. Scores evaluted during stage (2) and (3) cannot be cached as they depend on the entire source sentence. Therefore, it is more efficient to evaluate as early as possible.
+However, the stage at which the feature function is evaluate determines whether the feature function is cacheable between sentences. Scores that are evaluated at stage (1) can be cached and reused inter-sentence. Scores evaluated during stage (2) and (3) cannot be cached as they depend on the entire source sentence. Therefore, it is more efficient to evaluate as early as possible.
+
+Additionally, some feature functions do not override any of the stages. These feature is so intertwined with the search operation that their scores are set by search operation themselves. The feature function exist as an identifier to locate the score. Features functions such as the translation models, unknown word penalty,  generation models, and input feature score fall into this category.
+
+\subsection{Examples}
 
 Each feature function can override any or all of the methods to evaluate at each of these stage. For example. a simple word penalty feature would typically implement its evaluation in stage (1) as access to the translation rule is sufficient information to allow it to evaluate the word penalty score.
 
-On the other hand, a feature that depends on the bag of words of the input sentence would override the method for stage (2).
+On the other hand, a feature that depends on the bag of words of the input sentence must override the evaluation method for stage (2).
 
 Stateful features need to override stage (3). Features that depend on the segmentation of the input sentence also need to override this stage. 
 
-The most efficient way to implement language models is to override stage (1) and (3). As a stateful feature, it must override stage (3) to access adjacent target words to score overlapping n-grams. However, it is able to score the n-grams within each translation rule, and also calculate the estimated future cost, without the context. By evaluating the stateless portion of the language model score during stage (1) mitigate these score from having to be re-evaluated each time the translation rule is applied. This behaviour codify the existing practises by building the framework to support it, alllowing other feature function to take advantage of this efficient mechanism.
-
-Additionally, some feature functions do not override any of the stages. These feature is so intertwined with the search operation that their scores are set by search operation themselves. The feature function exist as an identifier to locate the score. Features functions such as the translation models, unknown word penalty, and generation models score fall into this category.
+The most efficient way to implement language models is to override stage (1) and (3). As a stateful feature, it must override stage (3) to access adjacent target words to score overlapping n-grams, and to set the current state. However, it is able to evaluate the n-grams within each translation rule without the context, therefore, language models should also override stage (1). The calculation of estimate future cost should also occur in stage (1). This behaviour codify existing practises by building the framework to support it, allowing other feature functions to take advantage of this efficient mechanism.
 
 \subsection{cdec and Joshua}
 Moses implements a one-pass search strategy. All feature functions are evaluated when a hypothesis is created.
