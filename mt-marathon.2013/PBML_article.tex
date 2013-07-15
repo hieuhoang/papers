@@ -118,7 +118,7 @@
 % long, you should define short versions. These definitions are optional. You
 % define them only if they are needed. The example follows:
 \shorttitle{SCFG Decoder Implementations}
-\shortauthor{H. Dumpty, M. Turtle, C. Cat}
+\shortauthor{Hoang, Heafield et al}
 
 % Now print the title by:
 \PBMLmaketitle
@@ -132,10 +132,9 @@
 \begin{abstract}
 Best practise for developing a SMT decoder has progressed enormously since the initial release of the Moses decoder in 2006. The emergence of syntax-inspired models, sparse features and more features, have been the driver for the major changes in the framework of the decoder.
 
-In this paper, we describe the changes in the Moses decoder to support such changes. How we have updated the decoder, and dependent programs, while preserving the rich features in the toolkit. Particular emphasis will be place in describing the feature function framework.
+In this paper, we describe the changes in the Moses decoder and supporting programs to support such changes, while preserving the rich features in the Moses toolkit. Particular emphasis will be place in describing the feature function framework.
 
-The open-source community has also changed from the dominance of phrase-based model and virtual Moses monopoly, to a situation where syntactic models are leading the research agenda, and other projects such as cdec and Joshua have equal prominence.
-We take this opportunity to compare the implementations of these other decoders with Moses. We find that there are many similarities between the decoders, but also some surprising differences in implementation of even very fundamental features in each decoder.
+The open-source community has also changed from the dominance of the phrase-based model and virtual Moses monopoly, to a situation where syntactic models are leading the research agenda, and other projects such as cdec and Joshua have equal prominence.  We take this opportunity to compare the implementations of these other decoders with Moses. We find that there are many similarities between the decoders, but also some surprising differences in implementation of even very fundamental features in each decoder.
 
 \end{abstract}
 
@@ -152,17 +151,15 @@ We take this opportunity to compare the implementations of these other decoders 
 %\citet{PDT2} show \ldots \\ % This renders as "Hajič et al. (2006) show" instead of "(Hajič et al., 2006) show".
 %\ldots tree-based annotation (e.g.~\citealp{PDT2}).
 
-In terms of extensibility, the Moses\cite{koehn-EtAl:2007:PosterDemo} decoder was a vast improvement over its immediate predecessor, Pharoah\cite{Koehn:Pharaoh:2004}. 
+In terms of extensibility, the Moses\cite{koehn-EtAl:2007:PosterDemo} decoder was a vast improvement over its immediate predecessor, Pharoah\cite{Koehn:Pharaoh:2004}. For instance, Moses allows multiple translation models and language models \emph{instances} and \emph{implementations}. 
 
-Moses allows multiple translation models and language models instances and implementations. Allowing multiple instances has enabled researchers to combine multiple datasets in novel ways, as well as the use of secondary models on linguistic information\cite{Koehn:Philipp:2007, Sennrich:Rico:2011,Koehn:Philipp:2012}. Allowing multiple implementations has spurred on the developments of smaller, faster, better implementation of language models and phrase tables\cite{talbot-osborne:2007:ACLMain, Heafield-kenlm, Junczys-Dowmunt:Marcin:2012}.
+Allowing multiple instances has enabled researchers to combine multiple datasets in novel ways such as the use of secondary models with differing linguistic information\cite{Koehn:Philipp:2007, Sennrich:Rico:2011,Koehn:Philipp:2012}. Allowing multiple implementations has spurred on the developments of smaller, faster, better implementation of language models and phrase tables\cite{talbot-osborne:2007:ACLMain, Heafield-kenlm, Junczys-Dowmunt:Marcin:2012}.
 
-However, a direction of machine translation research in the last few years has been improving translation quality with the addition of ad-hoc feature functions outside of the translation model and language model types. Also, the use of sparse features during decoding has also been popular. Research such as \cite{chiang-knight-wang:2009:NAACLHLT09, cherry:2013:NAACL-HLT} typifies this approach.
+However, a direction of machine translation research in the last few years has been on improving translation quality with the addition of ad-hoc feature functions to soft-constrain the search process. The use of sparse features during decoding has also been popular. Research such as \cite{chiang-knight-wang:2009:NAACLHLT09, cherry:2013:NAACL-HLT} typifies this approach.
 
-Enabling ad-hoc features and sparse features requires a more extensible framework that incorporate feature functions into the decoder.
+Enabling ad-hoc features in Moses requires a framework where new feature functions can be easily added. Adding support for sparse features entails fundamental changes in the way features function scores are stored and calculated. It is generally known that MERT ??? is unstable with a large number of scores, using sparse features will also require tuning algorithms which are able to deal with a large, non-predetermined number of feature scores. 
 
-It also required tuning algorithms which are able to deal with a large number of features. It is generally known that MERT is unstable with a large number of features.
-
-This paper describes the changes to the Moses decoder in order to incorporate more feature functions, and compares it with that implemented in cdec\cite{Dyer_etal_2010} and Joshua\cite{Joshua-Decoder}.
+This paper describes the changes to the Moses decoder in order to incorporate more feature functions, sparse feature scores, and compares it with that implemented in cdec\cite{Dyer_etal_2010} and Joshua\cite{Joshua-Decoder}.
 
 \section{Feature Function Framework}
 \subsection{Old Framework}
