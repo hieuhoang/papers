@@ -306,75 +306,75 @@ In cdec and Joshua, each pass creates a hypergraph that is used as the input for
 
 cdec also supports an arbitrary number of passes, feature functions can be assigned to a particular pass.
 
-\section{File Format}
-\subsection{Old Framework}
-Each feature function also required a separate section in the configuration (moses.ini) file to be created, along with the code to read the new section. For example, translation models are specified in the section
-\begin{verbatim}
-     [ttable-file]
-\end{verbatim}
-Language models are in
-\begin{verbatim}
-     [lmodel-file]
-\end{verbatim}
-Similarly, each feature function also need a separate weight section, for example, for translation models:
-\begin{verbatim}
-     [weight-t]
-\end{verbatim}
-and language models:
-\begin{verbatim}
-     [weight-l]
-\end{verbatim}
-New feature functions need to create and manage their own specification and weight sections.
-
-The tuning script must also be informed of new weight sections by manually editing the MERT script.
-
-\subsection{New Framework}
-The configuration file format has been changed to minimize the amount of code changes necessary when adding new feature functions. All feature functions are declared in the configuration file in the section
-\begin{verbatim}
-  [feature]
-\end{verbatim}
-In the fixed format
-\begin{verbatim}
-  Feature-Name [key=value]*
-\end{verbatim}
-Similarly, all dense \emph{weights} are put into the section
-\begin{verbatim}
-  [weight]
-\end{verbatim}
-In the fixed format
-\begin{verbatim}
-  Feature-Instance= [value]*
-\end{verbatim}
-Weights for sparse features are in separate file referenced by the section
-\begin{verbatim}
-  [weight-file]
-\end{verbatim}
-in the format
-\begin{verbatim}
-  Feature-Instance feature value
-\end{verbatim}
-The following is an example section from a vanilla phrase-based configuration file:
-\begin{verbatim}
-  [feature]
-  UnknownWordPenalty
-  WordPenalty
-  PhraseDictionaryMemory name=TranslationModel0 table-limit=20 num-features=5...
-  LexicalReordering name=LexicalReordering0 num-features=6 type=wbe-msd...
-  Distortion
-  KENLM lazyken=1 name=LM0 factor=0 path=europarl.binlm.1 order=5
-\end{verbatim}
-Notice that feature functions \emph{UnknownWordPenalty}, \emph{WordPenalty}, and \emph{Distortion} must be explicitly specified. In the old format, these features were implicitly included for all phrase-based models.
-
-The weights section from the same moses.ini file is shown below:
-\begin{verbatim}
-  [weight]
-  UnknownWordPenalty0= 1
-  WordPenalty0= -1
-  TranslationModel0= 0.2 0.2 0.2 0.2 0.2
-  LexicalReordering0= 0.3 0.3 0.3 0.3 0.3 0.3
-  Distortion0= 0.3
-  LM0= 0.5
-\end{verbatim}
+% \section{File Format}
+% \subsection{Old Framework}
+% Each feature function also required a separate section in the configuration (moses.ini) file to be created, along with the code to read the new section. For example, translation models are specified in the section
+% \begin{verbatim}
+%      [ttable-file]
+% \end{verbatim}
+% Language models are in
+% \begin{verbatim}
+%      [lmodel-file]
+% \end{verbatim}
+% Similarly, each feature function also need a separate weight section, for example, for translation models:
+% \begin{verbatim}
+%      [weight-t]
+% \end{verbatim}
+% and language models:
+% \begin{verbatim}
+%      [weight-l]
+% \end{verbatim}
+% New feature functions need to create and manage their own specification and weight sections.
+% 
+% The tuning script must also be informed of new weight sections by manually editing the MERT script.
+% 
+% \subsection{New Framework}
+% The configuration file format has been changed to minimize the amount of code changes necessary when adding new feature functions. All feature functions are declared in the configuration file in the section
+% \begin{verbatim}
+%   [feature]
+% \end{verbatim}
+% In the fixed format
+% \begin{verbatim}
+%   Feature-Name [key=value]*
+% \end{verbatim}
+% Similarly, all dense \emph{weights} are put into the section
+% \begin{verbatim}
+%   [weight]
+% \end{verbatim}
+% In the fixed format
+% \begin{verbatim}
+%   Feature-Instance= [value]*
+% \end{verbatim}
+% Weights for sparse features are in separate file referenced by the section
+% \begin{verbatim}
+%   [weight-file]
+% \end{verbatim}
+% in the format
+% \begin{verbatim}
+%   Feature-Instance feature value
+% \end{verbatim}
+% The following is an example section from a vanilla phrase-based configuration file:
+% \begin{verbatim}
+%   [feature]
+%   UnknownWordPenalty
+%   WordPenalty
+%   PhraseDictionaryMemory name=TranslationModel0 table-limit=20 num-features=5...
+%   LexicalReordering name=LexicalReordering0 num-features=6 type=wbe-msd...
+%   Distortion
+%   KENLM lazyken=1 name=LM0 factor=0 path=europarl.binlm.1 order=5
+% \end{verbatim}
+% Notice that feature functions \emph{UnknownWordPenalty}, \emph{WordPenalty}, and \emph{Distortion} must be explicitly specified. In the old format, these features were implicitly included for all phrase-based models.
+% 
+% The weights section from the same moses.ini file is shown below:
+% \begin{verbatim}
+%   [weight]
+%   UnknownWordPenalty0= 1
+%   WordPenalty0= -1
+%   TranslationModel0= 0.2 0.2 0.2 0.2 0.2
+%   LexicalReordering0= 0.3 0.3 0.3 0.3 0.3 0.3
+%   Distortion0= 0.3
+%   LM0= 0.5
+% \end{verbatim}
 
 
 \section{Sparse Feature Function}
@@ -414,19 +414,19 @@ Joshua's lower model score is likely due to the fact that in Moses and cdec, the
 \subsection{Glue Rules}
 
 The glue grammar can be constructed in a number of ways. In formulation (1), the grammar is:
- \begin{verbatim}
+\begin{verbatim}
     S -> <s>
     S -> S X
     GOAL -> S </s> 
- \end{verbatim}
+\end{verbatim}
  where <s> and </s> are first-class words like any other. In this formulation, glued hypotheses know that they are bound to the beginning of sentence <s>.  Therefore, their left language model state is empty and more hypotheses can recombine.  
  
 The grammar for formulation (2) is:
- \begin{verbatim}
+\begin{verbatim}
     S -> X
     S -> S X
     GOAL -> <s> S </s> 
- \end{verbatim}
+\end{verbatim}
 Glued hypotheses are informed about <s> and </s> only after forming a complete sentence, so the left states are spuriously ambiguous.  Moreover, hypothesis score estimates are more accurate in (1) as they know about <s> earlier. 
 
 Figure~\ref{fig:glue} shows the improvement in cdec by changing the glue rule formulation from (2) to (1). The glue grammar for each decoder had varied since their inceptions. The convergence on using formulation (1) is the direct result of the comparison between the three decoders.
