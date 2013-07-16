@@ -302,11 +302,9 @@ The most efficient way to implement language models is to override stage (1) and
 \subsection{cdec and Joshua}
 In contrast to Moses which uses a one-pass search strategy, cdec and Joshua uses a multi-pass search strategy. That is, for each input sentence, all feature functions are evaluated when a hypothesis is created in Moses.
 
-In cdec and Joshua, each pass creates a hypergraph that is used as the input for the next pass. Both decoders evaluates stateless feature functions in the first pass, followed by stateful feature functions in the second.
+In cdec and Joshua, each pass creates a hypergraph that is used as the input for the next pass. Both decoders evaluates stateless feature functions in the first pass, followed by stateful feature functions in the second. Neither decoder partially evaluate stateful feature functions to estimate future cost, as done in Moses.
 
 cdec also supports an arbitrary number of passes, feature functions can be assigned to a particular pass.
-
-cdec and Joshua do not partially evaluate stageful feature functions to estimate future cost, as done in Moses.
 
 \section{File Format}
 \subsection{Old Framework}
@@ -314,7 +312,7 @@ Each feature function also required a separate section in the configuration (mos
 \begin{verbatim}
      [ttable-file]
 \end{verbatim}
-Language models in
+Language models are in
 \begin{verbatim}
      [lmodel-file]
 \end{verbatim}
@@ -339,10 +337,6 @@ In the fixed format
 \begin{verbatim}
   Feature-Name [key=value]*
 \end{verbatim}
-For example,
-\begin{verbatim}
-  KENLM factor=0 path=lm.arpa order=5
-\end{verbatim}
 Similarly, all dense \emph{weights} are put into the section
 \begin{verbatim}
   [weight]
@@ -359,32 +353,55 @@ in the format
 \begin{verbatim}
   Feature-Instance feature value
 \end{verbatim}
-  
+The following is an example section from a vanilla phrase-based configuration file:
+\begin{verbatim}
+  [feature]
+  UnknownWordPenalty
+  WordPenalty
+  PhraseDictionaryMemory name=TranslationModel0 table-limit=20 num-features=5...
+  LexicalReordering name=LexicalReordering0 num-features=6 type=wbe-msd...
+  Distortion
+  KENLM lazyken=1 name=LM0 factor=0 path=europarl.binlm.1 order=5
+\end{verbatim}
+Notice that feature functions \emph{UnknownWordPenalty}, \emph{WordPenalty}, and \emph{Distortion} must be explicitly specified. In the old format, these features were implicitly included for all phrase-based models.
+
+The weights section from the same moses.ini file is shown below:
+\begin{verbatim}
+  [weight]
+  UnknownWordPenalty0= 1
+  WordPenalty0= -1
+  TranslationModel0= 0.2 0.2 0.2 0.2 0.2
+  LexicalReordering0= 0.3 0.3 0.3 0.3 0.3 0.3
+  Distortion0= 0.3
+  LM0= 0.5
+\end{verbatim}
+
+
 \section{Sparse Feature Function}
 
-Sparse features contain scores that may only be present occasionally. Also, there may be many more sparse features than dense features. There are typically 14 scores from five feature functions in a standard phrase-based model and 7 scores in a hierarchical phrase-based model. There may be millions of sparse score in a system with sparse features. However, only a few will be present in a particular hypothesis.
+Sparse features contain scores that may only be present occasionally. However, whereas there are typically 14 scores from five feature functions in a standard phrase-based model and 7 scores in a hierarchical phrase-based model, there may be millions of sparse scores in a system with sparse features. Only a few will be present in a particular hypothesis or translation rule.
 
-This presents efficiency challenges which each decoder has attempted to solve in a different way.
+Storing and using sparse feature efficiently present a challenge which each decoder has attempted to solve differently.
 
 \subsection{Moses}
-Moses explicitly implements both dense and sparse features. Each score must be identifiable as one or the other.
-The intuition behind this is that most systems will still contain dense features. Therefore, it would be more efficient to use dedicated dense vectors for these scores.
+Moses implements supports for both dense and sparse features. Each score must be identifiable as one or the other.
+The intuition behind this is that most systems will still contain dense features. Therefore, it would be more efficient to use existing dedicated data-structures to efficiently handle dense vectors.
 
 A sparse feature map was added to handle sparse scores.
 
 \subsection{cdec}
-cdec eschew the dense and sparse hybrid approach and implement only sparse maps. Dense features can still be modelled in the framework with sparse features, with some loss of efficiency.
+cdec eschew Moses' dense and sparse hybrid approach and implement only sparse maps. Dense features can still be modelled in the framework as sparse features, whose name are suffixed with indices.
 
 To improve speed and memory usage, hypotheses only store deltas of feature differences with antecedent hypotheses.
 
 \subsection{Joshua}
 As with cdec, Joshua only supports sparse features, however, it uses a different strategy to improve efficiency.
 
-Hypotheses only retain the weighted sum of the feature scores. They do not retain the individual score components unless required, for example, in the n-best list. The intuition behind this approach is that the score breakdown is only required in some situations such as producing n-best lists for tuning. In most other circumstances, they can be traded for better performance.
+Hypotheses only retain the weighted sum of the feature scores, . The individual score components are not stored unless required, for example, in the n-best list. The intuition behind this approach is that the score breakdown is only required in some situations. In most other circumstances, they can be traded for better speed and lower memory consumption.
   
 \section{Results}
 
-The results from the three decoders are comparable, given the same formalism and model data, and adjusting for scaling differences and constants. . Figure~\ref{fig:model} shows the comparison of model scores and BLEU scores for a hierarchical model. Moses and cdec are roughly comparable in terms of speed. Also, Moses and cdec converges to roughly the same model scores, while Joshua makes more search errors. 
+The results from the three decoders are comparable, given the same formalism and model data, and adjusting for scaling differences and constants. . Figure~\ref{fig:model} shows the comparison of model scores and BLEU scores for a hierarchical model. Moses and cdec are roughly comparable in terms of speed. Also, Moses and cdec converges to roughly the same model scores, while Joshua makes more search errors, leading to lower BLEU scores.
 
 \begin{figure}
 %run report.gnuplot to update these.
@@ -412,7 +429,7 @@ The grammar for formulation (2) is:
  \end{verbatim}
 Glued hypotheses are informed about <s> and </s> only after forming a complete sentence, so the left states are spuriously ambiguous.  Moreover, hypothesis score estimates are more accurate in (1) as they know about <s> earlier. 
 
-Figure~\ref{fig:glue} shows the improvement in cdec by changing the glue rule formulation. The glue grammar for each decoder had varied since their inception but the convergence on formulation (1) is the direct result of research comparing the three decoders.
+Figure~\ref{fig:glue} shows the improvement in cdec by changing the glue rule formulation from (2) to (1). The glue grammar for each decoder had varied since their inceptions. The convergence on using formulation (1) is the direct result of the comparison between the three decoders.
 
  \begin{figure}[h]
  \begin{center}
