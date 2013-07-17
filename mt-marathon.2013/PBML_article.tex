@@ -56,7 +56,7 @@
 % PLEASE, use Unicode (utf8) encoding (e.g ï instead of \"{i}).
 
 \institute{label1}{University of Edinburgh}
-\institute{label2}{Center for Language and Speech Processing, Johns Hopkins University}
+\institute{label2}{Human Language Technology Center of Excellence, Johns Hopkins University}
 \institute{label3}{Carnegie Mellon University}
 
 \author{
@@ -185,18 +185,16 @@ The state information in Moses has evolved since its inception. Initially, state
 \small 
 \begin{algorithmic}
 \REQUIRE hypothesis $a$, hypothesis b
-
        \IF {coverage of a != coverage of b }
-	\RETURN not equal
+         \RETURN not equal
        \ENDIF
        
         \FORALL {LM state s}
           \IF {state s of hypothesis a != state s for hypothesis b}
-	    \RETURN not equal
-	 \ENDIF
+            \RETURN not equal
+          \ENDIF
         \ENDFOR
         \RETURN equal
-
 \end{algorithmic}
 \caption{Comparing Hypothesis States (old framework)}
 \label{algo:CompareHypoStates}
@@ -233,7 +231,9 @@ The state comparison routine of Figure~\ref{algo:CompareHypoStates} was generali
 \end{figure} 
         
 \subsection{cdec and Joshua}
-cdec and Joshua both have modern feature function frameworks similar to the Moses new framework. cdec has no distinction between stateful and stateless features; stateless features have zero size states.
+cdec and Joshua both have modern feature function frameworks similar to the Moses new
+framework. Both of them have no distinction between stateful and stateless features; stateless
+features have zero size states.
 
 \section{Hypothesis and Translation Rule Evaluation}
 \subsection{Original Framework}
@@ -301,12 +301,48 @@ Stateful features need to override stage (3). Features that depend on the segmen
 
 The most efficient way to implement language models is to override stage (1) and (3). As a stateful feature, it must override stage (3) to access adjacent target words to score overlapping n-grams, and to set the current state. However, it is able to evaluate the n-grams within each translation rule without the context, therefore, language models should also override stage (1). The calculation of estimate future cost should also occur in stage (1). This behaviour codify existing practises by building the framework to support it, allowing other feature functions to take advantage of this efficient mechanism.
 
-\subsection{cdec and Joshua}
-In contrast to Moses which uses a one-pass search strategy, cdec and Joshua uses a multi-pass search strategy. That is, for each input sentence, all feature functions are evaluated when a hypothesis is created in Moses.
+\subsection{Joshua}
 
-In cdec and Joshua, each pass creates a hypergraph that is used as the input for the next pass. Both decoders evaluates stateless feature functions in the first pass, followed by stateful feature functions in the second. Neither decoder partially evaluate stateful feature functions, as done in Moses.
+Joshua's decoding algorithm is an implementation of CKY+ \cite{chappelier1998generalized}. It
+supports decoding with arbitrary synchronous CFG productions, imposing no limits on the rank of
+rules or on the intermingling of terminals and nonterminals.
 
-cdec also supports an arbitrary number of passes, feature functions can be assigned to a particular pass.
+Joshua makes only a single CKY pass over the source language sentence; it does not build a
+``stateless'' hypergraph (or --LM forest, in the language of \citet{chiang2007hierarchical}). To
+enable this, Joshua interleaves the extension of partially-constructed rules with the application of
+complete rules while building the hypergraph, depicted here with pseudocode:
+
+\begin{figure} [h!]
+\small 
+\begin{algorithmic}
+  \FORALL {spans $(i,j)$ in bottom-up order}
+    \STATE {extend incomplete rules seeking the terminal at $(j-1,j)$}
+    \FORALL {split points $k$}
+      \STATE {extend incomplete rules over $(i,k)$ seeking a nonterminal $N$ such that chart item $(N,k,j)$ exists in the hypergraph}
+    \ENDFOR
+    \STATE {construct new hypergraph node by applying cube pruning to all completed rules over $(i,j)$}
+  \ENDFOR
+\end{algorithmic}
+\caption{Interweaving of partially-completed and completed rules in Joshua.}
+\label{algorithm:joshua}
+\end{figure} 
+
+The chart containing partially-completed rules is called the \emph{dot chart}, and no pruning is
+applied to it; rule features are computed only when complete rules are applied.
+
+The efficiency gained from this interleaving allows Joshua to decode with SCFGs with rich
+nonterminal sets \cite{galley2004whats,zollmann2006syntax}, although the time and memory
+requirements increase dramatically. Incorporating feature scores into the dot chart for more
+efficient decoding with SCFGs with rich nonterminal sets is a direction of interest.
+
+\subsection{cdec}
+In contrast to Moses and Joshua which use a one-pass search strategy, cdec uses a multi-pass search strategy. That is, for each input sentence, all feature functions are evaluated when a hypothesis is created in Moses.
+
+In cdec, each pass creates a hypergraph that is used as the input for the next pass. cdec evaluates stateless feature functions in the first pass, followed by stateful feature functions in the second. Neither decoder partially evaluate stateful feature functions, as done in Moses.
+
+cdec also supports an arbitrary number of passes, feature functions can be assigned to a particular
+pass.
+
 
 % \section{File Format}
 % \subsection{Old Framework}
