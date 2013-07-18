@@ -437,13 +437,13 @@ Hypotheses only retain the weighted sum of the feature scores, . The individual 
 
 The results from the three decoders are comparable, given the same formalism and model data, and adjusting for scaling differences and constants. Figure~\ref{fig:model} shows the comparison of model scores and BLEU scores for a hierarchical model. Moses and cdec are roughly comparable in terms of speed. Also, Moses and cdec converges to roughly the same model scores, while Joshua makes more search errors, leading to overall lower BLEU scores.
 
+Joshua's lower model score is likely due to the fact that in Moses and cdec, the calculation of language model state is delegated to the language model implementation~\cite{Heafield-left} which uses the internal data-structure of the language model to determine state. Joshua, on the other hand, uses the words in the left and right context to determine language model state. This results in more aggressive hypothesis recombination in Moses and cdec, leading to better model score. Joshua will soon be updated~\footnote{\url{https://github.com/hieuhoang/papers/commit/e417a6adcf4f1e49954836b14799509fecdea11c#mt-marathon.2013} } to incorporate better left-state minimisation to match the performance of Moses and cdec. 
+
 \begin{figure}
 %run report.gnuplot to update these.
 \input{1111-8/model.tex}\input{1111-8/bleu.tex}
 \caption{\label{fig:model}Model scores and BLEU using cube pruning with pop limits ranging from 5 to 1000.}
 \end{figure} 
-
-Joshua's lower model score is likely due to the fact that in Moses and cdec, the calculation of language model state is delegated to the language model implementation~\cite{Heafield-left} which uses the internal data-structure of the language model to determine state. Joshua, on the other hand, uses the words in the left and right context to determine language model state. This results in more aggressive hypothesis recombination in Moses and cdec, leading to better model score. Joshua will soon be updated~\footnote{\url{https://github.com/hieuhoang/papers/commit/e417a6adcf4f1e49954836b14799509fecdea11c#mt-marathon.2013} } to incorporate better left-state minimisation to match the performance of Moses and cdec. 
 
 \subsection{Glue Rules}
 
