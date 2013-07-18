@@ -132,7 +132,7 @@
 \begin{abstract}
 Best practices for developing a SMT decoder have progressed enormously since the initial release of the Moses decoder in 2006. The emergence of syntax-inspired models, sparse features and more features, have been the driver for the major changes in the framework of the decoder.
 
-In this paper, we describe the changes in the Moses decoder and supporting programs to support such changes, while preserving the rich features in the Moses toolkit. Particular emphasis will be place in describing the feature function framework.
+In this paper, we describe the changes in the Moses decoder and supporting programs to support such changes, while preserving the toolkit's existing functionality. Particular emphasis will be place in describing the feature function framework.
 
 We compare the implementation of the Moses SCFG decoder to that of cdec and Joshua and find that there are some surprising differences in implementation of even very fundamental features in each decoder.
 
@@ -177,37 +177,36 @@ The hierarchical and syntax model also uses these feature functions, except for 
 
 Each feature function is implemented as a separate class, with no common class hierarchy. The initialisation and evaluation of each feature function was entirely bespoked.
 
-Feature function state information is an essential component of the search procedure in decoding. State information control hypothesis recombination, enabling the decoder to effectively search through many more hypotheses than it actually has. State information is emitted from stateful feature functions.
+Feature function \emph{state} information is an essential component of the search procedure in decoding. State information control hypothesis recombination, enabling the decoder to effectively search through many more hypotheses than it actually has. Higher recombination results in higher effective number of hypotheses created, leading to better model score.
 
-The state information in Moses has evolved since its inception. Initially, state information was only available for language models, therefore, only language models states are compared, Figure~\ref{algo:CompareHypoStates}.
+Initially, state information was only available for language models, therefore, only language models states are compared.
+%, Figure~\ref{algo:CompareHypoStates}.
 
-\begin{figure} [h!]
-\small 
-\begin{algorithmic}
-\REQUIRE hypothesis $a$, hypothesis b
-       \IF {coverage of a != coverage of b }
-         \RETURN not equal
-       \ENDIF
-       
-        \FORALL {LM state s}
-          \IF {state s of hypothesis a != state s for hypothesis b}
-            \RETURN not equal
-          \ENDIF
-        \ENDFOR
-        \RETURN equal
-\end{algorithmic}
-\caption{Comparing Hypothesis States (old framework)}
-\label{algo:CompareHypoStates}
-\end{figure} 
+% \begin{figure} [h!]
+% \small 
+% \begin{algorithmic}
+% \REQUIRE hypothesis $a$, hypothesis b
+%        \IF {coverage of a != coverage of b }
+%          \RETURN not equal
+%        \ENDIF
+%        
+%         \FORALL {LM state s}
+%           \IF {state s of hypothesis a != state s for hypothesis b}
+%             \RETURN not equal
+%           \ENDIF
+%         \ENDFOR
+%         \RETURN equal
+% \end{algorithmic}
+% \caption{Comparing Hypothesis States (old framework)}
+% \label{algo:CompareHypoStates}
+% \end{figure} 
 
 \subsection{Current Framework}        
  All feature functions inherit indirectly from the class \emph{FeatureFunction}, which provides basic services to all feature functions such as storing the name and number of dense features, and providing a central repository of all feature functions.
 
-Feature function \emph{state} plays an important role in hypothesis recombination. Two hypotheses can be recombined if their states are equivalent. Higher recombination results in increased effective number of hypotheses created, leading to better model score.
+Each feature function can be stateless or stateful, depending on whether it emits a state for each hypothesis. Stateful features inherits from \emph{StatefulFeatureFunction}, otherwise they inherits from \emph{StatelessFeatureFunction}.
 
-Each feature function can be stateless or stateful, depending on whether it emits a state for each hypothesis. Stateful features imherits from \emph{StatefulFeatureFunction}, otherwise they it inherits from \emph{StatelessFeatureFunction}.
-
-The state comparison routine of Figure~\ref{algo:CompareHypoStates} was generalised to compare the state of all stateful feature functions, Figure~\ref{algo:CompareHypoStates.new}.
+The state comparison of the original framework was generalised to compare the state of all stateful feature functions, Figure~\ref{algo:CompareHypoStates.new}.
 
 \begin{figure} [h!]
 \small 
@@ -226,14 +225,12 @@ The state comparison routine of Figure~\ref{algo:CompareHypoStates} was generali
         \RETURN equal
 
 \end{algorithmic}
-\caption{Comparing Hypothesis States (new framework)}
+\caption{Comparing Hypothesis States}
 \label{algo:CompareHypoStates.new}
 \end{figure} 
         
 \subsection{cdec and Joshua}
-cdec and Joshua both have modern feature function frameworks similar to the Moses new
-framework. Both of them have no distinction between stateful and stateless features; stateless
-features have zero size states.
+cdec and Joshua both have modern feature function frameworks. Both of them have no distinction between stateful and stateless features; stateless features have zero size states.
 
 \section{Hypothesis and Translation Rule Evaluation}
 \subsection{Original Framework}
@@ -287,11 +284,11 @@ Furthermore, there are three junctures during decoding where each feature functi
     \item Just before decoding. Has access to the entire source sentence to be decoded.
     \item During decoding. Access to the context information is possible, containing the current and antecedent hypotheses. The exact information contained in the hypotheses is dependent on the formalism used.
 \end{enumerate}
-However, the stage at which the feature function is evaluate determines whether the feature function is cacheable between sentences. Scores that are evaluated at stage (1) can be cached and reused inter-sentence. Scores evaluated during stage (2) and (3) cannot be cached as they depend on the entire source sentence. Therefore, it is more efficient to evaluate as early as possible.
+However, the stage at which the feature function is evaluated determines whether the feature function needs to be evaluated, given a different sentence. Scores that are evaluated at stage (1) are only dependent the source phrase, not the entire source sentence, and therefore can be reused inter-sentence. Scores evaluated during stage (2) and (3) must be re-evaluated given a different sentence. Given a simple, source phrase-level cache, only feature function evaluated at stage (1) can be cached.
 
 Additionally, the evaluation at stage (1) can return an estimate of the future cost to guide search. This is a technique used by the phrase-based decoder but not by the SCFG decoder.
 
-Some feature functions do not override any of the stages. These feature is so intertwined with the search mechanism that their scores are set by search mechanism themselves. The feature function exist as an identifier to locate the score. Features functions such as the translation models, unknown word penalty,  generation models fall into this category. The input feature, which scores lattices and confusion network input is also hardcoded into the decoder.
+Some feature functions do not override any of the stages. These feature is so intertwined with the search mechanism that their scores are set by search mechanism themselves. Features functions such as the translation models, unknown word penalty,  generation models fall into this category. The input feature, which scores lattices and confusion network input is also hardcoded into the decoder.
 
 \subsection{Examples}
 
@@ -445,33 +442,33 @@ Joshua's lower model score is likely due to the fact that in Moses and cdec, the
 \caption{\label{fig:model}Model scores and BLEU using cube pruning with pop limits ranging from 5 to 1000.}
 \end{figure} 
 
-\subsection{Glue Rules}
-
-The glue grammar can be constructed in a number of ways. In formulation (1), the grammar is:
-\begin{verbatim}
-    S -> <s>
-    S -> S X
-    GOAL -> S </s> 
-\end{verbatim}
- where <s> and </s> are first-class words like any other. In this formulation, glued hypotheses know that they are bound to the beginning of sentence <s>.  Therefore, their left language model state is empty and more hypotheses can recombine.  
- 
-The grammar for formulation (2) is:
-\begin{verbatim}
-    S -> X
-    S -> S X
-    GOAL -> <s> S </s> 
-\end{verbatim}
-Glued hypotheses are informed about <s> and </s> only after forming a complete sentence, so the left states are spuriously ambiguous.  Moreover, hypothesis score estimates are more accurate in (1) as they know about <s> earlier. 
-
-Figure~\ref{fig:glue} shows the improvement in cdec by changing the glue rule formulation from (2) to (1). The glue grammar for each decoder had varied since their inceptions. The convergence on using formulation (1) is the direct result of the comparison between the three decoders. (Result for cdec and Joshua in Figure~\ref{fig:model} were done with the improved glue grammar formulation.)
-
- \begin{figure}[h]
- \begin{center}
- \input{1111-8/glue_model.tex}
- \end{center}
- \caption{Affect on model score by changing glue-rule formulation}
- \label{fig:glue}
- \end{figure}
+% \subsection{Glue Rules}
+% 
+% The glue grammar can be constructed in a number of ways. In formulation (1), the grammar is:
+% \begin{verbatim}
+%     S -> <s>
+%     S -> S X
+%     GOAL -> S </s> 
+% \end{verbatim}
+%  where <s> and </s> are first-class words like any other. In this formulation, glued hypotheses know that they are bound to the beginning of sentence <s>.  Therefore, their left language model state is empty and more hypotheses can recombine.  
+%  
+% The grammar for formulation (2) is:
+% \begin{verbatim}
+%     S -> X
+%     S -> S X
+%     GOAL -> <s> S </s> 
+% \end{verbatim}
+% Glued hypotheses are informed about <s> and </s> only after forming a complete sentence, so the left states are spuriously ambiguous.  Moreover, hypothesis score estimates are more accurate in (1) as they know about <s> earlier. 
+% 
+% Figure~\ref{fig:glue} shows the improvement in cdec by changing the glue rule formulation from (2) to (1). The glue grammar for each decoder had varied since their inceptions. The convergence on using formulation (1) is the direct result of the comparison between the three decoders. (Result for cdec and Joshua in Figure~\ref{fig:model} were done with the improved glue grammar formulation.)
+% 
+%  \begin{figure}[h]
+%  \begin{center}
+%  \input{1111-8/glue_model.tex}
+%  \end{center}
+%  \caption{Affect on model score by changing glue-rule formulation}
+%  \label{fig:glue}
+%  \end{figure}
  
 \section{Conclusion}
 
