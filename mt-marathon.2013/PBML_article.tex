@@ -44,7 +44,7 @@
 % AFTER \begin{document}. Note that \subtitle is not allowed anymore due to
 % problems with indexing in science databases. If needed use colon in the title.
 
-\title{A Comparison of Synchronous-CFG \titlelinebreak{} Decoder Implementations}
+\title{Updating the Feature Function Framework \titlelinebreak{} in the Moses Decoder}
 
 
 % Now put the affiliated institutes first, then author names and the labels
@@ -134,7 +134,7 @@ Best practices for developing a SMT decoder have progressed enormously since the
 
 In this paper, we describe the changes in the Moses decoder and supporting programs to support such changes, while preserving the rich features in the Moses toolkit. Particular emphasis will be place in describing the feature function framework.
 
-The open-source community has also changed from the dominance of the phrase-based model and virtual Moses monopoly, to a situation where syntactic models are leading the research agenda, and other projects such as cdec and Joshua have equal prominence.  We take this opportunity to compare the implementations of these other decoders with Moses. We find that there are many similarities between the decoders, but also some surprising differences in implementation of even very fundamental features in each decoder.
+We compare the implementation of the Moses SCFG decoder to that of cdec and Joshua and find that there are some surprising differences in implementation of even very fundamental features in each decoder.
 
 \end{abstract}
 
@@ -289,7 +289,9 @@ Furthermore, there are three junctures during decoding where each feature functi
 \end{enumerate}
 However, the stage at which the feature function is evaluate determines whether the feature function is cacheable between sentences. Scores that are evaluated at stage (1) can be cached and reused inter-sentence. Scores evaluated during stage (2) and (3) cannot be cached as they depend on the entire source sentence. Therefore, it is more efficient to evaluate as early as possible.
 
-Additionally, some feature functions do not override any of the stages. These feature is so intertwined with the search mechanism that their scores are set by search mechanism themselves. The feature function exist as an identifier to locate the score. Features functions such as the translation models, unknown word penalty,  generation models fall into this category. The input feature, which scores lattices and confusion network input is also hardcoded into the decoder.
+Additionally, the evaluation at stage (1) can return an estimate of the future cost to guide search. This is a technique used by the phrase-based decoder but not by the SCFG decoder.
+
+Some feature functions do not override any of the stages. These feature is so intertwined with the search mechanism that their scores are set by search mechanism themselves. The feature function exist as an identifier to locate the score. Features functions such as the translation models, unknown word penalty,  generation models fall into this category. The input feature, which scores lattices and confusion network input is also hardcoded into the decoder.
 
 \subsection{Examples}
 
@@ -303,14 +305,12 @@ The most efficient way to implement language models is to override stage (1) and
 
 \subsection{Joshua}
 
-Joshua's decoding algorithm is an implementation of CKY+ \cite{chappelier1998generalized}. It
-supports decoding with arbitrary synchronous CFG productions, imposing no limits on the rank of
-rules or on the intermingling of terminals and nonterminals.
+As with cdec and Moses' SCFG decoder, Joshua's decoding algorithm is an implementation of CKY+ \cite{chappelier1998generalized}. 
 
 Joshua makes only a single CKY pass over the source language sentence; it does not build a
 ``stateless'' hypergraph (or --LM forest, in the language of \citet{chiang2007hierarchical}). To
 enable this, Joshua interleaves the extension of partially-constructed rules with the application of
-complete rules while building the hypergraph, depicted here with pseudocode:
+complete rules while building the hypergraph, Figure~\ref{algorithm:joshua}:
 
 \begin{figure} [h!]
 \small 
@@ -330,15 +330,14 @@ complete rules while building the hypergraph, depicted here with pseudocode:
 The chart containing partially-completed rules is called the \emph{dot chart}, and no pruning is
 applied to it; rule features are computed only when complete rules are applied.
 
-The efficiency gained from this interleaving allows Joshua to decode with SCFGs with rich
-nonterminal sets \cite{galley2004whats,zollmann2006syntax}, although the time and memory
-requirements increase dramatically. Incorporating feature scores into the dot chart for more
-efficient decoding with SCFGs with rich nonterminal sets is a direction of interest.
+% The efficiency gained from this interleaving allows Joshua to decode with SCFGs with rich
+% nonterminal sets \cite{galley2004whats,zollmann2006syntax}, although the time and memory
+% requirements increase dramatically. Incorporating feature scores into the dot chart for more
+% efficient decoding with SCFGs with rich nonterminal sets is a direction of interest.
 
 \subsection{cdec}
-In contrast to Moses and Joshua which use a one-pass search strategy, cdec uses a multi-pass search strategy. That is, for each input sentence, all feature functions are evaluated when a hypothesis is created in Moses.
-
-In cdec, each pass creates a hypergraph that is used as the input for the next pass. cdec evaluates stateless feature functions in the first pass, followed by stateful feature functions in the second. Neither decoder partially evaluate stateful feature functions, as done in Moses.
+In contrast to Moses and Joshua which use a one-pass search strategy, cdec uses a multi-pass search strategy. %That is, for each input sentence, all feature functions are evaluated when a hypothesis is created in Moses.
+Each pass creates a hypergraph that is used as the input for the next pass. cdec evaluates stateless feature functions in the first pass, followed by stateful feature functions in the second. 
 
 cdec also supports an arbitrary number of passes, feature functions can be assigned to a particular
 pass.
@@ -422,10 +421,7 @@ Sparse features contain scores that may only be present occasionally. However, w
 Storing and using sparse feature efficiently present a challenge which each decoder has attempted to solve differently.
 
 \subsection{Moses}
-Moses implements supports for both dense and sparse features. Each feature must be identifiable as one or the other.
-The intuition behind this is that most systems will still contain dense features. Therefore, it would be more efficient to use existing dedicated data-structures to efficiently handle dense vectors.
-
-A sparse feature map was added to handle sparse scores.
+Moses implements supports for both dense and sparse features. Each feature must be identifiable as one or the other. The intuition behind this is that most systems will still contain dense features. Therefore, it would be more efficient to use existing dedicated data-structures to efficiently handle dense vectors. A sparse feature map was added to handle sparse scores.
 
 \subsection{cdec}
 cdec eschews Moses' dense and sparse hybrid approach and implement only sparse maps. Dense features can still be modelled in the framework as sparse features, whose name are suffixed with indices.
@@ -439,7 +435,15 @@ Hypotheses only retain the weighted sum of the feature scores, . The individual 
   
 \section{Results}
 
-The results from the three decoders are comparable, given the same formalism and model data, and adjusting for scaling differences and constants. 
+The results from the three decoders are comparable, given the same formalism and model data, and adjusting for scaling differences and constants. Figure~\ref{fig:model} shows the comparison of model scores and BLEU scores for a hierarchical model. Moses and cdec are roughly comparable in terms of speed. Also, Moses and cdec converges to roughly the same model scores, while Joshua makes more search errors, leading to overall lower BLEU scores.
+
+\begin{figure}
+%run report.gnuplot to update these.
+\input{1111-8/model.tex}\input{1111-8/bleu.tex}
+\caption{\label{fig:model}Model scores and BLEU using cube pruning with pop limits ranging from 5 to 1000.}
+\end{figure} 
+
+Joshua's lower model score is likely due to the fact that in Moses and cdec, the calculation of language model state is delegated to the language model implementation~\cite{Heafield-left} which uses the internal data-structure of the language model to determine state. Joshua, on the other hand, uses the words in the left and right context to determine language model state. This results in more aggressive hypothesis recombination in Moses and cdec, leading to better model score. Joshua will soon be updated~\footnote{\url{https://github.com/hieuhoang/papers/commit/e417a6adcf4f1e49954836b14799509fecdea11c#mt-marathon.2013} } to incorporate better left-state minimisation to match the performance of Moses and cdec. 
 
 \subsection{Glue Rules}
 
@@ -459,7 +463,7 @@ The grammar for formulation (2) is:
 \end{verbatim}
 Glued hypotheses are informed about <s> and </s> only after forming a complete sentence, so the left states are spuriously ambiguous.  Moreover, hypothesis score estimates are more accurate in (1) as they know about <s> earlier. 
 
-Figure~\ref{fig:glue} shows the improvement in cdec by changing the glue rule formulation from (2) to (1). The glue grammar for each decoder had varied since their inceptions. The convergence on using formulation (1) is the direct result of the comparison between the three decoders.
+Figure~\ref{fig:glue} shows the improvement in cdec by changing the glue rule formulation from (2) to (1). The glue grammar for each decoder had varied since their inceptions. The convergence on using formulation (1) is the direct result of the comparison between the three decoders. (Result for cdec and Joshua in Figure~\ref{fig:model} were done with the improved glue grammar formulation.)
 
  \begin{figure}[h]
  \begin{center}
@@ -468,25 +472,12 @@ Figure~\ref{fig:glue} shows the improvement in cdec by changing the glue rule fo
  \caption{Affect on model score by changing glue-rule formulation}
  \label{fig:glue}
  \end{figure}
-
-\subsection{Head-to-head}
-
-Figure~\ref{fig:model} shows the comparison of model scores and BLEU scores for a hierarchical model. Moses and cdec are roughly comparable in terms of speed. Also, Moses and cdec converges to roughly the same model scores, while Joshua makes more search errors, leading to lower BLEU scores.
-
-\begin{figure}
-%run report.gnuplot to update these.
-\input{1111-8/model.tex}\input{1111-8/bleu.tex}
-\caption{\label{fig:model}Model scores and BLEU using cube pruning with pop limits ranging from 5 to 1000.}
-\end{figure} 
-
-Joshua's lower model score is likely due to the fact that in Moses and cdec, the calculation of language model state is delegated to the language model implementation~\cite{Heafield-left} which uses the internal data-structure of the language model to determine state. Joshua, on the other hand, uses the words in the left and right context to determine language model state. This results in more aggressive hypothesis recombination in Moses and cdec, leading to better model score. Joshua will soon be updated~\footnote{\url{https://github.com/hieuhoang/papers/commit/e417a6adcf4f1e49954836b14799509fecdea11c#mt-marathon.2013} } to incorporate better left-state minimisation to match the performance of Moses and cdec. 
-
  
 \section{Conclusion}
 
-Statistical machine translation is a dynamic field which is constantly evolving. A major challenge for the Moses project, in common with many long-term software projects, is to maintain and update the the underlying framework and infrastructure to enable this evolution to continue. The paper documents the major changes that were made to Moses to enable this to happen and compare it two other decoders which implements the same decoding formalism.
+Statistical machine translation is a dynamic field which is constantly evolving. A major challenge for the Moses project, in common with many long-term software projects, is to maintain and update the the underlying framework and infrastructure to enable this evolution to continue. This paper documents the major changes that were made to Moses to enable this to happen and compare it two other decoders which implements the same decoding formalism.
 
-Even though each decoder was created independently, their output are comparable. We see that by doing an indepth analysis of the working of each decoder and comparing their model scores, we are able to transfer the best optmization techniques from each decoder to the others.
+%Even though each decoder was created independently, their output are comparable. We see that by doing an indepth analysis of the working of each decoder and comparing their model scores, we are able to transfer the best optmization techniques from each decoder to the others.
 
 
 \section*{Acknowledgements}
