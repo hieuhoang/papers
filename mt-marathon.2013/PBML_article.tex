@@ -29,6 +29,7 @@
 \usepackage{algorithmic}
 \usepackage{amsmath}
 \usepackage{tikz,gnuplot-lua-tikz} 
+\usepackage{nameref}
 
 % Definitions
 % ===========
@@ -229,6 +230,8 @@ The state comparison of the original framework was generalised to compare the st
 \label{algo:CompareHypoStates.new}
 \end{figure} 
         
+A detailed example of how to add a new feature function to the Moses decoder is contained in\emph{~\nameref{Appendix}}.
+
 \subsection{cdec and Joshua}
 cdec and Joshua both have modern feature function frameworks. Both of them have no distinction between stateful and stateless features; stateless features have zero size states.
 
@@ -491,6 +494,102 @@ The research leading to these results has received funding from the European Uni
 
 % If needed, add appendices here
 %\section*{Appendix A: \ldots}
+
+\section*{Appendix: Adding a New Feature Function to Moses, an Example}
+\label{Appendix}
+
+The section describes how to add a new feature function to the current (July 2013) version of Moses, and use it during decoding.
+
+\begin{enumerate}
+    \item Create a new class in the decoder source code. By convention, the files should be in the folder or subfolder of either
+\begin{verbatim}
+   moses/FF
+   moses/LM
+   moses/TranslationModel
+\end{verbatim}
+Inherit the class from either of
+\begin{verbatim}
+  StatelessFeatureFunction
+  StatefulFeatureFunction
+\end{verbatim}
+or any class that inherit from one of these classes. Other common classes to inherit from are:
+\begin{verbatim}
+  PhraseDictionary
+  LanguageModelImplementation
+\end{verbatim}
+
+    \item Create a constructor of the form
+\begin{verbatim}
+  ClassName(const std::string &line);
+\end{verbatim}
+
+    \item Implement the method
+\begin{verbatim}
+  bool IsUseable(const FactorMask &mask) const;
+\end{verbatim}
+The argument is a bit vector of which factors are available. The method should return \emph{true} if it can be evaluated with these factors, otherwise return \emph{false}. If the feature does not use any factors, always return  \emph{true}. 
+
+The constructor, and this method, are the only mandatory function for feature functions. All others methods override default methods (that often do nothing).
+
+    \item Useful methods to override:
+      \begin{enumerate}
+        \item If the feature needs to load data, override the method
+	  \begin{verbatim}
+  void Load();
+	  \end{verbatim}
+        \item If the feature functions takes arguments
+	  \begin{verbatim}
+  void SetParameter(const std::string& key, const std::string& value);
+	  \end{verbatim}
+\emph{name}, \emph{num-features}, \emph{tuneable} are reserved keys that the new feature should not use.
+	\item If it requires initialisation and cleaning after each sentence (this is not particularly thread-safe):
+	  \begin{verbatim}
+  void InitializeForInput(InputType const& source);
+  void CleanUpAfterSentenceProcessing(const InputType& source);
+	  \end{verbatim}
+       \end{enumerate}
+    \item Override one or more of the Evaluate() method. 
+      \begin{verbatim}
+  void Evaluate(const Phrase &source
+	    , const TargetPhrase &targetPhrase
+	    , ScoreComponentCollection &scoreBreakdown
+	    , ScoreComponentCollection &estimatedFutureScore) const;
+  void Evaluate(const InputType &source
+            , ScoreComponentCollection &scoreBreakdown) const;
+       \end{verbatim}
+Also for stateless features:
+      \begin{verbatim}
+  void Evaluate(const PhraseBasedFeatureContext& context,
+                ScoreComponentCollection* accumulator) const;
+  void EvaluateChart(const ChartBasedFeatureContext& context,
+                ScoreComponentCollection* accumulator) const;
+       \end{verbatim}
+The method signature is similar for stateful features, but the methods return a state object:
+      \begin{verbatim}
+  FFState* Evaluate(const Hypothesis& cur_hypo,
+		    const FFState* prev_state,
+		    ScoreComponentCollection* accumulator) const;
+  FFState* EvaluateChart(const ChartHypothesis&,
+		      int featureID,
+		      ScoreComponentCollection* accumulator) const;
+      \end{verbatim}
+    \item Register the new feature function with the decoder by adding the following line to \emph{Factory.cpp}:
+      \begin{verbatim}
+  MOSES_FNAME(ClassName);
+      \end{verbatim}
+    \item To instantiate the feature during decoding, add the following line to the \emph{[feature]} section of the moses.ini file:
+      \begin{verbatim}
+  ClassName [key=value]*
+      \end{verbatim}
+If it has dense features, the weights should be in the \emph{[weight]} section, for example:
+      \begin{verbatim}
+  ClassName0= 0.1 0.2 0.3
+      \end{verbatim}
+
+
+
+\end{enumerate}
+
 
 \correspondingaddress
 \end{document}
