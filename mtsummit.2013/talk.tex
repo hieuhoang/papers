@@ -896,64 +896,86 @@ rename file .mm
 \colorbox{gray}{\BUseVerbatim{myverb}}
 \end{itemize}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Randomized language model}
-\vspace{5mm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{KENLM: Training}
+\vspace{10mm}
 \begin{itemize}
-\item For huge corpora (e.g. 100 billion words)
-\item Lossy compression
+\item Another training toolkit for large corpora
 	\begin{itemize}
-	\item Makes false positive mistakes
-	\item frequency of mistakes can be varied with a parameter
-	\end{itemize}	
-\item Typically $\frac{1}{10}$ size of SRI / IRST language model
-\item Maybe use as secondary LM to complement conventional LM
-	\begin{itemize}
-	\item out-of-domain data scraped from the web
-	\item high-order n-gram, eg. 6-7 gram
+	\item faster
+	\item very small memory usage
 	\end{itemize}
+\item Training: \\
+\begin{SaveVerbatim}{myverb} 
+lmplz TODO
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+
+\begin{itemize}
+\item \littlecode{-n 3} = n-gram order
+\item \littlecode{-k 10} = split training procedure into 10 steps
+\end{itemize}
+
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{RandLM: Use in Moses}
-\vspace{10mm}
-\begin{itemize}
-\item Compile the decoder with RandLM library \\
-\begin{SaveVerbatim}{myverb} 
-./configure --with-randlm=[root dir of the RandLM toolkit] 
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\item Change ini file to use RandLM implementation \\
-\begin{SaveVerbatim}{myverb} 
-[lmodel-file]
-0 0 3 /path/to/file   # conventional lm
-5 0 7 /path/to/file   # rand lm
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{itemize}
+% \slide{Randomized language model}
+% \vspace{5mm}
+% \begin{itemize}
+% \item For huge corpora (e.g. 100 billion words)
+% \item Lossy compression
+% 	\begin{itemize}
+% 	\item Makes false positive mistakes
+% 	\item frequency of mistakes can be varied with a parameter
+% 	\end{itemize}	
+% \item Typically $\frac{1}{10}$ size of SRI / IRST language model
+% \item Maybe use as secondary LM to complement conventional LM
+% 	\begin{itemize}
+% 	\item out-of-domain data scraped from the web
+% 	\item high-order n-gram, eg. 6-7 gram
+% 	\end{itemize}
+% \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% \slide{RandLM: Use in Moses}
+% \vspace{10mm}
+% \begin{itemize}
+% \item Compile the decoder with RandLM library \\
+% \begin{SaveVerbatim}{myverb} 
+% ./configure --with-randlm=[root dir of the RandLM toolkit] 
+% \end{SaveVerbatim}
+% \colorbox{gray}{\BUseVerbatim{myverb}}
+% 
+% \item Change ini file to use RandLM implementation \\
+% \begin{SaveVerbatim}{myverb} 
+% [lmodel-file]
+% 0 0 3 /path/to/file   # conventional lm
+% 5 0 7 /path/to/file   # rand lm
+% \end{SaveVerbatim}
+% \colorbox{gray}{\BUseVerbatim{myverb}}
+% \end{itemize}
 
-\slide{RandLM: Training}
-\vspace{10mm}
-\begin{itemize}
-\item Train from text corpus \\
-\begin{SaveVerbatim}{myverb} 
-./buildlm -struct BloomMap -falsepos 8 -values 8 -order 3
-   -output-prefix model  
-   < corpus.txt
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\item Convert SRILM language model \\
-\begin{SaveVerbatim}{myverb} 
-./buildlm -struct BloomMap -falsepos 8 -values 8 -order 3 
-   -output-prefix model
-   -input-path lm.srilm -input-type arpa
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% \slide{RandLM: Training}
+% \vspace{10mm}
+% \begin{itemize}
+% \item Train from text corpus \\
+% \begin{SaveVerbatim}{myverb} 
+% ./buildlm -struct BloomMap -falsepos 8 -values 8 -order 3
+%    -output-prefix model  
+%    < corpus.txt
+% \end{SaveVerbatim}
+% \colorbox{gray}{\BUseVerbatim{myverb}}
+% \item Convert SRILM language model \\
+% \begin{SaveVerbatim}{myverb} 
+% ./buildlm -struct BloomMap -falsepos 8 -values 8 -order 3 
+%    -output-prefix model
+%    -input-path lm.srilm -input-type arpa
+% \end{SaveVerbatim}
+% \colorbox{gray}{\BUseVerbatim{myverb}}
+% \end{itemize}
 
 
 %
@@ -1042,6 +1064,22 @@ rename file .mm
 \item Deal with different number formats\\[2mm]
 \littlecode{\example{er erzielte} <num translation="\example{17.55}"> \example{17,55} </num> \example{Punkte .}}
 \end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Placeholders}
+
+TODO
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{XML Options}
+
+TODO
+
+Contrained - terminologoies
+Inclusive 
+Exclusive
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
