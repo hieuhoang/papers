@@ -907,13 +907,17 @@ rename file .mm
 	\end{itemize}
 \item Training: \\
 \begin{SaveVerbatim}{myverb} 
-lmplz TODO
+lmplz -o [order] -S [memory] < text > text.lm
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
 
 \begin{itemize}
-\item \littlecode{-n 3} = n-gram order
-\item \littlecode{-k 10} = split training procedure into 10 steps
+\item \littlecode{-o order} = n-gram order
+\item \littlecode{-S memory} = How much memory to use.
+	      \begin{itemize}
+		\item NUM\% = percentage of physical memory
+		\item NUM[b/K/M/G/T]
+	      \end{itemize}
 \end{itemize}
 
 \end{itemize}
@@ -1026,7 +1030,7 @@ lmplz TODO
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Advanced Features}
-\vspace{-5mm}
+\vspace{5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
 \item Data and domain adaptation
@@ -1068,8 +1072,42 @@ lmplz TODO
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Placeholders}
+Translate:
+\begin{itemize}
+  \item You owe me a 100 dollars !
+  \item You owe me a 200 dollars !
+  \item You owe me a 9.56 dollars !
+\end{itemize}
+Problem: \\
+Need translations for
+\begin{itemize}
+  \item 100
+  \item 200
+  \item 9.56
+\end{itemize}
+Some things are better off being handled by simple rules:
+\begin{itemize}
+  \item Numbers
+  \item Dates
+  \item Named entities
+\end{itemize}
 
-TODO
+Placeholder:
+\begin{itemize}
+  \item  \littlecode{You owe me a @num@ dollars !}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Placeholders}
+
+\begin{itemize}
+  \item You owe me a 100 dollars !
+\end{itemize}
+Replace with
+\begin{itemize}
+  \item \littlecode{You owe me a  <ne translation="@num@" entity="100">@num@</ne> dollars !}
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
