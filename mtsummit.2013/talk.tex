@@ -1071,6 +1071,44 @@ lmplz -o [order] -S [memory] < text > text.lm
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\slide{Specifying Translations with XML}
+
+\littlecode{./moses -xml-input [exclusive | inclusive | constraint ] }
+\\
+\littlecode{\example{the revenue for} <num translation="\example{2003}"> \example{2003}
+  </num> \example{is higher than ...} }
+
+3 types of XML input:
+\begin{itemize} 
+  \item Exclusive \\
+    \emph{Only} possible translation is given in XML \\
+  \item Inclusive \\
+  Translation is given in XML is in addition to phrase-table\\
+  \item Contraint \\
+  Only use translations from phrase-table if it match XML\\
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Specifying Translations with XML}
+
+Contraint XML. \\
+
+Specifically for translating terminology
+\begin{itemize} 
+  \item learnt good translations from training data
+  \item consistently translate particular phrase in a document
+\end{itemize} 
+
+Example: \\
+\littlecode{\example{Microsoft} <option translation="\example{Windows}"> \example{Windows}
+  </option> \example{8 ...} }
+
+ i.e. do not use any translation unless it contains the word 'Windows'
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \slide{Placeholders}
 Translate:
 \begin{itemize}
@@ -1109,15 +1147,6 @@ Replace with
   \item \littlecode{You owe me a  <ne translation="@num@" entity="100">@num@</ne> dollars !}
 \end{itemize}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{XML Options}
-
-TODO
-
-Contrained - terminologoies
-Inclusive 
-Exclusive
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
