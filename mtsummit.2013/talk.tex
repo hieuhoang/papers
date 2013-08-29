@@ -697,28 +697,38 @@ Typical Europarl file sizes:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Create Binary Tables}
+\small
 Phrase Table:  
 \begin{center}
+\small
 \textcolor{red}{Phrase-based} \\
 \begin{SaveVerbatim}{myverb} 
-  export LC_ALL=C
+  export LC_ALL=C 
   cat pt.txt | sort | ./processPhraseTable -ttable 0 0 -  \
-      -nscores 5 -out out.file
+      -nscores 4 -out out.file
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
+
+\begin{SaveVerbatim}{myverb} 
+  export LC_ALL=C   ./CreateOnDiskPt 1 1 4 100 2 pt.txt out.folder
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+
 \end{center}
 
+
 \begin{center}
+\small
 \textcolor{red}{Hierarchical / Syntax} \\
 \begin{SaveVerbatim}{myverb} 
-  export LC_ALL=C
-  ./CreateOnDiskPt 1 1 5 100 2 pt.txt out.folder
+  export LC_ALL=C ./CreateOnDiskPt 1 1 4 100 2 pt.txt out.folder
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
 \end{center}
 
 Lexical Reordering Table:  
 \begin{center}
+\small
 \begin{SaveVerbatim}{myverb} 
   export LC_ALL=C
   processLexicalTable -in r-t.txt -out out.file
