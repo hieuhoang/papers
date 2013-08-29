@@ -103,9 +103,9 @@
 \item[2002] $\;$ Pharaoh decoder, precursor to Moses (phrase-based models)
 \item[2005] $\;$ Moses started by Hieu Hoang and Philipp Koehn (factored models)
 \item[2006] $\;$ JHU workshop extends Moses significantly
-\item[since late 2006] $\;$ Funding by EU projects EuroMatrix, EuroMatrixPlus
+\item[2006-2012] $\;$ Funding by EU projects EuroMatrix, EuroMatrixPlus
 \item[2009] $\;$ Tree-based models implemented in Moses
-\item[2012] $\;$ MosesCore project. Full-time staff to maintain and enhance Moses
+\item[2012-2015] $\;$ MosesCore project. Full-time staff to maintain and enhance Moses
 \end{description}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,7 +140,7 @@
 \end{itemize}
 \item Code shared on github.com
 \item Main forum: support and developer mailing lists
-\item Main event: Machine Translation Marathon (next: September 2011, Trento)\vspace{-3mm}
+\item Main event: Machine Translation Marathon (next week in Prague)\vspace{-3mm}
 \begin{itemize}
 \item annual open source convention
 \item presentation of new open source tools
@@ -156,8 +156,8 @@
 \begin{itemize}
 \item Moses distribution uses external open source tools
 \begin{itemize}
-\item word alignment: {\sc giza++}, Berkeley aligner
-\item language model: {\sc srilm}, {\sc irstlm}, {\sc randlm}
+\item word alignment: {\sc giza++}, Berkeley aligner, FastAlign
+\item language model: {\sc srilm}, {\sc irstlm}, {\sc randlm}, {\sc kenlm}
 \item scoring: {\sc bleu}, {\sc ter}, {\sc meteor}
 \end{itemize}
 \item Other useful tools
@@ -172,15 +172,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Other Open Source MT Systems}
-\vspace{5mm}
-\begin{itemize} \itemsep -1mm
+\begin{itemize} \itemsep -3mm
 \item {\bf Joshua} --- Johns Hopkins University\\
 {\small \tt http://joshua.sourceforge.net/}
 \item {\bf CDec} --- University of Maryland\\
 {\small \tt http://cdec-decoder.org/}
 \item {\bf Jane} --- RWTH Aachen\\
 {\small \tt http://www-i6.informatik.rwth-aachen.de/jane/}
-\vspace{2mm}
+\item {\bf Phrasal} --- Stanford University\\
+{\small \tt http://nlp.stanford.edu/phrasal/}
 \item Very similar technology \vspace{-2mm}
 \begin{itemize}
 \item Joshua implemented in Java, others in C++
@@ -214,7 +214,7 @@
 \item[Autodesk] --- \\ showed productivity increases in translating manuals when post-editing output from a custom-build Moses system
 \item[Systran] --- \\ developed statistical post-editing using Moses
 \item[Asia Online] --- \\ offers translation technology and services based on Moses
-\item[Many others] ... \\ World Trade Organisation, Adobe, Symantec, WIPO, Sybase, Safaba
+\item[Many others] ... \\ World Trade Organisation, Adobe, Symantec, WIPO, Sybase, Safaba, Bloomberg, Pangeanic, KatanMT, Capita, ...
 
 \end{description}
 
@@ -421,6 +421,7 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Advanced Topics}
+\vspace{-5mm}
 \begin{itemize} \itemsep -1mm
 \item Data and domain adaptation
 \item Speed vs. quality
@@ -429,7 +430,7 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 \item Instructions to decoder
 \item Input formats
 \item Output formats
-\item Minimum Bayes risk decoding
+\item Incremental updating
 \item Translation models
 \item Experiment management system
 \end{itemize}
@@ -462,7 +463,7 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 \item Instructions to decoder
 \item Input formats
 \item Output formats
-\item Minimum Bayes risk decoding
+\item Incremental updating
 \item Translation models
 \item Experiment management system
 \end{itemize}
@@ -499,7 +500,7 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 \item train a translation model for each domain corpus
 \item train a language model for each domain corpus
 \item use all, tune weights for each model
-\item alternative: interpolate language model
+\item alternative: interpolate language model and translation model
 \end{itemize}
 \item Always tune towards target domain
 \end{itemize}
@@ -517,6 +518,7 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 \item Instructions to decoder
 \item Input formats
 \item Output formats
+\item Incremental updating
 \item Translation models
 \item Experiment management system
 \end{itemize}
@@ -531,13 +533,12 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 \begin{center}
 \littlecode{--threads NUM}
 \end{center}
-\item Requires boost library
 \item Does not currently work for:
 \begin{itemize}
-\item syntax-based decoding
 \item IRSTLM
 \item randLM
 \end{itemize}
+\item Also parts of the training pipeline multi-threaded\\ (word alignment, phrase table building)
 \end{itemize}
 
 
@@ -626,7 +627,7 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 \item Instructions to decoder
 \item Input formats
 \item Output formats
-\item Minimum Bayes risk decoding
+\item Incremental updating
 \item Translation models
 \item Experiment management system
 \end{itemize}
@@ -634,14 +635,14 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Speed vs. Memory Use}
+\slide{Reduce Memory Use}
 \begin{center} 
 \includegraphics[scale=1.4]{less-memory.pdf}
 \end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Speed vs. Memory Use}
+\slide{Example}
 \begin{tabular}{p{10cm}c}
 \vspace{-11cm}
 Typical Europarl file sizes:
@@ -695,8 +696,7 @@ Typical Europarl file sizes:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Speed vs. Memory Use}
- 
+\slide{Create Binary Tables}
 Phrase Table:  
 \begin{center}
 \textcolor{red}{Phrase-based} \\
@@ -730,31 +730,50 @@ Language Models (later)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Speed vs. Memory Use}
+\slide{Specify Binary Tables}
 
-Change ini file \\
+Change ini file \\[-6mm]
 \begin{center}
-\textcolor{red}{Phrase-based} \\
+\textcolor{red}{Phrase Table} \\[2mm]
+{\small
 \begin{SaveVerbatim}{myverb} 
-[ttable-file]
-1 0 0 5 out.file
+[feature]
+PhraseDictionaryBinary name=TranslationModel0 table-limit=20 \ 
+   num-features=4 path=/.../phrase-table
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
+}
+\vspace{5mm}
 
-\textcolor{red}{Hierarchical / Syntax} \\
+\textcolor{red}{Hierarchical / Syntax} \\[2mm]
+{\small
 \begin{SaveVerbatim}{myverb} 
-[ttable-file]
-2 0 0 5 out.folder
+[feature]
+PhraseDictionaryOnDisk name=TranslationModel0 table-limit=20 \ 
+   num-features=4 path=/.../phrase-table
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
+}
+\vspace{5mm}
 
 \textcolor{red}{Lexical Reordering Table} \\
-\begin{SaveVerbatim}{myverb} 
-[distortion-file]
-0-0 wbe-msd-bidirectional-fe-allff 6 out.file
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
+automatically detected
 \end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{New: Compact Phrase Table}
+\begin{itemize}
+\item Memory-efficient data structure
+\begin{itemize}
+\item phrase table 6--7 times smaller than on-disk binary table
+\item lexical reordering table 12--15 times smaller than on-disk binary table
+\end{itemize}
+\item Stored in RAM
+\item May be memory mapped
+\item Train with \littlecode{processPhraseTableMin}
+\item Specify with \littlecode{PhraseDictionaryCompact}
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -769,7 +788,7 @@ Change ini file \\
 \item Instructions to decoder
 \item Input formats
 \item Output formats
-\item Minimum Bayes risk decoding
+\item Incremental updating
 \item Translation models
 \item Experiment management system
 \end{itemize}
@@ -792,7 +811,7 @@ Change ini file \\
 	\item large memory requirement during decoding
 	\item large load time
 	\end{itemize}
-\item IRSTLM and RandLM especially designed to tackle large data issues
+\item IRSTLM and KenLM especially designed to tackle large data issues
 \end{itemize}
 
 %As philipp described
@@ -848,8 +867,8 @@ Change ini file \\
 
 \item Change ini file to use IRSTLM implementation \\
 \begin{SaveVerbatim}{myverb} 
-[lmodel-file]
-1 0 3 file/path
+[feature]
+IRSTLM name=LM0 factor=0 path=/.../lm order=5
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
 
@@ -881,15 +900,15 @@ build-lm.sh -i "gunzip -c corpus.gz" -n 3
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{IRSTLM: Binary Format}
-\vspace{20mm}
+\vspace{30mm}
 \begin{itemize}
-\item Create binary format: \\
+\item Create binary format: \\[3mm]
 \begin{SaveVerbatim}{myverb} 
 compile-lm language-model.srilm language-model.blm
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
 
-\item Load-on-demand: \\
+\item Load-on-demand: \\[3mm]
 \begin{SaveVerbatim}{myverb} 
 rename file .mm  
 \end{SaveVerbatim}
@@ -897,30 +916,42 @@ rename file .mm
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{KENLM: Training}
+\slide{KENLM}
 \vspace{10mm}
 \begin{itemize}
-\item Another training toolkit for large corpora
-	\begin{itemize}
-	\item faster
-	\item very small memory usage
-	\end{itemize}
-\item Training: \\
+\item Developed by Kenneth Heafield (CMU / Edinburgh / Stanford)
+\item Fastest and smallest language model implementation
+\item Compile from LM trained with SRILM\\[5mm]
+\begin{SaveVerbatim}{myverb} 
+build_binary model.lm model.binlm
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+\item Specify in decoder\\[5mm]
+\begin{SaveVerbatim}{myverb} 
+KENLM name=LM0 factor=0 path=/.../model.binlm order=5
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{KENLM: Training}
+\vspace{5mm}
+\begin{itemize}
+\item Can train very large language models with limited RAM\\
+(on disk streaming)\\[5mm]
 \begin{SaveVerbatim}{myverb} 
 lmplz -o [order] -S [memory] < text > text.lm
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
 
-\begin{itemize}
 \item \littlecode{-o order} = n-gram order
 \item \littlecode{-S memory} = How much memory to use.
 	      \begin{itemize}
-		\item NUM\% = percentage of physical memory
-		\item NUM[b/K/M/G/T]
+		\item \littlecode{NUM\%} = percentage of physical memory \vspace{2mm}
+		\item \littlecode{NUM[b/K/M/G/T]} = specified amount in bytes, kilo bytes, etc.
 	      \end{itemize}
 \end{itemize}
 
-\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \slide{Randomized language model}
@@ -1030,7 +1061,7 @@ lmplz -o [order] -S [memory] < text > text.lm
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Advanced Features}
-\vspace{5mm}
+\vspace{-10mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
 \item Data and domain adaptation
@@ -1040,7 +1071,7 @@ lmplz -o [order] -S [memory] < text > text.lm
 \item \currenttopic{Instructions to decoder}
 \item Input formats
 \item Output formats
-\item Minimum Bayes risk decoding
+\item Incremental updating
 \item Translation models
 \item Experiment management system
 \end{itemize}
@@ -1078,73 +1109,70 @@ lmplz -o [order] -S [memory] < text > text.lm
 \littlecode{\example{the revenue for} <num translation="\example{2003}"> \example{2003}
   </num> \example{is higher than ...} }
 
-3 types of XML input:
-\begin{itemize} 
+\vspace{1cm}
+Three types of XML input:
+\vspace{-2mm}
+\begin{itemize} \itemsep -2mm 
   \item Exclusive \\
-    \emph{Only} possible translation is given in XML \\
+    \emph{Only} possible translation is given in XML 
   \item Inclusive \\
-  Translation is given in XML is in addition to phrase-table\\
-  \item Contraint \\
-  Only use translations from phrase-table if it match XML\\
+  Translation is given in XML is in addition to phrase-table
+  \item Constraint \\
+  Only use translations from phrase-table if it match XML specification
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Specifying Translations with XML}
-
-Contraint XML. \\
-
-Specifically for translating terminology
+\slide{Constraint XML}
+\vspace{1cm}
+\begin{itemize}
+\item Specifically for translating terminology
 \begin{itemize} 
-  \item learnt good translations from training data
   \item consistently translate particular phrase in a document
+  \item may have learned larger phrase pairs that contain terminology term
 \end{itemize} 
 
-Example: \\
+\item Example: \\[4mm]
 \littlecode{\example{Microsoft} <option translation="\example{Windows}"> \example{Windows}
   </option> \example{8 ...} }
 
- i.e. do not use any translation unless it contains the word 'Windows'
-
+\item Allows use of phrase pair only if maps \example{Windows} to  \example{Windows}
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Placeholders}
-Translate:
-\begin{itemize}
-  \item You owe me a 100 dollars !
-  \item You owe me a 200 dollars !
-  \item You owe me a 9.56 dollars !
+\begin{itemize} \itemsep -2mm
+\item Translate:
+\begin{itemize} \vspace{-2mm}
+  \item \example{You owe me 100 dollars !}
+  \item \example{You owe me 200 dollars !}
+  \item \example{You owe me 9.56 dollars !}
 \end{itemize}
-Problem: \\
-Need translations for
-\begin{itemize}
-  \item 100
-  \item 200
-  \item 9.56
+\item Problem: need translations for
+\begin{itemize} \vspace{-2mm}
+  \item \example{100}
+  \item \example{200}
+  \item \example{9.56}
 \end{itemize}
-Some things are better off being handled by simple rules:
-\begin{itemize}
+\item Some things are better off being handled by simple rules:
+\begin{itemize} \vspace{-2mm}
   \item Numbers
   \item Dates
   \item Named entities
 \end{itemize}
-
-Placeholder:
-\begin{itemize}
-  \item  \littlecode{You owe me a @num@ dollars !}
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Placeholders}
-
+\vspace{2cm}
 \begin{itemize}
-  \item You owe me a 100 dollars !
-\end{itemize}
-Replace with
-\begin{itemize}
-  \item \littlecode{You owe me a  <ne translation="@num@" entity="100">@num@</ne> dollars !}
+\item \example{You owe me 100 dollars !}
+\item Replace numbers with {\tt @num@}\\[4mm]
+ \littlecode{\example{You owe me} @num@ \example{dollars !}}
+\item Specification\\[4mm]
+ \littlecode{\example{You owe me}  <ne translation="@num@" entity="\example{100}">@num@</ne> \example{dollars !}}
 \end{itemize}
 
 
@@ -1240,7 +1268,7 @@ I really like to $<$b$>$eat$<$/b$>$ chicken!}
 \item Instructions to decoder
 \item \currenttopic{Input formats}
 \item Output formats
-\item Minimum Bayes risk decoding
+\item Incremental updating
 \item Translation models
 \item Experiment management system
 \end{itemize}
@@ -1442,7 +1470,7 @@ Command line argument & Input to Moses {\tiny (PLF format - Python Lattice Forma
 \item Instructions to decoder
 \item Input formats
 \item \currenttopic{Output formats}
-\item Minimum Bayes risk decoding
+\item Incremental updating
 \item Translation models
 \item Experiment management system
 \end{itemize}
@@ -1647,52 +1675,59 @@ Argument to command line\\[2mm]
 \item Instructions to decoder
 \item Input formats
 \item Output formats
-\item \currenttopic{Minimum Bayes risk decoding}
+\item \currenttopic{Incremental updating}
 \item Translation models
 \item Experiment management system
 \end{itemize}
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Minimum Bayes Risk Decoding}
-\begin{itemize}
-\item Normal (MAP) decoding: \vspace{-5mm}
-\begin{center}
-\maths{$ \hat{t} = argmax_t \; p (t | s ) $}
-\end{center} \vspace{-5mm}
-\item MBR decoding: \vspace{-5mm}
-\begin{center}
-\maths{$ \hat{t} = argmax_t \sum_{t' \in T} \; p (t' | s ) \times bleu(t', t) $}
 
-\vspace{5mm}
-\includegraphics[scale=1.2]{minimum-bayes-risk.pdf}
+\slide{Incremental Training}
+\begin{center}
+\includegraphics[scale=2]{wikitrans.pdf}
 \end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Incremental Training}
+\vspace{1cm}
+\begin{itemize}
+\item Incremental word alignment
+\begin{itemize}
+\item requires modified version of GIZA++\\
+(available at http://code.google.com/p/inc-giza-pp/)
+\item only works for HMM alignment (not the common IBM Model 4)
+\end{itemize}
+\item Translation model is defined by parallel corpus\\[5mm]
+\begin{SaveVerbatim}{myverb}
+PhraseDictionaryDynSuffixArray \ 
+   source=/.../corpus.f target=/.../corpus.e \ 
+   alignment=/.../model/aligned 
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Minimum Bayes Risk Decoding}
-\vspace{10mm}
+
+\slide{Update Word Alignment}
+\vspace{2cm}
 \begin{itemize}
-\item Set of translations \textcolor{red}{$t' \in T$}
-\begin{center}
-\maths{$ \hat{t} = argmax_t \sum_\text{\textcolor{red}{{$t' \in T$}}} \; p (t' | s ) \times bleu(t', t) $}
-\end{center}
+\item Uses original word alignment models\\
+(with additional model files stored after training)
+\item Incremental GIZA++ loads model
+\item New sentence pairs is aligned on the fly
+\item Typically, GIZA++ processes are run in both directions, symmetrized
+\end{itemize}
 
-\item Using n-best list:
-\begin{center}
-\begin{SaveVerbatim}{myverb}
-moses -f moses.ini -i in.txt -mbr 
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\item Using lattice:
-\begin{center}
-\begin{SaveVerbatim}{myverb}
-lmbrgrid ... -f moses.ini -i input.txt
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
+\slide{Update Translation Model}
+\vspace{3cm}
+\begin{itemize}
+\item Translation table is stored as word-aligned parallel corpus
+\item Update = add word aligned sentence pair
+\item Updating a running Moses instance via XML RPC
 \end{itemize}
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1708,7 +1743,7 @@ lmbrgrid ... -f moses.ini -i input.txt
 \item Instructions to decoder
 \item Input formats
 \item Output formats
-\item Minimum Bayes risk decoding
+\item Incremental updating
 \item \currenttopic{Translation models}
 \item Experiment management system
 \end{itemize}
@@ -2056,7 +2091,7 @@ seine Stellung und Maßnahmen [CNP] ||| his position and actions [NPB] ||| ...
 \item Instructions to decoder
 \item Input formats
 \item Output formats
-\item Minimum Bayes risk decoding
+\item Incremental updating
 \item Translation models
 \item \currenttopic{Experiment management system}
 \end{itemize}
