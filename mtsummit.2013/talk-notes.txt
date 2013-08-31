@@ -2,7 +2,7 @@ philipss has described the theories and models used in machine translation.
 
 And I hope that the hands-on session has given you the appetite to go away and create your own engines.
 
-Now i'm gonna spend about an hour going through some of the more advanced details of Moses
+Now i'm gonna spend about an hour going through some of exactly how you create your own engine with Moses
 
 I'm gonna show you how to 
   - create an engine faster,
@@ -13,7 +13,63 @@ There's a lot of information
   - it might be confusing
   - so please interrupt if you don't understand something
   - i'll try & deal with them there & then
-  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+First of all, i'm gonna give you a high level overvue about the data need in SMT
+
+There are 2 main type of data you need
+
+the 1st is parallel data.
+   - this is used to create the translation rules
+        - that is, this phrase in the source language
+              - translate to this phrase in the target.              
+   - parallel data could be 
+        - your in-house tmx'es
+   			- bilingual dictionaries 
+   			- parallel corpora for SMT
+   	- parallel data MUST be sentence aligned
+   	    - that is, 1 sentence in the source language - 1 sentence in the target
+				- can't just 2 documents in different languages about the same thing
+				       - not sentenced aligned. 
+
+if your Moses engine only contains a translation model
+   - it WILL translate
+   - output will be stilted
+   
+TO make the output fluent
+  - another model, called the LANGUAGE MODEL needs to be created
+   
+language models are created from monolingual data, in the target language
+   - could be half of the data from parallel corpus
+   - BUT can be much more
+   - monolingual data is easy to collect
+      - turn a web crawl onto the web 
+      - this year in Edinburgh 
+         - used the 60TB corpus of the whole internet 
+         - collect by the Common Crawl foundation 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Nearly always the case that more data is better
+  - so don't throw out translations of the bible when you're trying to translate legal documents
+      - it may be useful
+However, you should always know what is in your data
+  	- be able to separate them into files of different genres or domain
+  	
+'cos ONE of the best way to use 
+  	- create a model for each domain
+  	- use them all in your Moses engine
+  	    - let them battle it out against each other
+  	    - Moses has always supported the use of
+  	       multiple translation models & language models
+There are other ways of using all that data
+   - we often use interpolation for language models
+   - you can also interpolate translation models with Moses
+   
+However, the take-home message here
+   - keep data from separate domain - SEPARATED
+   - it will make a much better engine that way
+     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Faster Training
 
