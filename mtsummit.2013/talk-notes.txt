@@ -14,63 +14,6 @@ There's a lot of information
   - so please interrupt if you don't understand something
   - i'll try & deal with them there & then
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-First of all, i'm gonna give you a high level overvue about the data need in SMT
-
-There are 2 main type of data you need
-
-the 1st is parallel data.
-   - this is used to create the translation rules
-        - that is, this phrase in the source language
-              - translate to this phrase in the target.              
-   - parallel data could be 
-        - your in-house tmx'es
-   			- bilingual dictionaries 
-   			- parallel corpora for SMT
-   	- parallel data MUST be sentence aligned
-   	    - that is, 1 sentence in the source language - 1 sentence in the target
-				- can't just 2 documents in different languages about the same thing
-				       - not sentenced aligned. 
-
-if your Moses engine only contains a translation model
-   - it WILL translate
-   - output will be stilted
-   
-TO make the output fluent
-  - another model, called the LANGUAGE MODEL needs to be created
-   
-language models are created from monolingual data, in the target language
-   - could be half of the data from parallel corpus
-   - BUT can be much more
-   - monolingual data is easy to collect
-      - turn a web crawl onto the web 
-      - this year in Edinburgh 
-         - used the 60TB corpus of the whole internet 
-         - collect by the Common Crawl foundation 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-Nearly always the case that more data is better
-  - so don't throw out translations of the bible when you're trying to translate legal documents
-      - it may be useful
-However, you should always know what is in your data
-  	- be able to separate them into files of different genres or domain
-  	
-'cos ONE of the best way to use 
-  	- create a model for each domain
-  	- use them all in your Moses engine
-  	    - let them battle it out against each other
-  	    - Moses has always supported the use of
-  	       multiple translation models & language models
-There are other ways of using all that data
-   - we often use interpolation for language models
-   - you can also interpolate translation models with Moses
-   
-However, the take-home message here
-   - keep data from separate domain - SEPARATED
-   - it will make a much better engine that way
-     
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Faster Training
 
 Training may take a day to week.
@@ -79,7 +22,7 @@ Training may take a day to week.
   
   - to speed it it up, we are looking to make the most use of all the cores on our server
      - currents servers have at least 2 cores or more. Our edinburgh server, for instance has 16 or 24 cores.
- 	 - as you can imagine, being able to use 16 cores results in a significant speedup.
+ 	 - as you can imagine, being able to use 24 cores results in a substantioal speedup.
 %%%%%%%%%%%%%%%%%%%%%%%
 
 %%%
@@ -499,7 +442,44 @@ In these cases, need
 
    - preprocess your input. Identify numbers, dates, names
    - add XML tags to force the translation
- 
+
+%%%%%%%%%%%%
+3 ways you can influence what translations the decoder uses
+  - exclusive
+  - inclusive
+  - constraint
+
+Exclusive
+  - the decoder must use the translation given in the XML. Translations from the phrase-table are discarded
+Inclusive
+  - the translation in the XML is in addition to translations from the phrase-table. It competes with the phrase table translations
+Constraint
+   - only the phrase-table translation are used. However, they must contain the phrase specified in the XML
+   
+%%%%%%%%%%%%%%
+This last type is useful for translating terminogloy
+   - the translation can be seen in the training data
+       - therefore it's in the phrase-table
+   - need to consistently translate it
+
+%%%%%%%%%%%%%%%%%
+Another refinement on XML input are placeholders
+  - some things such as 
+      numbers
+      dates
+      currency
+      named entities
+    best translated using simple rules outside of moses
+  
+  - need context to produce good translations
+  - in training data
+      - replace all occurences with a placeholder symbol 
+	- when decoding
+	    - do the same
+	    - translate the number outside of moses
+	    - once everything is done
+	         - replace placeholder with the translation
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Walls and Zones
 
