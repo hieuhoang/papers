@@ -463,22 +463,28 @@ This last type is useful for translating terminogloy
    - need to consistently translate it
 
 %%%%%%%%%%%%%%%%%
-Another refinement on XML input are placeholders
-  - some things such as 
+A property of SMT 
+ - need context to produce good translations
+Some "words" just won't occur a lot in the training data
+  - therefore have good context
+  - these 'words' i'm thinking of are
       numbers
       dates
       currency
       named entities
-    best translated using simple rules outside of moses
+  - best translated using simple rules outside of moses
+      - using simple rules or lookups
+%%%%%%%%%%%%%%%%%%
+For these, Moses has another functionality
+  - replace them with a placeholder 'word' to represent them all.
   
-  - need context to produce good translations
   - in training data
       - replace all occurences with a placeholder symbol 
 	- when decoding
 	    - do the same
 	    - translate the number outside of moses
 	    - once everything is done
-	         - replace placeholder with the translation
+	         - the decoder will replace placeholder with the translation
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Walls and Zones
