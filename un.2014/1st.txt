@@ -39,4 +39,108 @@ We call the things in the yellow box models
 
 When we want to actually translate a sentence
   - load these models
-  - push the sentence thru, get 
+  - push the sentence thru the models, get output translation 
+
+===================================================
+
+machine translation
+  - 1 of the earliest use of computers
+ 
+however, current best performing types of systems
+  - trace their roots back to pioneering work done researchers at IBM
+  - took statistical approach being used in speech recognition
+  - applied it machine translation
+     - our subfield is called STATICAL machine translation
+     - differentiate it from RULE-BASED, EXAMPLE-BASED mt
+
+In the beginning
+  - progress was slow
+  - concentrated on translating word-by-word
+
+Then someone had the bright idea
+  - lets trasnlating multiple words at the same time.
+     - multiple-worsds --> phrases
+  - such a simple, but powerful, idea
+     - even today, still producing state of the translations
+         - many languages pairs
+  - and good enough for many others
+  - it's simplicity makes it fast.
+
+  - this is the system you've prob implemented here
+
+however, today, the current research more linguistically motivated systems
+  - don't just translate phrases, but translate tree fragments
+
+===================================================
+b
+The 1st software that implemented phrase-based model
+  - called Pharoah
+  - implemented by my supervisor
+Then i came along
+  - rather than use Pharoah, wrote my own
+
+For various reasons, it was adopted by a lot of people
+  - part of some major EU projects
+
+4 years later
+  - still hadn't finished my phd
+  - added tree-based models to moses
+
+past 2.6 years
+  - the eu are funding a project that maintain this software
+  - i work full time to maintain moses
+     - disseminate information about it 
+     - by giving talks suc as this
+
+Doesn't fund just me
+  - research events, business outreach initiatives, 
+  - ad-hoc collatbrations, marcin came to edinburgh for 3 months, paid by the MosesCore project
+ 
+===================================================
+
+We love to people to use Moses
+  - try our darndsest to make it easier to use
+
+However, to get the best translation quality
+  - it has to be built by academic, for academic
+
+Moses is the reference implemntation that most academic use
+  - when they want something to compare against.
+
+It is the goto toolkit
+  - if you want new gizmos you've read about
+
+It is the goto toolkit
+  - if you HAVE new gizmos and you want to try it out
+
+===================================================
+
+Moses is increaslingly being adopted by organisation that want to use MT
+  - has a liberal open source license
+
+Its emphasis on translation quality makes it comparable with closed-source systems
+ - given the same trainingdata
+
+HOWEVER,
+  - not easy to use
+  - we don't do any of the integration into your workflow
+     - want a plugin for MS word or Trados
+        - do it yourself
+
+===================================================
+if u wanna know about orgonations that uses it
+  - search online for these organisation
+ 
+find youtube videos & slides of people talkig about trheir experience 
+  - implmenenting Moses in their organisations
+
+===================================================
+
+In this tutorial
+contrate on phrase0based translation model
+
+where multiple-words, or phrases, are translated to other phrases
+  - with some reordering
+
+===================================================
+
