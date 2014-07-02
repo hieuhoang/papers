@@ -144,3 +144,26 @@ where multiple-words, or phrases, are translated to other phrases
 
 ===================================================
 
+Lets begin to translate a sentence. 
+
+For every sub-span
+  - look up what the corresponding translation SHOULD be
+  - in the translation model
+Each span
+  - many possible trasnaltions
+
+Each of these are called the translation option
+===================================================
+
+Translation (decoding) is just a matter of choosing 
+  - a set of translation option which is a good 
+
+===================================================
+
+Many flavours of syntax
+  - string to tree
+
+tree is a valid syntactic tree
+
+or you could start with with a sentence & syntactic
+  - created 
