@@ -1,3 +1,42 @@
+hieu from edinburgh university
+marcin from uni of posnan
+  - working closely with us on machine translation
+
+===================================================
 tell you the theory behind machine translation
 
-tell you using open source soft
+tell you using open source software we've developed
+  - over past 10 years
+
+===================================================
+why do you need to understand MT at all?
+  - why not just past everything into Google Translate and let it do it for you?
+
+  - one reason is that you get much quality if you control how the system is created
+     - we call creating an MT system
+      - TRAINING 
+during training
+  - need 2 main type of data
+
+  - 1st - parallel data in the 2 languages you're translating 2 & from.
+            - translation memories you've collected, bitext, dictionaries 
+  - 2nd - monolingual data in the target language
+
+   - optionally, also give the training linguistic information such as part-of-speech tags and parse trees.
+
+
+With the parallel data
+  - MT system figure out correspondents between words in the source & target. 
+     - you in English <--> vous in French. eg
+With the monolingual data
+  - figure out what is a fluent, grammatical sentence in the output language
+	
+We call the things in the yellow box models
+  - the thing that know the correspondence between source and target words
+          - TRANSLATION MODEL
+  - the thing that knows the fluency of the target language
+          - LANGUAGE MODEL
+
+When we want to actually translate a sentence
+  - load these models
+  - push the sentence thru, get 
