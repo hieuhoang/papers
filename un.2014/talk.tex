@@ -66,8 +66,8 @@
 
 \begin{document}
 \title[Machine Translation with Open Source Software]{{\sc \huge Moses}\\[3mm] Machine Translation with Open Source Software}
-\author[Koehn and Hoang]{Philipp Koehn  and Hieu Hoang}
-\date{\vspace{-5mm}2 September 2013}
+\author[Junczys-Dowmunt and Hoang]{Marcin Junczys-Dowmunt and Hieu Hoang}
+\date{\vspace{-5mm}2 July 2014}
 \maketitle
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,12 +75,9 @@
 
 \slide{Outline}
 \vspace{20mm}
-Slides downloadable from \\
-\littlecode{\normalsize http://www.statmt.org/moses/mtsummit.2013.pdf}
 
 \begin{description}
 \item[\small 09:30-10:00 $\;\;$] {\bf Introduction}
-\item[\small 10:00-11:00 $\;\;$] {\bf Hands-on Session} --- you will need a laptop
 \item[\small 11:00-11:30 $\;\;$] Break
 \item[\small 11:30-12:30 $\;\;$] {\bf Advanced Topics}
 \end{description}
@@ -133,71 +130,6 @@ Slides downloadable from \\
 \item researchers compare their method against Moses
 \end{itemize}
 \end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Developer Community}
-\begin{itemize} \itemsep -1mm
-\item Main development at University of Edinburgh, but also: \vspace{-3mm}
-\begin{itemize}
-\item Fondazione Bruno Kessler (Italy)
-\item Charles University (Czech Republic)
-\item DFKI (Germany)
-\item RWTH Aachen (Germany)
-\item others...
-\end{itemize}
-\item Code shared on github.com
-\item Main forum: support and developer mailing lists
-\item Main event: Machine Translation Marathon (next week in Prague)\vspace{-3mm}
-\begin{itemize}
-\item annual open source convention
-\item presentation of new open source tools
-\item hands-on work on new open source projects
-\item summer school for statistical machine translation
-\end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Open Source Components}
-\vspace{10mm}
-\begin{itemize}
-\item Moses distribution uses external open source tools
-\begin{itemize}
-\item word alignment: {\sc giza++}, Berkeley aligner, FastAlign
-\item language model: {\sc srilm}, {\sc irstlm}, {\sc randlm}, {\sc kenlm}
-\item scoring: {\sc bleu}, {\sc ter}, {\sc meteor}
-\end{itemize}
-\item Other useful tools
-\begin{itemize}
-\item sentence aligner
-\item syntactic parsers
-\item part-of-speech taggers
-\item morphological analyzers
-\end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Other Open Source MT Systems}
-\begin{itemize} \itemsep -3mm
-\item {\bf Joshua} --- Johns Hopkins University\\
-{\small \tt http://joshua.sourceforge.net/}
-\item {\bf CDec} --- University of Maryland\\
-{\small \tt http://cdec-decoder.org/}
-\item {\bf Jane} --- RWTH Aachen\\
-{\small \tt http://www-i6.informatik.rwth-aachen.de/jane/}
-\item {\bf Phrasal} --- Stanford University\\
-{\small \tt http://nlp.stanford.edu/phrasal/}
-\item Very similar technology \vspace{-2mm}
-\begin{itemize}
-\item Joshua implemented in Java, others in C++
-\item Joshua and Jane support only tree-based models
-\item Phrasal supports only phrase-based models
-\end{itemize}
-\item Open sourcing tools increasing trend in NLP research
-\end{itemize}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Moses in Industry}
@@ -428,6 +360,15 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{}
+\vspace{50mm}
+\begin{center}
+\Huge \bf Advanced Features
+\end{center}
+
+
 \slide{Advanced Features}
 \small
 \vspace{-5mm}
@@ -435,15 +376,11 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 \begin{itemize} \itemsep -1mm
 \item \currenttopic{How do I get started?}
 \item {Experiment Management System}
-\item {Faster Training}
 \item {Faster Decoding}
-\item {Moses Server}
 \item {Data and domain adaptation}
 \item {Instructions to decoder}
 \item {Input formats}
 \item {Output formats}
-\item {Translation models}
-\item {Incremental Training}
 \end{itemize}
 }
 
@@ -529,15 +466,11 @@ mteval-v13.pl ...
 \begin{itemize} \itemsep -1mm
 \item {How do I get started?}
 \item \currenttopic{Experiment Management System}
-\item {Faster Training}
 \item {Faster Decoding}
-\item {Moses Server}
 \item {Data and domain adaptation}
 \item {Instructions to decoder}
 \item {Input formats}
 \item {Output formats}
-\item {Translation models}
-\item {Incremental Training}
 \end{itemize}
 }
 
@@ -678,27 +611,6 @@ Phrase alignment of the decoding process\\[5mm]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Analysis: Tree Alignment}
-\vspace{15mm}
-\begin{center}
-\includegraphics[scale=1.2]{analysis-tree-alignment.png}\\[10mm]
-Uses nested boxes to indicate tree structure\\[3mm]
-(red border, yellow shaded spans in focus, interactive)\\[3mm]
-for syntax model, non-terminals are also shown
-\end{center}
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{}
-\vspace{-2.5cm}
-\begin{center}
-\includegraphics[width=26cm]{ems-syntax-viz.png}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \slide{Analysis: Comparison of 2 Runs}
 \begin{center}
 \includegraphics[scale=1]{analysis-comparison.png}\\[10mm]
@@ -707,13 +619,6 @@ sortable by most improvement, deterioration
 \end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{}
-\vspace{50mm}
-\begin{center}
-\Huge \bf Hands-On Session
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Advanced Features}
 \vspace{-5mm}
@@ -722,386 +627,13 @@ sortable by most improvement, deterioration
 \begin{itemize} \itemsep -1mm
 \item {How do I get started?}
 \item {Experiment Management System}
-\item \currenttopic{Faster Training}
 \item {Faster Decoding}
-\item {Moses Server}
 \item {Data and domain adaptation}
 \item {Instructions to decoder}
 \item {Input formats}
 \item {Output formats}
-\item {Translation models}
-\item {Incremental Training}
 \end{itemize}
 }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-\item {How do I get started?}
-\item {Experiment Management System}
-\item \currenttopic{Faster Training}
-  \begin{itemize}
-  \item Tokenization
-  \item Tuning
-  \item Alignment
-  \item Phrase-Table Extraction
-  \item Train language model
-  \end{itemize}
-\end{itemize}
-...
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Faster Training}
-
-\begin{itemize} \itemsep 10mm
-\vspace{10mm}
-\item Run steps in parallel (that do not depend on each other)
-
-\item {Multicore Parallelization}\\[4mm]
-\begin{SaveVerbatim}{myverb} 
-  .../train-model.perl -parallel
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\item EMS: \\[4mm]
-\begin{SaveVerbatim}{myverb} 
-  [TRAINING]
-  parallel = yes
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-\item {How do I get started?}
-\item {Experiment Management System}
-\item {Faster Training}
-  \begin{itemize}
-  \item \currenttopic{Tokenization}
-  \item Tuning
-  \item Alignment
-  \item Phrase-Table Extraction
-  \item Train language model
-  \end{itemize}
-\end{itemize}
-...
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Faster Training}
-
-\begin{itemize} \itemsep 10mm
-
-\item Multi-threaded tokenization
-
-\item {Specify number of threads}\\[4mm]
-\begin{SaveVerbatim}{myverb} 
- .../tokenizer.perl -threads NUM
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\item EMS: \\[4mm]
-\begin{SaveVerbatim}{myverb} 
- input-tokenizer = "$moses-script-dir/tokenizer/tokenizer.perl 
-		    -threads NUM " 
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-  
-  
-\end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-\item {How do I get started?}
-\item {Experiment Management System}
-\item {Faster Training}
-  \begin{itemize}
-  \item {Tokenization}
-  \item \currenttopic{Tuning}
-  \item Alignment
-  \item Phrase-Table Extraction
-  \item Train language model
-  \end{itemize}
-\end{itemize}
-...
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Faster Training}
-\vspace{10mm}
-\begin{itemize} \itemsep 10mm
-\item Multi-threaded tokenization
-
-\item {Specify number of threads}\\[4mm]
-\begin{SaveVerbatim}{myverb} 
-  .../mert -threads NUM
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\item EMS:\\[4mm]
-\begin{SaveVerbatim}{myverb} 
-  tuning-settings = "-threads NUM" 
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-\item {How do I get started?}
-\item {Experiment Management System}
-\item {Faster Training}
-  \begin{itemize}
-  \item {Tokenization}
-  \item {Tuning}
-  \item \currenttopic{Alignment}
-  \item Phrase-Table Extraction
-  \item Train language model
-  \end{itemize}
-\end{itemize}
-...
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Faster Training}
-
-\begin{itemize} \itemsep -1mm
-
-\item {Word Alignment}
-\item {Multi-threaded}
-  \begin{itemize}
-  \item    Use MGIZA, not GIZA++
-  \begin{center}
-    \littlecode{.../train-model.perl -mgiza -mgiza-cpus NUM} 
-  \end{center}      
-  EMS: 
-  \begin{center}
-    \littlecode{training-options = " -mgiza -mgiza-cpus NUM " } 
-  \end{center}      
-  \end{itemize}
-
-\item {On: memory-limited machines}
-  \begin{itemize}
-  \item snt2cooc program requires 6GB+ memory
-  \item Reimplementation uses 10MB, but take longer to run
-  \begin{center}
-    \littlecode{.../train-model.perl -snt2cooc snt2cooc.pl} 
-  \end{center}      
-  EMS:
-  \begin{center}
-    \littlecode{training-options = "-snt2cooc snt2cooc.pl"}
-  \end{center}      
-
-  \end{itemize}
-\end{itemize}
-       
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-\item {How do I get started?}
-\item {Experiment Management System}
-\item {Faster Training}
-  \begin{itemize}
-  \item {Tokenization}
-  \item {Tuning}
-  \item {Alignment}
-  \item \currenttopic{Phrase-Table Extraction}
-  \item Train language model
-  \end{itemize}
-\end{itemize}
-...
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Faster Training}
-\vspace{30mm}
-\begin{itemize} \itemsep -1mm
-
-\item {Phrase-Table Extraction}
-  \begin{itemize}
-  \item Split training data into NUM equal parts
-  \item Extract concurrently
-  \end{itemize}
-  \begin{center}
-    \littlecode{.../train-model.perl -cores NUM}
-  \end{center}      
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Faster Training}
-\vspace{10mm}
-\begin{itemize} \itemsep -1mm
-\item {Sorting}
-  \begin{itemize}
-  \item Rely heavily on Unix 'sort' command
-    \item may take 50\%+ of translation model build time 
-  \item Need to optimize for
-     \begin{itemize}
-      \item speed
-      \item disk usage
-     \end{itemize}
-
-  \item Dependent on
-    \begin{itemize}
-    \item      sort version
-    \item      Unix version
-    \item      available memory
-    \end{itemize}
-  \end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Faster Training}
-\vspace{-5mm}
-  \begin{itemize} \itemsep -1mm 
-  \item Plain sorted\\[2mm]
-  \begin{SaveVerbatim}{myverb}
- sort < extract.txt > extract.sorted.txt
-  \end{SaveVerbatim}
-  \colorbox{gray}{\BUseVerbatim{myverb}}
-
-  \item Optimized for large server\\[2mm]
-  \begin{SaveVerbatim}{myverb}
- sort --buffer-size 10G --parallel 5
-      --batch-size 253 --compress-program gzip ...
-  \end{SaveVerbatim}
-  \colorbox{gray}{\BUseVerbatim{myverb}}
-    \begin{itemize}
-    \item Use 10GB of RAM --- the more the better
-    \item 5 CPUs --- the more the better
-    \item merge\-sort at most 253 files
-    \item compress intermediate files --- less disk i/o
-    \end{itemize}
-
-\item In Moses:\\[2mm]
-    \begin{SaveVerbatim}{myverb}
- .../train-model.perl -sort-buffer-size 10G -sort-parallel 5 
-      -sort-batch-size 253 -sort-compress gzip 
-    \end{SaveVerbatim}
-    \colorbox{gray}{\BUseVerbatim{myverb}}
-
-  \end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-\item {How do I get started?}
-\item {Experiment Management System}
-\item {Faster Training}
-  \begin{itemize}
-  \item {Tokenization}
-  \item {Tuning}
-  \item {Alignment}
-  \item {Phrase-Table Extraction}
-  \item \currenttopic{Train language model}
-  \end{itemize}
-\end{itemize}
-...
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{IRSTLM: Training}
-\vspace{10mm}
-\begin{itemize}
-
-\item Developed by FBK-irst, Trento, Italy
-
-\item Specialized training for large corpora
-	\begin{itemize}
-	\item parallelization
-	\item reduce memory usage
-	\end{itemize}
-
-\item Quantization of probabilities
-	\begin{itemize}
-	\item reduces memory but lose accuracy
-	\item probability stored in 1 byte instead of 4 bytes
-	\end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{IRSTLM: Training}
-
-\begin{itemize}
-
-\item Training: \\[3mm]
-\begin{SaveVerbatim}{myverb} 
-build-lm.sh -i "gunzip -c corpus.gz" -n 3 
-      -o train.irstlm.gz -k 10
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\begin{itemize}
-\item \littlecode{-n 3} = n-gram order
-\item \littlecode{-k 10} = split training procedure into 10 steps
-\end{itemize}
-
-\item EMS:  \\[3mm]
-  \begin{SaveVerbatim}{myverb} 
-  irst-dir = [IRST path]
-  lm-training = "$moses-script-dir/generic/trainlm-irst.perl 
-		  -cores NUM -irst-dir $irst-dir"
-  \end{SaveVerbatim}
-  \colorbox{gray}{\BUseVerbatim{myverb}}
-
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{KENLM: Training}
-\vspace{5mm}
-\begin{itemize}
-\item Can train very large language models with limited RAM\\
-(on disk streaming)\\[5mm]
-\begin{SaveVerbatim}{myverb} 
-lmplz -o [order] -S [memory] < text > text.lm
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\item \littlecode{-o order} = n-gram order
-\item \littlecode{-S memory} = How much memory to use.
-	      \begin{itemize}
-		\item \littlecode{NUM\%} = percentage of physical memory \vspace{2mm}
-		\item \littlecode{NUM[b/K/M/G/T]} = specified amount in bytes, kilo bytes, etc.
-	      \end{itemize}
-\end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Advanced Features}
 \vspace{-5mm}
@@ -1110,15 +642,11 @@ lmplz -o [order] -S [memory] < text > text.lm
 \begin{itemize} \itemsep -1mm
 \item {How do I get started?}
 \item {Experiment Management System}
-\item {Faster Training}
 \item \currenttopic{Faster Decoding}
-\item {Moses Server}
 \item {Data and domain adaptation}
 \item {Instructions to decoder}
 \item {Input formats}
 \item {Output formats}
-\item {Translation models}
-\item {Incremental Training}
 \end{itemize}
 }
 
@@ -1130,10 +658,25 @@ lmplz -o [order] -S [memory] < text > text.lm
 \begin{itemize} \itemsep -1mm
 \item {How do I get started?}
 \item {Experiment Management System}
-\item {Faster Training}
 \item \currenttopic{Faster Decoding}
   \begin{itemize}
-  \item Multi-threading
+  \item Speed vs. Memory
+  \item Speed vs. Quality
+  \end{itemize}
+\end{itemize}
+...
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Advanced Features}
+\vspace{-5mm}
+\textcolor{darkgrey}{
+\begin{itemize} \itemsep -1mm
+\item {How do I get started?}
+\item {Experiment Management System}
+\item {Faster Decoding}
+  \begin{itemize}
   \item Speed vs. Memory
   \item Speed vs. Quality
   \end{itemize}
@@ -1152,41 +695,6 @@ lmplz -o [order] -S [memory] < text > text.lm
 \item {Faster Training}
 \item {Faster Decoding}
   \begin{itemize}
-  \item \currenttopic{Multi-threading}
-  \item Speed vs. Memory
-  \item Speed vs. Quality
-  \end{itemize}
-\end{itemize}
-...
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Fast Decoding}
-
-\vspace{15mm}
-\begin{itemize}
-\item Multi-threaded decoding 
-\begin{center}
-\littlecode{.../moses --threads NUM}
-\end{center}
-\item Easy speed-up
-
-\end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-\item {How do I get started?}
-\item {Experiment Management System}
-\item {Faster Training}
-\item {Faster Decoding}
-  \begin{itemize}
-  \item {Multi-threading}
   \item \currenttopic{Speed vs. Memory}
   \item Speed vs. Quality
   \end{itemize}
@@ -1257,81 +765,6 @@ Typical Europarl file sizes:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Create Binary Tables}
-\small
-Phrase Table:  
-\begin{center}
-\small
-\textcolor{red}{Phrase-based} \\
-\begin{SaveVerbatim}{myverb} 
-  export LC_ALL=C 
-  cat pt.txt | sort | ./processPhraseTable -ttable 0 0 -  \
-      -nscores 4 -out out.file
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\begin{SaveVerbatim}{myverb} 
-  export LC_ALL=C   ./CreateOnDiskPt 1 1 4 100 2 pt.txt out.folder
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\end{center}
-
-
-\begin{center}
-\small
-\textcolor{red}{Hierarchical / Syntax} \\
-\begin{SaveVerbatim}{myverb} 
-  export LC_ALL=C ./CreateOnDiskPt 1 1 4 100 2 pt.txt out.folder
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
-
-Lexical Reordering Table:  
-\begin{center}
-\small
-\begin{SaveVerbatim}{myverb} 
-  export LC_ALL=C
-  processLexicalTable -in r-t.txt -out out.file
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
-
-Language Models (later)
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Specify Binary Tables}
-
-Change ini file \\[-6mm]
-\begin{center}
-\textcolor{red}{Phrase Table} \\[2mm]
-{\small
-\begin{SaveVerbatim}{myverb} 
-[feature]
-PhraseDictionaryBinary name=TranslationModel0 table-limit=20 \ 
-   num-features=4 path=/.../phrase-table
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-}
-\vspace{5mm}
-
-\textcolor{red}{Hierarchical / Syntax} \\[2mm]
-{\small
-\begin{SaveVerbatim}{myverb} 
-[feature]
-PhraseDictionaryOnDisk name=TranslationModel0 table-limit=20 \ 
-   num-features=4 path=/.../phrase-table
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-}
-\vspace{5mm}
-
-\textcolor{red}{Lexical Reordering Table} \\
-automatically detected
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{New: Compact Phrase Table}
 \begin{itemize}
@@ -1342,12 +775,10 @@ automatically detected
 \end{itemize}
 \item Stored in RAM
 \item May be memory mapped
-\item Train with \littlecode{processPhraseTableMin}
-\item Specify with \littlecode{PhraseDictionaryCompact}
 \end{itemize}
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \slide{IRSTLM}
 \vspace{20mm}
 \begin{itemize}
@@ -1365,55 +796,11 @@ automatically detected
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{IRSTLM in Moses}
-\vspace{20mm}
-\begin{itemize}
-\item Compile the decoder with IRSTLM library \\
-\begin{SaveVerbatim}{myverb} 
-./configure --with-irstlm=[root dir of the IRSTLM toolkit] 
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\item Create binary format: \\[3mm]
-\begin{SaveVerbatim}{myverb} 
-compile-lm language-model.srilm language-model.blm
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\item Load-on-demand: \\[3mm]
-\begin{SaveVerbatim}{myverb} 
-rename file .mm  
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\item Change ini file to use IRSTLM implementation \\
-\begin{SaveVerbatim}{myverb} 
-[feature]
-IRSTLM name=LM0 factor=0 path=/.../lm order=5
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \slide{KENLM}
 \vspace{10mm}
 \begin{itemize}
 \item Developed by Kenneth Heafield (CMU / Edinburgh / Stanford)
 \item Fastest and smallest language model implementation
-\item Compile from LM trained with SRILM\\[5mm]
-\begin{SaveVerbatim}{myverb} 
-build_binary model.lm model.binlm
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\item Specify in decoder\\[5mm]
-\begin{SaveVerbatim}{myverb} 
-[feature]
-KENLM name=LM0 factor=0 path=/.../model.binlm order=5
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1424,10 +811,8 @@ KENLM name=LM0 factor=0 path=/.../model.binlm order=5
 \begin{itemize} \itemsep -1mm
 \item {How do I get started?}
 \item {Experiment Management System}
-\item {Faster Training}
 \item {Faster Decoding}
   \begin{itemize}
-  \item {Multi-threading}
   \item {Speed vs. Memory}
   \item \currenttopic{Speed vs. Quality}
   \end{itemize}
@@ -1469,96 +854,19 @@ KENLM name=LM0 factor=0 path=/.../model.binlm order=5
 sentence length $\times$ stack size $\times$ applicable translation options
 \end{itemize}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Pruning Parameters}
-\begin{itemize}
-\item Regular beam search
-\begin{itemize}
-\item \littlecode{--stack NUM} max. number of hypotheses contained in each stack
-\item \littlecode{--ttable-limit NUM} max. num. of translation options per input phrase
-\vspace{2mm}
-\item search time roughly linear with respect to each number
-\end{itemize}
-\item Cube pruning\\
-(fixed number of hypotheses are added to each stack)
-\begin{itemize}
-\item \littlecode{--search-algorithm 1} turns on cube pruning
-\item \littlecode{--cube-pruning-pop-limit NUM} number of hypotheses added to each stack
-\vspace{2mm}
-\item search time roughly linear with respect to pop limit
-\vspace{2mm}
-\item note: stack size and translation table limit have little impact in speed
-\end{itemize}
-\end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Syntax Hypothesis Stacks}
-\begin{center} 
-\includegraphics[scale=1.5]{chart-stacks.pdf}
-\end{center}
-\vspace{-5mm}
-\begin{itemize} \itemsep -2mm
-\item One stack per input word span
-\item Number of hypothesis created = \\
-sentence length$^2$ $\times$  number of hypotheses added to each stack\\
-\littlecode{--cube-pruning-pop-limit NUM} number of hypotheses added to each stack
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \slide{Advanced Features}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
 \item {How do I get started?}
 \item {Experiment Management System}
-\item {Faster Training}
 \item {Faster Decoding}
-\item \currenttopic{Moses Server}
 \item {Data and domain adaptation}
 \item {Instructions to decoder}
 \item {Input formats}
 \item {Output formats}
-\item {Translation models}
-\item {Incremental Training}
 \end{itemize}
 }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Moses Server}
-\begin{itemize} \itemsep -1mm
-\item Moses command line:\\[3mm]
-\begin{SaveVerbatim}{myverb} 
-  .../moses -f [ini] < [input file] > [output file]
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-    \begin{itemize}
-      \item Not practical for commercial use
-    \end{itemize}
-
-
-\item Moses Server:\\[3mm]
-    \begin{SaveVerbatim}{myverb} 
- .../mosesserver -f [ini] --server-port [PORT] --server-log [LOG]
-    \end{SaveVerbatim}
-    \colorbox{gray}{\BUseVerbatim{myverb}}
-    \begin{itemize}
-      \item Accept HTTP input. XML SOAP format
-    \end{itemize}
-
-\item Client:
-    \begin{itemize}
-      \item Communicate via http
-      \item Example clients in Java and Perl
-      \item Write your own client
-      \item Integrate into your own application
-    \end{itemize}
-    
-\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1570,9 +878,7 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 \begin{itemize} \itemsep -1mm
 \item {How do I get started?}
 \item {Experiment Management System}
-\item {Faster Training}
 \item {Faster Decoding}
-\item {Moses Server}
 \item \currenttopic{Data and domain adaptation}
   \begin{itemize}\vspace{-4mm}
   \item Train everything together
@@ -1629,15 +935,11 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 \begin{itemize} \itemsep -1mm
 \item {How do I get started?}
 \item {Experiment Management System}
-\item {Faster Training}
 \item {Faster Decoding}
-\item {Moses Server}
 \item {Data and domain adaptation}
   \begin{itemize}\vspace{-5mm}
   \item \currenttopic{Train everything together}
   \item Secondary phrase table
-\item Domain indicator features
-\item Interpolated language models
   \item TM-MT integration
   \end{itemize}
 \end{itemize}
@@ -1663,41 +965,13 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Default: Train Everything Together}
-\vspace{-1mm}
-Specification in EMS:
-\begin{itemize} \itemsep 5mm
-\item Phrase-table\\[4mm] \small
-    \begin{SaveVerbatim}{myverb} 
-      [CORPUS]
-      [CORPUS:in-domain]
-      raw-stem = ....    
-      [CORPUS:background]
-      raw-stem = ....
-    \end{SaveVerbatim}
-    \colorbox{gray}{\BUseVerbatim{myverb}}
-\item LM\\[4mm] \small
-   \begin{SaveVerbatim}{myverb} 
-      [LM]
-      [LM:in-domain]
-      raw-corpus = ....
-      [LM:background]
-      raw-corpus = ....
-    \end{SaveVerbatim}
-    \colorbox{gray}{\BUseVerbatim{myverb}}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \slide{Advanced Features}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
 \item {How do I get started?}
 \item {Experiment Management System}
-\item {Faster Training}
 \item {Faster Decoding}
-\item {Moses Server}
 \item {Data and domain adaptation}
   \begin{itemize}\vspace{-5mm}
   \item {Train everything together}
@@ -1729,33 +1003,6 @@ Specification in EMS:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\slide{TM-MT Integration}
-
-\begin{itemize} \itemsep -1mm
-\item Translation memory-style fuzzy match
-  \begin{itemize}
-  \item For hierarchical decoding
-  \item Create long translation rule 'templates'
-  \item Best for use with parallel corpus with lots of repetition
-  \end{itemize}
-
-\item Add TM and word alignment as a special phrase table
-  \begin{itemize}
-    \item Use in addition to normal phrase table
-  \end{itemize}
-  \begin{SaveVerbatim}{myverb} 
-   [ttable-file]
-   11 0 0 3 source-corpus;target-corpus;word-alignment 
-   2 0 0 3 phrase table
-   6 0 0 3 glue-rules
-  \end{SaveVerbatim}
-  \colorbox{gray}{\BUseVerbatim{myverb}}
-
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \slide{Secondary Phrase Table}
 \begin{itemize} \itemsep -1mm
 \item Train initial phrase table and LM on baseline data
@@ -1763,41 +1010,6 @@ Specification in EMS:
 \item Train secondary phrase table and LM new/in-domain data
 
 \item Use both in Moses
-  \begin{itemize}
-
-  \item Secondary phrase table
-  \begin{SaveVerbatim}{myverb} 
-    [feature]
-    PhraseDictionaryMemory path=.../path.1
-    PhraseDictionaryMemory path=.../path.2
-    
-    [mapping]
-    0 T 0
-    1 T 1
-  \end{SaveVerbatim}
-  \colorbox{gray}{\BUseVerbatim{myverb}}
-
-  \end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Secondary Phrase Table}
-\begin{itemize} \itemsep -1mm
-  \item
-  \begin{itemize}
-  \item Secondary LM\\[4mm]
-  \begin{SaveVerbatim}{myverb} 
-    [feature]
-    KENLM path=.../path.1
-    KENLM path=.../path.2
-  \end{SaveVerbatim}
-  \colorbox{gray}{\BUseVerbatim{myverb}}
-
-  \end{itemize}
-
-  \item Can give different weights for primary and secondary tables
-  \item Not integrated into the EMS
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1831,109 +1043,6 @@ Specification in EMS:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-\item {How do I get started?}
-\item {Experiment Management System}
-\item {Faster Training}
-\item {Faster Decoding}
-\item {Moses Server}
-\item {Data and domain adaptation}
-  \begin{itemize} \vspace{-5mm}
-  \item {Train everything together}
-  \item {Secondary phrase table}
-  \item \currenttopic{Domain indicator features}
-\item Interpolated language models
-  \item TM-MT integration
-  \end{itemize}
-\end{itemize}
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Domain Indicator Features}
-\vspace{15mm}
-\begin{itemize} \itemsep 5mm
-\item One translation model
-\item Flag each phrase pair's origin
-\begin{itemize}
-\item indicator: binary flag if it occurs in specific domain
-\item ratio: how often it occurs in specific domain relative to all
-\item subset: similar to indicator, but if in multiple domains, marked with multiple-domain feature
-\end{itemize}
-\item In EMS:\\[4mm] \small
-\begin{SaveVerbatim}{myverb}
-  [TRAINING]
-  domain-features = "indicator"
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-\item {How do I get started?}
-\item {Experiment Management System}
-\item {Faster Training}
-\item {Faster Decoding}
-\item {Moses Server}
-\item {Data and domain adaptation}
-  \begin{itemize} \vspace{-5mm}
-  \item {Train everything together}
-  \item {Secondary phrase table}
-  \item Domain indicator features
-\item \currenttopic{Interpolated language models}
-  \item TM-MT integration
-  \end{itemize}
-\end{itemize}
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Interpolated Language Models}
-\vspace{5mm}
-\begin{itemize} \itemsep 5mm
-\item Train one language model per corpus
-\item Combine them by weighting each according to its importance
-\begin{itemize}
-\item weights obtained by optimizing perplexity\\ of resulting language model on tuning set\\
-(not the same as machine translation quality) \vspace{2mm}
-\item models are linearly combined
-\end{itemize}
-\item EMS provides a section {\tt [INTERPOLATED-LM]} that needs to be commented out
-\item Alternative: use multiple language models\\
-(disadvantage: larger process, slower)
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-\item {How do I get started?}
-\item {Experiment Management System}
-\item {Faster Training}
-\item {Faster Decoding}
-\item {Moses Server}
-\item {Data and domain adaptation}
-  \begin{itemize} \vspace{-5mm}
-  \item {Train everything together}
-  \item {Secondary phrase table}
-  \item Domain indicator features
-\item Interpolated language models
-  \item \currenttopic{TM-MT integration}
-  \end{itemize}
-\end{itemize}
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \slide{TM-MT Integration}
 \begin{itemize}
 \item Input sentence: \vspace{-5mm}
@@ -1950,33 +1059,6 @@ Specification in EMS:
 \item[] \textcolor{darkorange}{\bf Input word(s) that still need to be translated by SMT}
 \end{itemize}
 
-
-\slide{TM-MT Integration}
-
-\begin{itemize} \itemsep -1mm
-\item Translation memory-style fuzzy match
-  \begin{itemize}
-  \item For hierarchical decoding
-  \item Create long translation rule 'templates'
-  \item Best for use with parallel corpus with lots of repetition
-  \end{itemize}
-
-\item Add TM and word alignment as a special phrase table
-  \begin{itemize}
-    \item Use in addition to normal phrase table
-  \end{itemize}
-  \begin{SaveVerbatim}{myverb} 
-   [feature]
-   PhraseDictionaryFuzzyMatch ...
-   PhraseDictionaryMemory path=phrase-table.gz ...
-   PhraseDictionaryMemory path=glue-rules ...
-  \end{SaveVerbatim}
-  \colorbox{gray}{\BUseVerbatim{myverb}}
-
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Advanced Features}
@@ -1986,15 +1068,11 @@ Specification in EMS:
 \begin{itemize} \itemsep -1mm
 \item {How do I get started?}
 \item {Experiment Management System}
-\item {Faster Training}
 \item {Faster Decoding}
-\item {Moses Server}
 \item {Data and domain adaptation}
 \item \currenttopic{Instructions to decoder}
 \item {Input formats}
 \item {Output formats}
-\item {Translation models}
-\item {Incremental Training}
 \end{itemize}
 }
 
@@ -2187,15 +1265,12 @@ I really like to $<$b$>$eat$<$/b$>$ chicken!}
 \begin{itemize} \itemsep -1mm
 \item {How do I get started?}
 \item {Experiment Management System}
-\item {Faster Training}
 \item {Faster Decoding}
 \item {Moses Server}
 \item {Data and domain adaptation}
 \item {Instructions to decoder}
 \item \currenttopic{Input formats}
 \item {Output formats}
-\item {Translation models}
-\item {Incremental Training}
 \end{itemize}
 }
 
@@ -2391,15 +1466,11 @@ Command line argument & Input to Moses {\tiny (PLF format - Python Lattice Forma
 \begin{itemize} \itemsep -1mm
 \item {How do I get started?}
 \item {Experiment Management System}
-\item {Faster Training}
 \item {Faster Decoding}
-\item {Moses Server}
 \item {Data and domain adaptation}
 \item {Instructions to decoder}
 \item {Input formats}
 \item \currenttopic{Output formats}
-\item {Translation models}
-\item {Incremental Training}
 \end{itemize}
 }
 
@@ -2498,451 +1569,6 @@ Output\\[2mm]
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}}
 \end{center}
- 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Search Graph}
-
-\begin{itemize}
-\item  Input \vspace{-10mm}
-\begin{center}
-\example{er geht ja nicht nach hause}
-\end{center}
-
-\item Return internal structure from the decoder \vspace{-5mm}
-\begin{center}
-\includegraphics[scale=1.2]{search-graph.png}
-\end{center}
-
-\item Encode millions of other possible translations\\
-(every path through the graph = 1 translation)
-
-\end{itemize}
-
-
-%Alternative to getting n-best translation.
-%Get back internal structure of the decoder.
-%
-%Directed graph 
-%  - left most node is represents a hypothesis that has translated nothing
-%  - right most nodes have translated all words
-%  - a path from the left to the right is a translation of the input sentence
-%  - best translation is 1 of these paths
-%  
-%Many such paths (millions)
-%  - each path is a translation that the decoder has considered
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Uses of Search Graphs}
-\begin{tabular}{p{9cm}c}
-\vspace{-12cm}
-\begin{itemize}
-\item  Let the translator choose
-	\begin{itemize}
-	\item Individual words or phrases
-	\item 'Suggest' next phrase
-	\end{itemize}
-\item  Reranker
-\item  Used to tune component weights
-	\begin{itemize}
-	\item More difficult than with n-best list
-	\end{itemize}
-
-\end{itemize}
-
-&
-
-\includegraphics[scale=1]{lattice-caitra.png}
-
-\end{tabular}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Search Graphs in Moses}
-\vspace{5mm}
-\begin{center}
-Argument to command line\\[2mm]
-\begin{SaveVerbatim}{myverb}
- ./moses -output-search-graph search-graph.file.txt 
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
-\vspace{5mm}
-
-\begin{center}
-Argument to command line\\[2mm]
-{\small \begin{SaveVerbatim}{myverb}
-0 hyp=0 stack=0 forward=36 fscore=-113.734
-0 hyp=75 stack=1 back=0 score=-104.943 ... covered=5-5 out=.
-0 hyp=72 stack=1 back=0 score=-8.846 ... covered=4-4 out=opinions
-0 hyp=73 stack=1 back=0 score=-10.661 ... covered=4-4 out=opinions of
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\vspace{-10mm}
-\begin{tabular}{p{15cm}}
-\begin{itemize} \itemsep -2mm
-\item hyp - hypothesis id
-\item  stack - how many words have been translated
-\item score - total weighted score
-\item covered - which words were translated by this hypothesis
-\item out - target phrase
-\end{itemize}
-\end{tabular}}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\small
-\begin{itemize} \itemsep -1mm
-\item {How do I get started?}
-\item {Experiment Management System}
-\item {Faster Training}
-\item {Faster Decoding}
-\item {Moses Server}
-\item {Data and domain adaptation}
-\item {Instructions to decoder}
-\item {Input formats}
-\item {Output formats}
-\item \currenttopic{Translation models}
-\item {Incremental Training}
-\end{itemize}
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Phrase-Based Model}
-
-\begin{itemize}
-\item Advantages
-\vspace{-1mm}
-\begin{itemize}
-\item fast: under half a second per sentence for fast configuration
-\item low-memory requirement
-	\begin{itemize}
-	\item 200-300MB for lowest configuration
-	\item suitable for netbooks and mobile devices
-	\end{itemize}
-\item outperform more complicated models for many language pairs
-	\begin{itemize}
-	\item especially for related languages pairs
-	\end{itemize}
-\end{itemize}
-\item Command line   
-\vspace{-4mm}
-\begin{center}
-\begin{SaveVerbatim}{myverb}
- ./moses -f moses.ini -i in.txt > out.txt
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
-\item Output
-\vspace{-4mm}
-\begin{center}
-\begin{SaveVerbatim}{myverb}
-there are various different opinions .
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Hierarchical Models}
-{\small \begin{multicols}{2}
-
-Advantages
-\begin{itemize}
-\item able to model non-contiguous phrases
-	\begin{itemize}
-	\item ne..pas $\rightarrow$ not
-	\end{itemize}
-\item low-memory requirement
-	\begin{itemize}
-	\item 200-300MB for lowest configuration
-	\item suitable for netbooks and mobile devices
-	\end{itemize}
-\item outperform phrase-based models when translating between widely different languages
-	\begin{itemize}
-	\item Chinese-English consistently better with hierarchical model 
-	\item better at medium range re-ordering
-	\end{itemize}
-\item Linguistically motivated 
-\end{itemize}
-
-\columnbreak
-
-Disadvantages
-\begin{itemize}
-\item slower
-	\begin{itemize}
-	\item 0.5 - 2 sec/sent. for fastest configuration
-	\end{itemize}
-\item more memory requirement
-	\begin{itemize}
-	\item 1-2GB ram
-	\end{itemize}
-\item more disk usage
-	\begin{itemize}
-	\item translation model $\times$10 larger than phrase-based
-	\end{itemize}
-\end{itemize}
-
-\end{multicols}
-}
-\begin{center}
-\textcolor{red}{Command line} 
-\begin{SaveVerbatim}{myverb}
-./moses_chart -f moses.ini -i in.txt > out.txt
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
-
-
-%Advantages
-%   - can outperform phrase-based models when translating between widely different languages
-%	- Chinese-English
-%         - only consistent perforance with hierarchical model 
-%   - better at medium range re-ordering
-%        
-%   - theoritical
-%       - language is recursive
-%       - embed clause within clause
-%       - eg. 
-%        This is the house that Jack built.
-%
-%        This is the malt that lay in the house that Jack built.
-%
-%        This is the mouse that ate the malt that lay in the house that Jack built.
-%
-%        This is the cat that scared the mouse that ate the malt hat lay in the house that Jack built.
-%
-%        This is the dog that chased the cat that scared the mouse that ate the malt that lay in the house that Jack built.
-%
-%        This is the boy who loves the dog that chased the cat that scared the mouse that ate the malt that lay in the house that Jack built.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Syntax Models}
-\begin{itemize} \itemsep -1mm
-\item Hierarchical model + use of syntactic information\\
-(constituency parser, chunkers)
-%\item Active research in this area
-\item Advantage \vspace{-2mm}
-\begin{itemize}
-\item Can use outside linguistic information 
-\item promises to solve important problems in SMT, eg. long-range reordering
-\end{itemize}
-
-\item Disadvantages \vspace{-2mm}
-\begin{itemize}
-\item difficult to get  right
-\item for many language pairs still worse than phrase-based and hierarchical models
-\item need syntactic parse information
-	\begin{itemize}
-	\item unreliable
-	\item available only for some languages % need to be trained with costly, hand-annotated treebank
-	\item not designed for machine translation
-	\end{itemize}
-\end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Moses Tree Representation}
-% \vspace{10mm}
-% \begin{center}
-% \Tree [.TOP [.NP [.NE Musharrafs ] [.ADJA letzter ] [.NN Akt ]  ]  [.PUNC  ? ]  ]  \\
-% 
-% \vspace{10mm}
-% 
-% \includegraphics[scale=1]{tree-xml.png} 
-%  \end{center}
-
-%
-%Training and input data is embellished with parse information
-%  - either the parse information is on the source side - tree-to-string
-%  - on the target side - string-to-tree
-%  - have parse information for both - tree-to-tree
-%
-%
-%Advantages
-%   - can use outside linguistic information
-%Disadvantages
-%   - difficult to get  right
-%   - many still underperform other models
-%   - parser information unreliable
-%      - not for correct domain
-%      - not available for many languages
-%          - need to be trained with costly treebank
-%      - not optmized or suited for machine translation
-%
-% do some slides on moses implementation
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Phrase-Based Model Training}
-\vspace{20mm}
-\begin{itemize}
-\item Command line
-\begin{center}
-\begin{SaveVerbatim}{myverb}
-train-model.perl ...
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
-
-\item Model
-\begin{center}
-\footnotesize
-\begin{SaveVerbatim}{myverb}
-BŸndnisse ||| alliances ||| 1 1 1 1 2.718 ||| ||| 1 1
-General Musharraf betrat am ||| general Musharraf appeared on ||| 1 1 1 1 2.718 ||| ||| 1 1
-
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
-\end{itemize}
-
-% phrase based
-%  /Users/hieuhoang/workspace/sourceforge/trunk/scripts/training/train-model.perl -first-step 5 -last-step 6 --corpus corpus.1.0-0 -f de -e en -alignment-file /Users/hieuhoang/workspace/data/syntax-de-en-nc/10/aligned.1 -alignment  grow-diag-final-and -lexical-file lex 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Hierarchical Model}
-\vspace{5mm}
-\begin{itemize}
-\item Training
-\begin{center}
-\begin{SaveVerbatim}{myverb} 
-train-model.perl ... -hierarchical
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
-
-\item Decoding
-\begin{center}
-\begin{SaveVerbatim}{myverb} 
-./moses-chart -f moses.ini -i in.txt > out.txt
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Hierarchical Model}
-
-\item Example rule from model \vspace{-12mm}
-\begin{center}
-\littlecode{\tiny B\"undnisse [X][X] Kr\"aften [X] ||| alliances [X][X] forces [X] ||| 1 1 1 1 2.718 ||| 1-1 ||| 0.0526316 0.0526316}
-\end{center}
-
-\item Visualization of rule
-\begin{center}
-\tikzset{level distance=72pt}
-\Tree [.X [. B\"undnisse ]  [.X$_1$ ] [. Kr\"aften ] ] $\Rightarrow$ \Tree [.X [. alliances ]  [.X$_1$ ] [. forces ] ]
-
-\end{center}
-\end{itemize}
-
-%  /Users/hieuhoang/workspace/sourceforge/trunk/scripts/training/train-model.perl -first-step 5 -last-step 6 --corpus corpus.1.0-0 -f de -e en -alignment-file /Users/hieuhoang/workspace/data/syntax-de-en-nc/10/aligned.1 -alignment  grow-diag-final-and -lexical-file lex  -hierarchical
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Hierarchical Model}
-
-Comparison with phrase-based model:
-
-\begin{table}[ht]
-\begin{tabular}{| c c | c c |}
-\hline 
-		& 	& Phrase-based & Hierarchical \\
-\hline
-BLEU (Europarl) & fr-en & 25.10 & 24.58 \\
-		& de-en & 18.11 & 17.99 \\
-		& es-en & 25.81 & 25.17 \\
-		& de-en & 18.11 & 17.99 \\
-		& cs-en & 18.00 & 17.86 \\
-\hline
-Phrase-table size & fr-en & 2.5GB & 20.0GB \\
-\hline
-Decoding time (sec) & per sentence & 2.27 & 6.45 \\
-		    & per word & 0.09 & 0.26 \\
-\hline
-\end{tabular}
-
-\end{table}
-	 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\small
-\begin{itemize} \itemsep -1mm
-\item {How do I get started?}
-\item {Experiment Management System}
-\item {Faster Training}
-\item {Faster Decoding}
-\item {Moses Server}
-\item {Data and domain adaptation}
-\item {Instructions to decoder}
-\item {Input formats}
-\item {Output formats}
-\item {Translation models}
-\item \currenttopic{Incremental Training}
-\end{itemize}
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Incremental Training}
-\begin{center}
-\includegraphics[scale=2]{wikitrans.pdf}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Incremental Training}
-\vspace{1cm}
-\begin{itemize}
-\item Incremental word alignment
-\begin{itemize}
-\item requires modified version of GIZA++\\
-(available at http://code.google.com/p/inc-giza-pp/)
-\item only works for HMM alignment (not the common IBM Model 4)
-\end{itemize}
-\item Translation model is defined by parallel corpus\\[5mm]
-\begin{SaveVerbatim}{myverb}
-PhraseDictionaryDynSuffixArray \ 
-   source=/.../corpus.f target=/.../corpus.e \ 
-   alignment=/.../model/aligned 
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Update Word Alignment}
-\vspace{2cm}
-\begin{itemize}
-\item Uses original word alignment models\\
-(with additional model files stored after training)
-\item Incremental GIZA++ loads model
-\item New sentence pairs is aligned on the fly
-\item Typically, GIZA++ processes are run in both directions, symmetrized
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Update Translation Model}
-\vspace{3cm}
-\begin{itemize}
-\item Translation table is stored as word-aligned parallel corpus
-\item Update = add word aligned sentence pair
-\item Updating a running Moses instance via XML RPC
-\end{itemize}
- 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Acknowledgements}
 \vspace{5mm}
