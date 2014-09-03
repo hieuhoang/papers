@@ -13,6 +13,62 @@ There's a lot of information
   - it might be confusing
   - so please interrupt if you don't understand something
   - i'll try & deal with them there & then
+
+%%%%%%%%%%%%%%%%%
+As you are probably aware
+  - Moses is not a translation system
+      - if you want a system to translate french to english
+      - won't get it from us
+  - it is a toolkit to make translation systems
+  
+To create your own translations system
+  - need data
+  - specifically parallel data
+      - best if it's in the same domain as what you're going to translate
+          - use TMX of previous translations for that client, or a similar client in that industry
+      - lots of publicly available data
+          - many organisations that make their data available
+              - for free or for a charge
+  - also need monologinal data
+      - in the target language
+          - again in-domain data will make your engine perform much better
+
+Once you have your data
+   - download moses
+       - download other component Moses rely on such as the word aligment tools giza++ or mgiza
+   - you can either download the source code and compile
+       - or we and other people provide binaries for you to download and run 
+%%%%%%%%%
+
+To create a translation system
+   - you have to run a series of commands
+   - convert the raw parallel and monolingual data 
+        - you've collected
+  - into something useful that the engine can use
+It's a very long series of command
+  - hundreds of commands
+  
+When I learnt it
+  - probably took 2 yrs to fumble thru it all
+We organise the MT Marathon
+  - used to take a week to teach phd how to do this
+  - watch the blood drain out of their faces
+  
+Rather than having to learn the 100 of command needed
+  - type them in, get them wrong, spend data debugging
+  
+You can automate the whole process
+
+%%%%%%%%
+With the Experiment Management System
+   - EMS for short
+%%%%%%%%%%
+
+For creatting standard Moses engines
+  - the EMS works very well
+  - urge you to use it
+   
+   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Faster Training
 
