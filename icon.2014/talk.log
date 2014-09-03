@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.4.18)  3 SEP 2014 20:32
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.4.18)  3 SEP 2014 18:59
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -2238,7 +2238,7 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 [112]
 File: univ-edinburgh.pdf Graphic file (type pdf)
  <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2252.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2253.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
@@ -2248,75 +2248,98 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 [113]
 File: univ-edinburgh.pdf Graphic file (type pdf)
  <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2270.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2274.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
 [][][]
  []
 
-[114]
-Overfull \hbox (19.57945pt too wide) in paragraph at lines 2294--2295
-[][][][][][][] 
- []
-
-File: univ-edinburgh.pdf Graphic file (type pdf)
-<use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2300.
-(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
-
-Underfull \hbox (badness 10000) has occurred while \output is active
-[][][]
- []
-
-[115]
-File: univ-edinburgh.pdf Graphic file (type pdf)
- <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2321.
-(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
-
-Underfull \hbox (badness 10000) has occurred while \output is active
-[][][]
- []
-
-[116]
-File: univ-edinburgh.pdf Graphic file (type pdf)
- <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2342.
-(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
-
-Underfull \hbox (badness 10000) has occurred while \output is active
-[][][]
- []
-
-[117] <confusion-network.png, id=886, 751.1262pt x 184.0476pt>
+[114] <confusion-network.png, id=877, 751.1262pt x 184.0476pt>
 File: confusion-network.png Graphic file (type png)
 
 <use confusion-network.png>
-Package pdftex.def Info: confusion-network.png used on input line 2347.
+Package pdftex.def Info: confusion-network.png used on input line 2279.
 (pdftex.def)             Requested size: 676.00734pt x 165.6413pt.
 File: univ-edinburgh.pdf Graphic file (type pdf)
  <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2352.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2284.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
 [][][]
  []
 
-[118 <./confusion-network.png>]
-<vietnamese.png, id=890, 422.0568pt x 41.4348pt>
+[115 <./confusion-network.png>]
+<vietnamese.png, id=881, 422.0568pt x 41.4348pt>
 File: vietnamese.png Graphic file (type png)
  <use vietnamese.png>
-Package pdftex.def Info: vietnamese.png used on input line 2357.
+Package pdftex.def Info: vietnamese.png used on input line 2289.
 (pdftex.def)             Requested size: 337.64589pt x 33.14786pt.
 
-<confusion-network-2.png, id=891, 440.847pt x 224.037pt>
+<confusion-network-2.png, id=882, 440.847pt x 224.037pt>
 File: confusion-network-2.png Graphic file (type png)
 
 <use confusion-network-2.png>
-Package pdftex.def Info: confusion-network-2.png used on input line 2366.
+Package pdftex.def Info: confusion-network-2.png used on input line 2298.
 (pdftex.def)             Requested size: 352.67807pt x 179.22983pt.
+File: univ-edinburgh.pdf Graphic file (type pdf)
+ <use univ-edinburgh.pdf>
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2306.
+(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[][][]
+ []
+
+[116 <./vietnamese.png> <./confusion-network-2.png>]
+File: univ-edinburgh.pdf Graphic file (type pdf)
+ <use univ-edinburgh.pdf>
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2332.
+(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[][][]
+ []
+
+[117] <chinese-unsegmented.png, id=889, 299.1978pt x 41.4348pt>
+File: chinese-unsegmented.png Graphic file (type png)
+
+<use chinese-unsegmented.png>
+Package pdftex.def Info: chinese-unsegmented.png used on input line 2342.
+(pdftex.def)             Requested size: 299.19705pt x 41.43468pt.
+
+<chinese-segmented-incorrect.png, id=890, 476.0184pt x 41.4348pt>
+File: chinese-segmented-incorrect.png Graphic file (type png)
+
+<use chinese-segmented-incorrect.png>
+Package pdftex.def Info: chinese-segmented-incorrect.png used on input line 234
+8.
+(pdftex.def)             Requested size: 476.01723pt x 41.43468pt.
+
+<chinese-segmented-correct.png, id=891, 436.029pt x 41.4348pt>
+File: chinese-segmented-correct.png Graphic file (type png)
+
+<use chinese-segmented-correct.png>
+Package pdftex.def Info: chinese-segmented-correct.png used on input line 2354.
+
+(pdftex.def)             Requested size: 436.02792pt x 41.43468pt.
+File: univ-edinburgh.pdf Graphic file (type pdf)
+ <use univ-edinburgh.pdf>
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2364.
+(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[][][]
+ []
+
+[118 <./chinese-unsegmented.png> <./chinese-segmented-incorrect.png> <./chinese
+-segmented-correct.png>] <lattice-chinese.png, id=895, 489.9906pt x 77.088pt>
+File: lattice-chinese.png Graphic file (type png)
+
+<use lattice-chinese.png>
+Package pdftex.def Info: lattice-chinese.png used on input line 2368.
+(pdftex.def)             Requested size: 685.98216pt x 107.92244pt.
 File: univ-edinburgh.pdf Graphic file (type pdf)
  <use univ-edinburgh.pdf>
 Package pdftex.def Info: univ-edinburgh.pdf used on input line 2374.
@@ -2326,87 +2349,60 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 [][][]
  []
 
-[119 <./vietnamese.png> <./confusion-network-2.png>]
-File: univ-edinburgh.pdf Graphic file (type pdf)
- <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2400.
-(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
-
-Underfull \hbox (badness 10000) has occurred while \output is active
-[][][]
- []
-
-[120] <chinese-unsegmented.png, id=899, 299.1978pt x 41.4348pt>
-File: chinese-unsegmented.png Graphic file (type png)
-
-<use chinese-unsegmented.png>
-Package pdftex.def Info: chinese-unsegmented.png used on input line 2410.
-(pdftex.def)             Requested size: 299.19705pt x 41.43468pt.
-
-<chinese-segmented-incorrect.png, id=900, 476.0184pt x 41.4348pt>
-File: chinese-segmented-incorrect.png Graphic file (type png)
-
-<use chinese-segmented-incorrect.png>
-Package pdftex.def Info: chinese-segmented-incorrect.png used on input line 241
-6.
-(pdftex.def)             Requested size: 476.01723pt x 41.43468pt.
-
-<chinese-segmented-correct.png, id=901, 436.029pt x 41.4348pt>
-File: chinese-segmented-correct.png Graphic file (type png)
-
-<use chinese-segmented-correct.png>
-Package pdftex.def Info: chinese-segmented-correct.png used on input line 2422.
-
-(pdftex.def)             Requested size: 436.02792pt x 41.43468pt.
-File: univ-edinburgh.pdf Graphic file (type pdf)
- <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2432.
-(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
-
-Underfull \hbox (badness 10000) has occurred while \output is active
-[][][]
- []
-
-[121 <./chinese-unsegmented.png> <./chinese-segmented-incorrect.png> <./chinese
--segmented-correct.png>] <lattice-chinese.png, id=905, 489.9906pt x 77.088pt>
-File: lattice-chinese.png Graphic file (type png)
-
-<use lattice-chinese.png>
-Package pdftex.def Info: lattice-chinese.png used on input line 2436.
-(pdftex.def)             Requested size: 685.98216pt x 107.92244pt.
-File: univ-edinburgh.pdf Graphic file (type pdf)
- <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2442.
-(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
-
-Underfull \hbox (badness 10000) has occurred while \output is active
-[][][]
- []
-
-[122 <./lattice-chinese.png>]
-<lattice-german.png, id=909, 1156.32pt x 153.57375pt>
+[119 <./lattice-chinese.png>]
+<lattice-german.png, id=899, 1156.32pt x 153.57375pt>
 File: lattice-german.png Graphic file (type png)
  <use lattice-german.png>
-Package pdftex.def Info: lattice-german.png used on input line 2450.
+Package pdftex.def Info: lattice-german.png used on input line 2382.
 (pdftex.def)             Requested size: 693.79736pt x 92.14494pt.
 
-Overfull \hbox (18.29051pt too wide) in paragraph at lines 2450--2451
+Overfull \hbox (18.29051pt too wide) in paragraph at lines 2382--2383
  [] 
  []
 
 File: univ-edinburgh.pdf Graphic file (type pdf)
 <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2459.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2391.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
 [][][]
  []
 
-[123 <./lattice-german.png>]
+[120 <./lattice-german.png>]
 File: univ-edinburgh.pdf Graphic file (type pdf)
  <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2504.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2436.
+(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[][][]
+ []
+
+[121]
+File: univ-edinburgh.pdf Graphic file (type pdf)
+ <use univ-edinburgh.pdf>
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2457.
+(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[][][]
+ []
+
+[122]
+File: univ-edinburgh.pdf Graphic file (type pdf)
+ <use univ-edinburgh.pdf>
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2486.
+(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[][][]
+ []
+
+[123]
+File: univ-edinburgh.pdf Graphic file (type pdf)
+ <use univ-edinburgh.pdf>
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2524.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
@@ -2414,93 +2410,93 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  []
 
 [124]
-File: univ-edinburgh.pdf Graphic file (type pdf)
- <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2525.
-(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
-
-Underfull \hbox (badness 10000) has occurred while \output is active
-[][][]
- []
-
-[125]
-File: univ-edinburgh.pdf Graphic file (type pdf)
- <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2554.
-(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
-
-Underfull \hbox (badness 10000) has occurred while \output is active
-[][][]
- []
-
-[126]
-File: univ-edinburgh.pdf Graphic file (type pdf)
- <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2592.
-(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
-
-Underfull \hbox (badness 10000) has occurred while \output is active
-[][][]
- []
-
-[127]
-Overfull \hbox (22.5715pt too wide) in paragraph at lines 2616--2617
+Overfull \hbox (22.5715pt too wide) in paragraph at lines 2548--2549
  [][][][][][][] 
  []
 
 File: univ-edinburgh.pdf Graphic file (type pdf)
 <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2620.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2552.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
 [][][]
  []
 
-[128] <search-graph.png, id=930, 390.7398pt x 145.5036pt>
+[125] <search-graph.png, id=920, 390.7398pt x 145.5036pt>
 File: search-graph.png Graphic file (type png)
 
 <use search-graph.png>
-Package pdftex.def Info: search-graph.png used on input line 2630.
+Package pdftex.def Info: search-graph.png used on input line 2562.
 (pdftex.def)             Requested size: 468.88542pt x 174.60342pt.
 File: univ-edinburgh.pdf Graphic file (type pdf)
  <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2652.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2584.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
 [][][]
  []
 
-[129 <./search-graph.png>]
-Underfull \hbox (badness 6063) in paragraph at lines 2658--2659
+[126 <./search-graph.png>]
+Underfull \hbox (badness 6063) in paragraph at lines 2590--2591
 []\OT1/fcmss/m/n/20.74 Individual words or
  []
 
-<lattice-caitra.png, id=934, 423.5825pt x 336.25626pt>
+<lattice-caitra.png, id=925, 423.5825pt x 336.25626pt>
 File: lattice-caitra.png Graphic file (type png)
 
 <use lattice-caitra.png>
-Package pdftex.def Info: lattice-caitra.png used on input line 2671.
+Package pdftex.def Info: lattice-caitra.png used on input line 2603.
 (pdftex.def)             Requested size: 423.58147pt x 336.25543pt.
 
-Overfull \hbox (27.14941pt too wide) in paragraph at lines 2653--2674
+Overfull \hbox (27.14941pt too wide) in paragraph at lines 2585--2606
 [] 
  []
 
 File: univ-edinburgh.pdf Graphic file (type pdf)
 <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2676.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2608.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
 [][][]
  []
 
-[130 <./lattice-caitra.png>]
+[127 <./lattice-caitra.png>]
 File: univ-edinburgh.pdf Graphic file (type pdf)
  <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2712.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2644.
+(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[][][]
+ []
+
+[128]
+File: univ-edinburgh.pdf Graphic file (type pdf)
+ <use univ-edinburgh.pdf>
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2664.
+(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[][][]
+ []
+
+[129]
+File: univ-edinburgh.pdf Graphic file (type pdf)
+ <use univ-edinburgh.pdf>
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2700.
+(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[][][]
+ []
+
+[130]
+File: univ-edinburgh.pdf Graphic file (type pdf)
+ <use univ-edinburgh.pdf>
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2775.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
@@ -2510,7 +2506,7 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 [131]
 File: univ-edinburgh.pdf Graphic file (type pdf)
  <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2732.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2832.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
@@ -2518,9 +2514,15 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  []
 
 [132]
+Missing character: There is no Ÿ in font txtt!
+
+Overfull \hbox (32.45154pt too wide) in paragraph at lines 2851--2852
+ [][][][][][] 
+ []
+
 File: univ-edinburgh.pdf Graphic file (type pdf)
- <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2768.
+<use univ-edinburgh.pdf>
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2859.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
@@ -2530,7 +2532,7 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 [133]
 File: univ-edinburgh.pdf Graphic file (type pdf)
  <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2843.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2879.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
@@ -2538,9 +2540,13 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  []
 
 [134]
+Overfull \hbox (37.4918pt too wide) in paragraph at lines 2883--2884
+ [][][][][][] 
+ []
+
 File: univ-edinburgh.pdf Graphic file (type pdf)
- <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2900.
+<use univ-edinburgh.pdf>
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2897.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
@@ -2548,15 +2554,9 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  []
 
 [135]
-Missing character: There is no Ÿ in font txtt!
-
-Overfull \hbox (32.45154pt too wide) in paragraph at lines 2919--2920
- [][][][][][] 
- []
-
 File: univ-edinburgh.pdf Graphic file (type pdf)
-<use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2927.
+ <use univ-edinburgh.pdf>
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2926.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
@@ -2573,24 +2573,25 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 [][][]
  []
 
-[137]
-Overfull \hbox (37.4918pt too wide) in paragraph at lines 2951--2952
- [][][][][][] 
- []
-
+[137] <wikitrans.pdf, id=962, 283.0575pt x 165.61874pt>
+File: wikitrans.pdf Graphic file (type pdf)
+ <use wikitrans.pdf>
+Package pdftex.def Info: wikitrans.pdf used on input line 2949.
+(pdftex.def)             Requested size: 566.11359pt x 331.23666pt.
 File: univ-edinburgh.pdf Graphic file (type pdf)
+
 <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2965.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2954.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
 [][][]
  []
 
-[138]
+[138 <./wikitrans.pdf>]
 File: univ-edinburgh.pdf Graphic file (type pdf)
  <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 2994.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2975.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
@@ -2600,42 +2601,75 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 [139]
 File: univ-edinburgh.pdf Graphic file (type pdf)
  <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 3015.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2987.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
 [][][]
  []
 
-[140] <wikitrans.pdf, id=972, 283.0575pt x 165.61874pt>
-File: wikitrans.pdf Graphic file (type pdf)
- <use wikitrans.pdf>
-Package pdftex.def Info: wikitrans.pdf used on input line 3017.
-(pdftex.def)             Requested size: 566.11359pt x 331.23666pt.
+[140]
+File: univ-edinburgh.pdf Graphic file (type pdf)
+ <use univ-edinburgh.pdf>
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 2997.
+(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[][][]
+ []
+
+[141]
+File: univ-edinburgh.pdf Graphic file (type pdf)
+ <use univ-edinburgh.pdf>
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 3003.
+(pdftex.def)             Requested size: 107.80357pt x 108.1047pt.
+
+<charles.png, id=993, 1422.31375pt x 1411.2725pt>
+File: charles.png Graphic file (type png)
+ <use charles.png>
+Package pdftex.def Info: charles.png used on input line 3005.
+(pdftex.def)             Requested size: 99.57213pt x 98.79916pt.
+
+<fbk.png, id=994, 192.72pt x 79.29625pt>
+File: fbk.png Graphic file (type png)
+ <use fbk.png>
+Package pdftex.def Info: fbk.png used on input line 3007.
+(pdftex.def)             Requested size: 192.71951pt x 79.29604pt.
+
+<maryland.png, id=995, 438.63875pt x 103.38625pt>
+File: maryland.png Graphic file (type png)
+ <use maryland.png>
+Package pdftex.def Info: maryland.png used on input line 3009.
+(pdftex.def)             Requested size: 263.18527pt x 62.03221pt.
+
+<mit.png, id=996, 58.2175pt x 32.12pt>
+File: mit.png Graphic file (type png)
+ <use mit.png>
+Package pdftex.def Info: mit.png used on input line 3011.
+(pdftex.def)             Requested size: 87.32602pt x 48.17986pt.
+
+<aachen.png, id=997, 250.9375pt x 44.165pt>
+File: aachen.png Graphic file (type png)
+ <use aachen.png>
+Package pdftex.def Info: aachen.png used on input line 3013.
+(pdftex.def)             Requested size: 250.93687pt x 44.16487pt.
 File: univ-edinburgh.pdf Graphic file (type pdf)
 
 <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 3022.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 3019.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
 [][][]
  []
 
-[141 <./wikitrans.pdf>]
+[142 <./charles.png> <./fbk.png> <./maryland.png> <./mit.png> <./aachen.png>]
+Missing character: There is no Ã in font cmr10!
+Missing character: There is no ­ in font cmr10!
 File: univ-edinburgh.pdf Graphic file (type pdf)
- <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 3043.
-(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
-Underfull \hbox (badness 10000) has occurred while \output is active
-[][][]
- []
-
-[142]
-File: univ-edinburgh.pdf Graphic file (type pdf)
- <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 3055.
+<use univ-edinburgh.pdf>
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 3100.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
@@ -2645,76 +2679,18 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 [143]
 File: univ-edinburgh.pdf Graphic file (type pdf)
  <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 3065.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 3104.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
 [][][]
  []
 
-[144]
-File: univ-edinburgh.pdf Graphic file (type pdf)
- <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 3071.
-(pdftex.def)             Requested size: 107.80357pt x 108.1047pt.
-
-<charles.png, id=1003, 1422.31375pt x 1411.2725pt>
-File: charles.png Graphic file (type png)
- <use charles.png>
-Package pdftex.def Info: charles.png used on input line 3073.
-(pdftex.def)             Requested size: 99.57213pt x 98.79916pt.
-
-<fbk.png, id=1004, 192.72pt x 79.29625pt>
-File: fbk.png Graphic file (type png)
- <use fbk.png>
-Package pdftex.def Info: fbk.png used on input line 3075.
-(pdftex.def)             Requested size: 192.71951pt x 79.29604pt.
-
-<maryland.png, id=1005, 438.63875pt x 103.38625pt>
-File: maryland.png Graphic file (type png)
- <use maryland.png>
-Package pdftex.def Info: maryland.png used on input line 3077.
-(pdftex.def)             Requested size: 263.18527pt x 62.03221pt.
-
-<mit.png, id=1006, 58.2175pt x 32.12pt>
-File: mit.png Graphic file (type png)
- <use mit.png>
-Package pdftex.def Info: mit.png used on input line 3079.
-(pdftex.def)             Requested size: 87.32602pt x 48.17986pt.
-
-<aachen.png, id=1007, 250.9375pt x 44.165pt>
-File: aachen.png Graphic file (type png)
- <use aachen.png>
-Package pdftex.def Info: aachen.png used on input line 3081.
-(pdftex.def)             Requested size: 250.93687pt x 44.16487pt.
-File: univ-edinburgh.pdf Graphic file (type pdf)
-
-<use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 3087.
-(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
-
-Underfull \hbox (badness 10000) has occurred while \output is active
-[][][]
- []
-
-[145 <./charles.png> <./fbk.png> <./maryland.png> <./mit.png> <./aachen.png>]
-Missing character: There is no Ã in font cmr10!
-Missing character: There is no ­ in font cmr10!
-File: univ-edinburgh.pdf Graphic file (type pdf)
-
-<use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 3168.
-(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
-
-Underfull \hbox (badness 10000) has occurred while \output is active
-[][][]
- []
-
-[146] (./talk.aux) ) 
+[144] (./talk.aux) ) 
 Here is how much of TeX's memory you used:
  16103 strings out of 495028
  309124 string characters out of 6181497
- 414388 words of memory out of 5000000
+ 414390 words of memory out of 5000000
  18914 multiletter control sequences out of 15000+600000
  15201 words of font info for 56 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
@@ -2730,10 +2706,10 @@ mf-dist/fonts/type1/public/amsfonts/cm/cmssi10.pfb></usr/share/texlive/texmf-di
 st/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fon
 ts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type
 1/public/txfonts/txtt.pfb>
-Output written on talk.pdf (147 pages, 1841858 bytes).
+Output written on talk.pdf (145 pages, 1835223 bytes).
 PDF statistics:
- 1061 PDF objects out of 1200 (max. 8388607)
- 701 compressed objects within 8 object streams
+ 1054 PDF objects out of 1200 (max. 8388607)
+ 697 compressed objects within 7 object streams
  0 named destinations out of 1000 (max. 500000)
  288 words of extra memory for PDF output out of 10000 (max. 10000000)
 

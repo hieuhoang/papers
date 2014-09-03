@@ -67,7 +67,7 @@
 \begin{document}
 \title[Machine Translation with Open Source Software]{{\sc \huge Moses}\\[3mm] Machine Translation with Open Source Software}
 \author[Hoang, Huck and Koehn]{Hieu Hoang and Matthias Huck}
-\date{\vspace{-5mm}October 2014}
+\date{\vspace{-5mm}December 2014}
 \maketitle
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2229,68 +2229,6 @@ I really like to $<$b$>$eat$<$/b$>$ chicken!}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Transliteration}
-\begin{itemize}
-  \item Languages are written in different scripts 
-  \begin{itemize}
-    \item Russian, Bulgarian and Serbian - written in Cyrillic script
-    \item Urdu, Farsi and Pashto - written in Arabic script
-    \item Hindi, Marathi and Nepalese - written in Devanagri
-  \end{itemize}
-  \item Transliteration can be used to translate OOVs and Named Entities
-  \item Problem: Transliteration corpus is not always available
-  \item Naive Solution:
-  \begin{itemize}
-    \item Crawl training data from Wikipedia titles
-    \item Build character-based transliteration model
-    \item Replace OOV words with 1-best transliteration
-  \end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Transliteration}
-
-\begin{itemize}
-  \item 2 methods to integrate into MT
-  \item Post-decoding method
-  \begin{itemize}  
-    \item Use language model to pick best transliteration
-    \item Transliteration features
-  \end{itemize}
-  \item In-decoding method
-  \begin{itemize}  
-    \item Integrate transliteration inside decoder
-    \item Words can be translated OR transliterated
-  \end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Transliteration}
-
-\begin{itemize}
-  \item EMS:
-  \begin{SaveVerbatim}{myverb}
-  [TRAINING]
-  transliteration-module = "yes"
-  \end{SaveVerbatim}
-  
-%  \item Post-processing method
-%  \begin{SaveVerbatim}{myverb} 
-%   post-decoding-transliteration = "yes"
-%  \end{SaveVerbatim}
-  
-%  \item In-decoding method
-%  \begin{SaveVerbatim}{myverb} 
-%   in-decoding-transliteration = "yes"
-%   transliteration-file = /file containing list of words to be transliterated/
-%  \end{SaveVerbatim}
- 
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \slide{Advanced Features}
 \vspace{-5mm}
 \textcolor{darkgrey}{
@@ -3156,6 +3094,10 @@ Richard Zens
 
 \end{tabular}
 \end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Feature Functions}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
