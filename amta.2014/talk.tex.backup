@@ -1804,15 +1804,35 @@ Specification in EMS:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Secondary Phrase Table}
-
+\small
 \begin{itemize} \itemsep -1mm
 \item Terminology/Glossary database
   \begin{itemize}
     \item fixed translation
-    \item 
+    \item per client, project, etc
   \end{itemize}
-\end{itemize}
+\item Primary phrase table
+  \begin{itemize}
+    \item backoff to 'normal' phrase-table if no glossary term
 
+  \begin{SaveVerbatim}{myverb} 
+    [feature]
+    PhraseDictionaryMemory path=.../glossary
+    PhraseDictionaryMemory path=.../normal.phrase.table
+    
+    [mapping]
+    0 T 0
+    1 T 1
+    
+    [decoding-graph-backoff]
+    0
+    1
+  \end{SaveVerbatim}
+  \colorbox{gray}{\BUseVerbatim{myverb}}
+
+    \end{itemize}
+\end{itemize}
+\normalsize 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 
 % \slide{Incremental training}
@@ -1859,7 +1879,7 @@ Specification in EMS:
   \item {Secondary phrase table}
   \item \currenttopic{Domain indicator features}
 \item Interpolated language models
-  \item TM-MT integration
+%  \item TM-MT integration
   \end{itemize}
 \end{itemize}
 }
@@ -1901,7 +1921,7 @@ Specification in EMS:
   \item {Secondary phrase table}
   \item Domain indicator features
 \item \currenttopic{Interpolated language models}
-  \item TM-MT integration
+%  \item TM-MT integration
   \end{itemize}
 \end{itemize}
 }
@@ -1925,68 +1945,68 @@ Specification in EMS:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-\item {How do I get started?}
-\item {Experiment Management System}
-\item {Faster Training}
-\item {Faster Decoding}
-\item {Moses Server}
-\item {Data and domain adaptation}
-  \begin{itemize} \vspace{-5mm}
-  \item {Train everything together}
-  \item {Secondary phrase table}
-  \item Domain indicator features
-\item Interpolated language models
-  \item \currenttopic{TM-MT integration}
-  \end{itemize}
-\end{itemize}
-}
+%\slide{Advanced Features}
+%\vspace{-5mm}
+%\textcolor{darkgrey}{
+%\begin{itemize} \itemsep -1mm
+%\item {How do I get started?}
+%\item {Experiment Management System}
+%\item {Faster Training}
+%\item {Faster Decoding}
+%\item {Moses Server}
+%\item {Data and domain adaptation}
+%  \begin{itemize} \vspace{-5mm}
+%  \item {Train everything together}
+%  \item {Secondary phrase table}
+%  \item Domain indicator features
+%\item Interpolated language models
+%  \item \currenttopic{TM-MT integration}
+%  \end{itemize}
+%\end{itemize}
+%}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{TM-MT Integration}
-\begin{itemize}
-\item Input sentence: \vspace{-5mm}
-\begin{center}
-\example{The second paragraph of Article \highlightOrange{21} is deleted .}
-\end{center}
-\item Fuzzy match in translation memory: \vspace{-5mm}
-\begin{center}
-\example{The second paragraph of Article \highlight{5} is deleted .}\\
-=\\
-\example{\highlightGreen{{\`A} l' article} \highlight{5} \highlightGreen{, le texte du deuxi{\'e}me alin{\'e}a est supprim{\'e} .}}
-\end{center}
-\item[] \textcolor{darkgreen}{\bf Output word(s) taken from the target TM}  \vspace{-5mm}
-\item[] \textcolor{darkorange}{\bf Input word(s) that still need to be translated by SMT}
-\end{itemize}
+%\slide{TM-MT Integration}
+%\begin{itemize}
+%\item Input sentence: \vspace{-5mm}
+%\begin{center}
+%\example{The second paragraph of Article \highlightOrange{21} is deleted .}
+%\end{center}
+%\item Fuzzy match in translation memory: \vspace{-5mm}
+%\begin{center}
+%\example{The second paragraph of Article \highlight{5} is deleted .}\\
+%=\\
+%\example{\highlightGreen{{\`A} l' article} \highlight{5} \highlightGreen{, le texte du deuxi{\'e}me alin{\'e}a est supprim{\'e} .}}
+%\end{center}
+%\item[] \textcolor{darkgreen}{\bf Output word(s) taken from the target TM}  \vspace{-5mm}
+%\item[] \textcolor{darkorange}{\bf Input word(s) that still need to be translated by SMT}
+%\end{itemize}
 
 
-\slide{TM-MT Integration}
+%\slide{TM-MT Integration}
 
-\begin{itemize} \itemsep -1mm
-\item Translation memory-style fuzzy match
-  \begin{itemize}
-  \item For hierarchical decoding
-  \item Create long translation rule 'templates'
-  \item Best for use with parallel corpus with lots of repetition
-  \end{itemize}
+%\begin{itemize} \itemsep -1mm
+%\item Translation memory-style fuzzy match
+%  \begin{itemize}
+%  \item For hierarchical decoding
+%  \item Create long translation rule 'templates'
+%  \item Best for use with parallel corpus with lots of repetition
+%  \end{itemize}
 
-\item Add TM and word alignment as a special phrase table
-  \begin{itemize}
-    \item Use in addition to normal phrase table
-  \end{itemize}
-  \begin{SaveVerbatim}{myverb} 
-   [feature]
-   PhraseDictionaryFuzzyMatch ...
-   PhraseDictionaryMemory path=phrase-table.gz ...
-   PhraseDictionaryMemory path=glue-rules ...
-  \end{SaveVerbatim}
-  \colorbox{gray}{\BUseVerbatim{myverb}}
+%\item Add TM and word alignment as a special phrase table
+%  \begin{itemize}
+%    \item Use in addition to normal phrase table
+%  \end{itemize}
+%  \begin{SaveVerbatim}{myverb} 
+%   [feature]
+%   PhraseDictionaryFuzzyMatch ...
+%   PhraseDictionaryMemory path=phrase-table.gz ...
+%   PhraseDictionaryMemory path=glue-rules ...
+%  \end{SaveVerbatim}
+%  \colorbox{gray}{\BUseVerbatim{myverb}}
 
-\end{itemize}
+%\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2926,9 +2946,10 @@ Decoding time (sec) & per sentence & 2.27 & 6.45 \\
 \end{itemize}
 \item Translation model is defined by parallel corpus\\[5mm]
 \begin{SaveVerbatim}{myverb}
-PhraseDictionaryDynSuffixArray \ 
-   source=/.../corpus.f target=/.../corpus.e \ 
-   alignment=/.../model/aligned 
+PhraseDictionaryBitextSampling \ 
+    path=/path/to/corpus \
+    L1=source language extension \
+    L2=target language extension
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
 \end{itemize}
