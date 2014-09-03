@@ -1420,10 +1420,16 @@ KENLM name=LM0 factor=0 path=/.../model.binlm order=5
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{OSM (Operations Sequence Model) }
+\vspace{-5mm}
 
 \begin{itemize}
  \item 'Language model' for source and target
- \item ??? TODO
+ \item Considers source and target contextual information across phrases
+ \item Integrates translation and reordering into a single model
+
+ \begin{center}
+ \includegraphics[scale=0.7]{osm.pdf}
+\end{center}
 \end{itemize}
 
 
