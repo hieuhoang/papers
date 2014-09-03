@@ -994,7 +994,7 @@ sortable by most improvement, deterioration
   \item Optimized for large server\\[2mm]
   \begin{SaveVerbatim}{myverb}
  sort --buffer-size 10G --parallel 5
-      --batch-size 253 --compress-program gzip ...
+      --batch-size 253 --compress-program [gzip/pigz] ...
   \end{SaveVerbatim}
   \colorbox{gray}{\BUseVerbatim{myverb}}
     \begin{itemize}
@@ -1007,7 +1007,7 @@ sortable by most improvement, deterioration
 \item In Moses:\\[2mm]
     \begin{SaveVerbatim}{myverb}
  .../train-model.perl -sort-buffer-size 10G -sort-parallel 5 
-      -sort-batch-size 253 -sort-compress gzip 
+      -sort-batch-size 253 -sort-compress pigz 
     \end{SaveVerbatim}
     \colorbox{gray}{\BUseVerbatim{myverb}}
 
@@ -1082,7 +1082,7 @@ build-lm.sh -i "gunzip -c corpus.gz" -n 3
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{KENLM: Training}
+\slide{New: KENLM Training}
 \vspace{5mm}
 \begin{itemize}
 \item Can train very large language models with limited RAM\\
@@ -1333,7 +1333,7 @@ automatically detected
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{New: Compact Phrase Table}
+\slide{Compact Phrase Table}
 \begin{itemize}
 \item Memory-efficient data structure
 \begin{itemize}
@@ -1361,6 +1361,7 @@ automatically detected
 	\item reduces memory but lose accuracy
 	\item probability stored in 1 byte instead of 4 bytes
 	\end{itemize}
+\item Not multithreaded	
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1579,7 +1580,7 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
   \item Secondary phrase table
 \item Domain indicator features
 \item Interpolated language models
-  \item TM-MT integration
+%\item TM-MT integration
   \end{itemize}
 \end{itemize}
 }
@@ -1638,7 +1639,7 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
   \item Secondary phrase table
 \item Domain indicator features
 \item Interpolated language models
-  \item TM-MT integration
+%\item TM-MT integration
   \end{itemize}
 \end{itemize}
 }
@@ -1704,55 +1705,55 @@ Specification in EMS:
   \item \currenttopic{Secondary phrase table}
 \item Domain indicator features
 \item Interpolated language models
-  \item TM-MT integration
+%\item TM-MT integration
   \end{itemize}
 \end{itemize}
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{TM-MT Integration}
-\begin{itemize}
-\item Input sentence: \vspace{-5mm}
-\begin{center}
-\example{The second paragraph of Article \highlightOrange{21} is deleted .}
-\end{center}
-\item Fuzzy match in translation memory: \vspace{-5mm}
-\begin{center}
-\example{The second paragraph of Article \highlight{5} is deleted .}\\
-=\\
-\example{\highlightGreen{{\`A} l' article} \highlight{5} \highlightGreen{, le texte du deuxi{\'e}me alin{\'e}a est supprim{\'e} .}}
-\end{center}
-\item[] \textcolor{darkgreen}{\bf Output word(s) taken from the target TM}  \vspace{-5mm}
-\item[] \textcolor{darkorange}{\bf Input word(s) that still need to be translated by SMT}
-\end{itemize}
+%\slide{TM-MT Integration}
+%\begin{itemize}
+%\item Input sentence: \vspace{-5mm}
+%\begin{center}
+%\example{The second paragraph of Article \highlightOrange{21} is deleted .}
+%\end{center}
+%\item Fuzzy match in translation memory: \vspace{-5mm}
+%\begin{center}
+%\example{The second paragraph of Article \highlight{5} is deleted .}\\
+%=\\
+%\example{\highlightGreen{{\`A} l' article} \highlight{5} \highlightGreen{, le texte du deuxi{\'e}me alin{\'e}a est supprim{\'e} .}}
+%\end{center}
+%\item[] \textcolor{darkgreen}{\bf Output word(s) taken from the target TM}  \vspace{-5mm}
+%\item[] \textcolor{darkorange}{\bf Input word(s) that still need to be translated by SMT}
+%\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\slide{TM-MT Integration}
+%\slide{TM-MT Integration}
 
-\begin{itemize} \itemsep -1mm
-\item Translation memory-style fuzzy match
-  \begin{itemize}
-  \item For hierarchical decoding
-  \item Create long translation rule 'templates'
-  \item Best for use with parallel corpus with lots of repetition
-  \end{itemize}
+%\begin{itemize} \itemsep -1mm
+%\item Translation memory-style fuzzy match
+%  \begin{itemize}
+%  \item For hierarchical decoding
+%  \item Create long translation rule 'templates'
+%  \item Best for use with parallel corpus with lots of repetition
+%  \end{itemize}
 
-\item Add TM and word alignment as a special phrase table
-  \begin{itemize}
-    \item Use in addition to normal phrase table
-  \end{itemize}
-  \begin{SaveVerbatim}{myverb} 
-   [ttable-file]
-   11 0 0 3 source-corpus;target-corpus;word-alignment 
-   2 0 0 3 phrase table
-   6 0 0 3 glue-rules
-  \end{SaveVerbatim}
-  \colorbox{gray}{\BUseVerbatim{myverb}}
+%\item Add TM and word alignment as a special phrase table
+%  \begin{itemize}
+%    \item Use in addition to normal phrase table
+%  \end{itemize}
+%  \begin{SaveVerbatim}{myverb} 
+%   [ttable-file]
+%   11 0 0 3 source-corpus;target-corpus;word-alignment 
+%   2 0 0 3 phrase table
+%   6 0 0 3 glue-rules
+%  \end{SaveVerbatim}
+%  \colorbox{gray}{\BUseVerbatim{myverb}}
 
-\end{itemize}
+%\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1800,6 +1801,38 @@ Specification in EMS:
   \item Not integrated into the EMS
 \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Secondary Phrase Table}
+\small
+\begin{itemize} \itemsep -1mm
+\item Terminology/Glossary database
+  \begin{itemize}
+    \item fixed translation
+    \item per client, project, etc
+  \end{itemize}
+\item Primary phrase table
+  \begin{itemize}
+    \item backoff to 'normal' phrase-table if no glossary term
+
+  \begin{SaveVerbatim}{myverb} 
+    [feature]
+    PhraseDictionaryMemory path=.../glossary
+    PhraseDictionaryMemory path=.../normal.phrase.table
+    
+    [mapping]
+    0 T 0
+    1 T 1
+    
+    [decoding-graph-backoff]
+    0
+    1
+  \end{SaveVerbatim}
+  \colorbox{gray}{\BUseVerbatim{myverb}}
+
+    \end{itemize}
+\end{itemize}
+\normalsize 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 
 % \slide{Incremental training}
@@ -3045,9 +3078,7 @@ Richard Zens
 \end{tabular}
 \end{center}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Feature Functions}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
+
