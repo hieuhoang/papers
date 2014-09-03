@@ -2946,9 +2946,10 @@ Decoding time (sec) & per sentence & 2.27 & 6.45 \\
 \end{itemize}
 \item Translation model is defined by parallel corpus\\[5mm]
 \begin{SaveVerbatim}{myverb}
-PhraseDictionaryDynSuffixArray \ 
-   source=/.../corpus.f target=/.../corpus.e \ 
-   alignment=/.../model/aligned 
+PhraseDictionaryBitextSampling \ 
+    path=/path/to/corpus \
+    L1=source language extension \
+    L2=target language extension
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
 \end{itemize}
