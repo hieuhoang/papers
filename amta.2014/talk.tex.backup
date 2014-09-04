@@ -1418,17 +1418,40 @@ KENLM name=LM0 factor=0 path=/.../model.binlm order=5
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{OSM (Operations Sequence Model) }
-\vspace{-5mm}
+\slide{New: OSM (Operations Sequence Model) }
 
 \begin{itemize}
- \item 'Language model' for source and target
- \item Considers source and target contextual information across phrases
- \item Integrates translation and reordering into a single model
+  \item A model that
+  \begin{itemize}
+    \item considers source and target contextual information across phrases
+    \item integrates translation and reordering into a single model
+  \end{itemize}
+  \item Convert a bilingual sentence to a sequence of operations
+  \begin{itemize}
+    \item Translate (Generate a minimal translation unit)
+    \item Reordering (Insert a gap or Jump)
+  \end{itemize}
+  \item P(e,f,a) = N-gram model over resulting operation sequences 
+  \item Overcomes phrasal independence assumption
+  \begin{itemize}
+    \item Considers source and target contextual information across phrases 
+  \end{itemize}
+  
+  \item Better reordering model
+  \item Translation and reordering decisions influence each
+  \item Handles local and long distance reorderings in a unified manner
+
+  \item No spurious phrasal segmentation problem
+
+  \item Average gain of +0.40 on news-test2013 across 10 pairs
+  
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{New: OSM (Operations Sequence Model) }
 
  \begin{center}
- \includegraphics[scale=0.7]{osm.pdf}
+ \includegraphics[scale=0.8]{osm.pdf}
 \end{center}
 \end{itemize}
 
@@ -2271,21 +2294,27 @@ I really like to $<$b$>$eat$<$/b$>$ chicken!}
 
 \begin{itemize}
   \item EMS:
+  
   \begin{SaveVerbatim}{myverb}
   [TRAINING]
   transliteration-module = "yes"
   \end{SaveVerbatim}
+  \colorbox{gray}{\BUseVerbatim{myverb}}
   
-%  \item Post-processing method
-%  \begin{SaveVerbatim}{myverb} 
-%   post-decoding-transliteration = "yes"
-%  \end{SaveVerbatim}
+  \item Post-processing method
+
+  \begin{SaveVerbatim}{myverb} 
+   post-decoding-transliteration = "yes"
+  \end{SaveVerbatim}
+  \colorbox{gray}{\BUseVerbatim{myverb}}
   
-%  \item In-decoding method
-%  \begin{SaveVerbatim}{myverb} 
-%   in-decoding-transliteration = "yes"
-%   transliteration-file = /file containing list of words to be transliterated/
-%  \end{SaveVerbatim}
+  \item In-decoding method
+
+  \begin{SaveVerbatim}{myverb} 
+   in-decoding-transliteration = "yes"
+   transliteration-file = /list of words to be transliterated/
+  \end{SaveVerbatim}
+  \colorbox{gray}{\BUseVerbatim{myverb}}
  
 \end{itemize}
 
@@ -3156,6 +3185,12 @@ Richard Zens
 
 \end{tabular}
 \end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{FOR ICRON 2014}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{Feature Functions}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
