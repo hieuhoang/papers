@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.8.29)  7 SEP 2014 14:15
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.8.29)  7 SEP 2014 14:45
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -2756,11 +2756,11 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  []
 
 [150 <./Feature_Function_API.pdf>]
-<Feature_Function_API2.pdf, id=1052, 722.7pt x 542.025pt>
-File: Feature_Function_API2.pdf Graphic file (type pdf)
+<Feature_Function_API3.pdf, id=1052, 722.7pt x 542.025pt>
+File: Feature_Function_API3.pdf Graphic file (type pdf)
 
-<use Feature_Function_API2.pdf>
-Package pdftex.def Info: Feature_Function_API2.pdf used on input line 3222.
+<use Feature_Function_API3.pdf>
+Package pdftex.def Info: Feature_Function_API3.pdf used on input line 3222.
 (pdftex.def)             Requested size: 433.62334pt x 325.2175pt.
 File: univ-edinburgh.pdf Graphic file (type pdf)
  <use univ-edinburgh.pdf>
@@ -2771,80 +2771,105 @@ Underfull \hbox (badness 10000) has occurred while \output is active
 [][][]
  []
 
-[151 <./Feature_Function_API2.pdf>]
-<Feature_Function_API3.pdf, id=1075, 722.7pt x 542.025pt>
-File: Feature_Function_API3.pdf Graphic file (type pdf)
+[151 <./Feature_Function_API3.pdf>]
+File: univ-edinburgh.pdf Graphic file (type pdf)
+ <use univ-edinburgh.pdf>
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 3248.
+(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
-<use Feature_Function_API3.pdf>
-Package pdftex.def Info: Feature_Function_API3.pdf used on input line 3229.
+Underfull \hbox (badness 10000) has occurred while \output is active
+[][][]
+ []
+
+[152]
+File: univ-edinburgh.pdf Graphic file (type pdf)
+ <use univ-edinburgh.pdf>
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 3251.
+(pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
+
+Underfull \hbox (badness 10000) has occurred while \output is active
+[][][]
+ []
+
+[153] <Feature_Function_API2.pdf, id=1081, 722.7pt x 542.025pt>
+File: Feature_Function_API2.pdf Graphic file (type pdf)
+
+<use Feature_Function_API2.pdf>
+Package pdftex.def Info: Feature_Function_API2.pdf used on input line 3254.
 (pdftex.def)             Requested size: 433.62334pt x 325.2175pt.
 File: univ-edinburgh.pdf Graphic file (type pdf)
  <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 3233.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 3258.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
 [][][]
  []
 
-[152 <./Feature_Function_API3.pdf>]
-<Feature_Function_API4.pdf, id=1098, 722.7pt x 542.025pt>
+[154 <./Feature_Function_API2.pdf>]
+<Feature_Function_API4.pdf, id=1104, 722.7pt x 542.025pt>
 File: Feature_Function_API4.pdf Graphic file (type pdf)
 
 <use Feature_Function_API4.pdf>
-Package pdftex.def Info: Feature_Function_API4.pdf used on input line 3236.
+Package pdftex.def Info: Feature_Function_API4.pdf used on input line 3261.
 (pdftex.def)             Requested size: 469.74944pt x 352.31207pt.
 File: univ-edinburgh.pdf Graphic file (type pdf)
  <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 3240.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 3265.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
 [][][]
  []
 
-[153 <./Feature_Function_API4.pdf>]
-<Feature_Function_API5.pdf, id=1130, 722.7pt x 542.025pt>
+[155 <./Feature_Function_API4.pdf>]
+<Feature_Function_API5.pdf, id=1136, 722.7pt x 542.025pt>
 File: Feature_Function_API5.pdf Graphic file (type pdf)
 
 <use Feature_Function_API5.pdf>
-Package pdftex.def Info: Feature_Function_API5.pdf used on input line 3243.
+Package pdftex.def Info: Feature_Function_API5.pdf used on input line 3268.
 (pdftex.def)             Requested size: 469.74944pt x 352.31207pt.
 File: univ-edinburgh.pdf Graphic file (type pdf)
  <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 3247.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 3272.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
 [][][]
  []
 
-[154 <./Feature_Function_API5.pdf>]
+[156 <./Feature_Function_API5.pdf>]
+<Feature_Function_API6.pdf, id=1170, 722.7pt x 542.025pt>
+File: Feature_Function_API6.pdf Graphic file (type pdf)
+
+<use Feature_Function_API6.pdf>
+Package pdftex.def Info: Feature_Function_API6.pdf used on input line 3275.
+(pdftex.def)             Requested size: 469.74944pt x 352.31207pt.
 File: univ-edinburgh.pdf Graphic file (type pdf)
  <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 3269.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 3280.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
 [][][]
  []
 
-[155]
+[157 <./Feature_Function_API6.pdf>]
 File: univ-edinburgh.pdf Graphic file (type pdf)
  <use univ-edinburgh.pdf>
-Package pdftex.def Info: univ-edinburgh.pdf used on input line 3273.
+Package pdftex.def Info: univ-edinburgh.pdf used on input line 3284.
 (pdftex.def)             Requested size: 359.34161pt x 360.34537pt.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
 [][][]
  []
 
-[156] (./talk.aux) ) 
+[158] (./talk.aux) ) 
 Here is how much of TeX's memory you used:
- 16128 strings out of 493304
- 309839 string characters out of 6139871
+ 16133 strings out of 493304
+ 309983 string characters out of 6139871
  418674 words of memory out of 5000000
- 19183 multiletter control sequences out of 15000+600000
+ 19187 multiletter control sequences out of 15000+600000
  15201 words of font info for 56 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
  56i,17n,56p,413b,919s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -2859,10 +2884,10 @@ mf-dist/fonts/type1/public/amsfonts/cm/cmssi10.pfb></usr/share/texlive/texmf-di
 st/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fon
 ts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type
 1/public/txfonts/txtt.pfb>
-Output written on talk.pdf (157 pages, 2347854 bytes).
+Output written on talk.pdf (159 pages, 2581069 bytes).
 PDF statistics:
- 1206 PDF objects out of 1440 (max. 8388607)
- 779 compressed objects within 8 object streams
+ 1247 PDF objects out of 1440 (max. 8388607)
+ 802 compressed objects within 9 object streams
  0 named destinations out of 1000 (max. 500000)
- 313 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 318 words of extra memory for PDF output out of 10000 (max. 10000000)
 
