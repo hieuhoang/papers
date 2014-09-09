@@ -3266,117 +3266,117 @@ PhraseDictionaryBitextSampling \
 
 \begin{comment}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{FOR ICON 2014}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \slide{FOR ICON 2014}
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \slide{What is a Translation Rule?}
+% 
+% \begin{itemize}
+%   \item Phrase-table file:
+%   
+%     \begin{SaveVerbatim}{myverb}
+%   j' ai ||| I have ||| 0.1 0.2 0.3 0.4 ||| .....
+%   un ||| a ||| 0.1 0.2 0.3 0.4 ||| .....
+%   chat noir ||| black cat ||| 0.1 0.2 0.3 0.4 ||| .....
+%   \end{SaveVerbatim}
+%   \colorbox{gray}{\BUseVerbatim{myverb}}
+% 
+%   \item Use to translate:
+%   \begin{itemize}
+%     \item j' ai un chat noir .
+%     \item I have a black cat .
+%   \end{itemize}
+%   
+%   \item TODO draw hypotheses boxes here
+% \end{itemize}
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \slide{Timeline of Translation Rule}
+% 
+% \begin{center}
+% \includegraphics[scale=0.6]{Feature_Function_API.pdf}
+% \end{center}
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \slide{Timeline of Translation Rule}
+% 
+% \begin{center}
+% \includegraphics[scale=0.6]{Feature_Function_API3.pdf}
+% \end{center}
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \slide{Feature Functions}
+% 
+% \begin{itemize}
+%   \item What is a feature function?
+%   \item Gives a score to a translation.
+%   \begin{itemize}
+%     \item partial translation
+%     \item completed
+%   \end{itemize}
+% 
+%   \item Example feature functions
+%   \begin{itemize}
+%     \item Language model
+%     \item Phrase penalty
+%     \item Word penalty
+%     \item Reordering model
+%     \item Phrase-table (special feature function)
+%     \item MANY MORE...
+%   \end{itemize}
+% \end{itemize}
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \slide{Implementing a Feature Function}
+% 
+% \begin{SaveVerbatim}{myverb}
+% class MyFeatureFunction : public Stateless/Statefull...
+% {
+%   MyFeatureFunction(string ini-line)
+%   
+%   void Load();
+%   
+%   ....
+% 
+% }
+% \end{SaveVerbatim}
+% \colorbox{gray}{\BUseVerbatim{myverb}}
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \slide{Timeline of Translation Rule}
+% 
+% \begin{center}
+% \includegraphics[scale=0.6]{Feature_Function_API2.pdf}
+% \end{center}
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \slide{Timeline of Translation Rule}
+% 
+% \begin{center}
+% \includegraphics[scale=0.65]{Feature_Function_API4.pdf}
+% \end{center}
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \slide{Timeline of Translation Rule}
+% 
+% \begin{center}
+% \includegraphics[scale=0.65]{Feature_Function_API5.pdf}
+% \end{center}
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \slide{Timeline of Translation Rule}
+% 
+% \begin{center}
+% \includegraphics[scale=0.65]{Feature_Function_API6.pdf}
+% \end{center}
+% 
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \slide{Feature Function API}
+% 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{What is a Translation Rule?}
-
-\begin{itemize}
-  \item Phrase-table file:
-  
-    \begin{SaveVerbatim}{myverb}
-  j' ai ||| I have ||| 0.1 0.2 0.3 0.4 ||| .....
-  un ||| a ||| 0.1 0.2 0.3 0.4 ||| .....
-  chat noir ||| black cat ||| 0.1 0.2 0.3 0.4 ||| .....
-  \end{SaveVerbatim}
-  \colorbox{gray}{\BUseVerbatim{myverb}}
-
-  \item Use to translate:
-  \begin{itemize}
-    \item j' ai un chat noir .
-    \item I have a black cat .
-  \end{itemize}
-  
-  \item TODO draw hypotheses boxes here
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Timeline of Translation Rule}
-
-\begin{center}
-\includegraphics[scale=0.6]{Feature_Function_API.pdf}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Timeline of Translation Rule}
-
-\begin{center}
-\includegraphics[scale=0.6]{Feature_Function_API3.pdf}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Feature Functions}
-
-\begin{itemize}
-  \item What is a feature function?
-  \item Gives a score to a translation.
-  \begin{itemize}
-    \item partial translation
-    \item completed
-  \end{itemize}
-
-  \item Example feature functions
-  \begin{itemize}
-    \item Language model
-    \item Phrase penalty
-    \item Word penalty
-    \item Reordering model
-    \item Phrase-table (special feature function)
-    \item MANY MORE...
-  \end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Implementing a Feature Function}
-
-\begin{SaveVerbatim}{myverb}
-class MyFeatureFunction : public Stateless/Statefull...
-{
-  MyFeatureFunction(string ini-line)
-  
-  void Load();
-  
-  ....
-
-}
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Timeline of Translation Rule}
-
-\begin{center}
-\includegraphics[scale=0.6]{Feature_Function_API2.pdf}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Timeline of Translation Rule}
-
-\begin{center}
-\includegraphics[scale=0.65]{Feature_Function_API4.pdf}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Timeline of Translation Rule}
-
-\begin{center}
-\includegraphics[scale=0.65]{Feature_Function_API5.pdf}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Timeline of Translation Rule}
-
-\begin{center}
-\includegraphics[scale=0.65]{Feature_Function_API6.pdf}
-\end{center}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Feature Function API}
-
 \end{comment}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
 
