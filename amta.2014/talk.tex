@@ -3395,6 +3395,46 @@ class MyFeatureFunction : public Stateless/Statefull...
 
 \end{itemize}
     
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{Properties}
+
+\begin{itemize}
+  \item Feature Function
+  \begin{itemize}
+    \item Score a translation
+  \end{itemize}
+  \item Property
+  \begin{itemize}
+    \item Store arbitrary information in each translation rule
+    \item Extra information
+    \begin{itemize}
+      \item Not just source, target, scores
+      \item syntax/semantic information
+      \item domain information
+    \end{itemize} 
+    \item can be used by any feature function
+  \end{itemize}
+  
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{Properties}
+\small
+\begin{itemize}
+  \item Standard translation rule
+
+  \begin{SaveVerbatim}{myverb}
+  j' ai ||| I have ||| 0.1 0.2 0.3 0.4 
+  \end{SaveVerbatim}
+  \colorbox{gray}{\BUseVerbatim{myverb}}
+
+  \item With properties information
+
+  \begin{SaveVerbatim}{myverb}
+  j' ai ||| I have ||| 0.1 0.2 0.3 0.4 ||| ||| ||| ||| {{key value}}
+  \end{SaveVerbatim}
+  \colorbox{gray}{\BUseVerbatim{myverb}}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
 
