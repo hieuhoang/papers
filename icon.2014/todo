@@ -1,0 +1,38 @@
+matthias
+training
+extraction
+
+basic moses.ini
+specify phrase-table, weights
+
+cut
+---
+srilm
+irstlm
+cat tools
+syntax
+xml
+input format
+incremental training
+
+add
+---
+tuning with kbmira, pro etc
+sparse feature
+filtering
+table-limit pruning, cube pruning
+reordering model
+mgiza
+
+hiero
+
+
+matthias
+--------
+cut out marketing
+hiero
+rationalise 32-52
+
+matthias flying 16th-21st
+hieu flying 17th - 31st
+
