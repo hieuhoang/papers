@@ -1364,54 +1364,7 @@ sortable by most improvement, deterioration
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{IRSTLM: Training}
-\vspace{10mm}
-\begin{itemize}
-
-\item Developed by FBK-irst, Trento, Italy
-
-\item Specialized training for large corpora
-	\begin{itemize}
-	\item parallelization
-	\item reduce memory usage
-	\end{itemize}
-
-\item Quantization of probabilities
-	\begin{itemize}
-	\item reduces memory but lose accuracy
-	\item probability stored in 1 byte instead of 4 bytes
-	\end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{IRSTLM: Training}
-
-\begin{itemize}
-
-\item Training: \\[3mm]
-\begin{SaveVerbatim}{myverb} 
-build-lm.sh -i "gunzip -c corpus.gz" -n 3 
-      -o train.irstlm.gz -k 10
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\begin{itemize}
-\item \littlecode{-n 3} = n-gram order
-\item \littlecode{-k 10} = split training procedure into 10 steps
-\end{itemize}
-
-\item EMS:  \\[3mm]
-  \begin{SaveVerbatim}{myverb} 
-  irst-dir = [IRST path]
-  lm-training = "$moses-script-dir/generic/trainlm-irst.perl 
-		  -cores NUM -irst-dir $irst-dir"
-  \end{SaveVerbatim}
-  \colorbox{gray}{\BUseVerbatim{myverb}}
-
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{New: KENLM Training}
+\slide{KENLM Training}
 \vspace{5mm}
 \begin{itemize}
 \item Can train very large language models with limited RAM\\
@@ -1586,77 +1539,41 @@ Typical Europarl file sizes:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Create Binary Tables}
-\small
-Phrase Table:  
+\slide{Binary Phrase Tables}
+Create:
 \begin{center}
-\small
-\textcolor{red}{Phrase-based} \\
 \begin{SaveVerbatim}{myverb} 
-  export LC_ALL=C 
-  cat pt.txt | sort | ./processPhraseTable -ttable 0 0 -  \
-      -nscores 4 -out out.file
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\begin{SaveVerbatim}{myverb} 
-  export LC_ALL=C   ./CreateOnDiskPt 1 1 4 100 2 pt.txt out.folder
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\end{center}
-
-
-\begin{center}
-\small
-\textcolor{red}{Hierarchical / Syntax} \\
-\begin{SaveVerbatim}{myverb} 
-  export LC_ALL=C ./CreateOnDiskPt 1 1 4 100 2 pt.txt out.folder
+  ./CreateOnDiskPt 1 1 4 100 2 pt.txt out.folder
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
 \end{center}
 
-Lexical Reordering Table:  
+Change ini file: \\[-6mm]
 \begin{center}
-\small
 \begin{SaveVerbatim}{myverb} 
-  export LC_ALL=C
+[feature]
+PhraseDictionaryBinary name=TranslationModel0 \
+   table-limit=20 \ num-features=4 \
+   path=/.../phrase-table
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Lexical Reordering Table}
+
+Create:
+\begin{center}
+\begin{SaveVerbatim}{myverb} 
+  export LC_ALL=C \
   processLexicalTable -in r-t.txt -out out.file
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
 \end{center}
 
-Language Models (later)
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Specify Binary Tables}
-
-Change ini file \\[-6mm]
+Change ini file: \\[-6mm]
 \begin{center}
-\textcolor{red}{Phrase Table} \\[2mm]
-{\small
-\begin{SaveVerbatim}{myverb} 
-[feature]
-PhraseDictionaryBinary name=TranslationModel0 table-limit=20 \ 
-   num-features=4 path=/.../phrase-table
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-}
-\vspace{5mm}
-
-\textcolor{red}{Hierarchical / Syntax} \\[2mm]
-{\small
-\begin{SaveVerbatim}{myverb} 
-[feature]
-PhraseDictionaryOnDisk name=TranslationModel0 table-limit=20 \ 
-   num-features=4 path=/.../phrase-table
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-}
-\vspace{5mm}
-
-\textcolor{red}{Lexical Reordering Table} \\
 automatically detected
 \end{center}
 
@@ -1668,70 +1585,31 @@ automatically detected
 \begin{itemize}
 \item phrase table 6--7 times smaller than on-disk binary table
 \item lexical reordering table 12--15 times smaller than on-disk binary table
+\item Fastest phrase-table implementation
 \end{itemize}
-\item Stored in RAM
-\item May be memory mapped
-\item Train with \littlecode{processPhraseTableMin}
-\item Specify with \littlecode{PhraseDictionaryCompact}
-\end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{IRSTLM}
-\vspace{20mm}
-\begin{itemize}
-\item Developed by FBK-irst, Trento, Italy
-\item Create a binary format which can be read from disk as needed
-	\begin{itemize}
-	\item reduces memory but slower decoding 
-	\end{itemize}
-\item Quantization of probabilities
-	\begin{itemize}
-	\item reduces memory but lose accuracy
-	\item probability stored in 1 byte instead of 4 bytes
-	\end{itemize}
-\item Not multithreaded	
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{IRSTLM in Moses}
-\vspace{20mm}
-\begin{itemize}
-\item Compile the decoder with IRSTLM library \\
+\item Create with
+\begin{center}
 \begin{SaveVerbatim}{myverb} 
-./configure --with-irstlm=[root dir of the IRSTLM toolkit] 
+processPhraseTableMin
+processLexicalTableMin
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
-
-\item Create binary format: \\[3mm]
+\end{center}
+\item Specify with 
+\begin{center}
 \begin{SaveVerbatim}{myverb} 
-compile-lm language-model.srilm language-model.blm
+PhraseDictionaryCompact
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
-
-\item Load-on-demand: \\[3mm]
-\begin{SaveVerbatim}{myverb} 
-rename file .mm  
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\item Change ini file to use IRSTLM implementation \\
-\begin{SaveVerbatim}{myverb} 
-[feature]
-IRSTLM name=LM0 factor=0 path=/.../lm order=5
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
+\end{center}
 \end{itemize}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{KENLM}
 \vspace{10mm}
 \begin{itemize}
-\item Developed by Kenneth Heafield (CMU / Edinburgh / Stanford)
+\item Developed by Kenneth Heafield (CMU / Edinburgh / Stanford / Bloomberg)
 \item Fastest and smallest language model implementation
 \item Compile from LM trained with SRILM\\[5mm]
 \begin{SaveVerbatim}{myverb} 
@@ -1745,61 +1623,6 @@ KENLM name=LM0 factor=0 path=/.../model.binlm order=5
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
 \end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{New: OSM (Operations Sequence Model) }
-
-\begin{itemize}
-  \item A model that
-  \begin{itemize}
-    \item considers source and target contextual information across phrases
-    \item integrates translation and reordering into a single model
-  \end{itemize}
-  \item Convert a bilingual sentence to a sequence of operations
-  \begin{itemize}
-    \item Translate (Generate a minimal translation unit)
-    \item Reordering (Insert a gap or Jump)
-  \end{itemize}
-  \item P(e,f,a) = N-gram model over resulting operation sequences 
-  \item Overcomes phrasal independence assumption
-  \begin{itemize}
-    \item Considers source and target contextual information across phrases 
-  \end{itemize}
-  \item Better reordering model
-  \begin{itemize}
-    \item Translation and reordering decisions influence each
-    \item Handles local and long distance reorderings in a unified manner
-  \end{itemize}
-  \item No spurious phrasal segmentation problem
-  \item Average gain of +0.40 on news-test2013 across 10 pairs
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{New: OSM (Operations Sequence Model) }
-
-\begin{center}
- \includegraphics[scale=0.8]{osm.pdf}
-\end{center}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-%\item {How do I get started?}
-%\item {Experiment Management System}
-\item {Faster Training}
-\item {Faster Decoding}
-  \begin{itemize}
-  \item {Multi-threading}
-  \item {Speed vs. Memory}
-  \item \currenttopic{Speed vs. Quality}
-  \end{itemize}
-\end{itemize}
-\ldots
-}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2396,186 +2219,6 @@ Specification in EMS:
 \end{itemize}
 }
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Specifying Translations with XML}
-\begin{itemize}
-\item Translation tables for numbers?
-\end{itemize}
-\begin{center} \begin{tabular}{c|c|r}
-\maths{$f$} & \maths{$e$} & \maths{$p(f|e)$} \\ \hline
-\example{2003} & \example{2003} & 0.7432 \\ \hline
-\example{2003} & \example{2000} & 0.0421 \\ \hline
-\example{2003} & \example{year} & 0.0212 \\ \hline
-\example{2003} & \example{the} & 0.0175 \\ \hline
-\example{2003} & \example{...} & \example{...} \\ \hline
-\end{tabular} \end{center}
-\begin{itemize}
-\item Instruct the decoder with XML instruction\\[2mm]
-\littlecode{\example{the revenue for} <num translation="\example{2003}"> \example{2003}
-  </num> \example{is higher than ...} }
-\item Deal with different number formats\\[2mm]
-\littlecode{\example{er erzielte} <num translation="\example{17.55}"> \example{17,55} </num> \example{Punkte .}}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Specifying Translations with XML}
-
-\littlecode{./moses -xml-input [exclusive | inclusive | constraint ] }
-\\
-\littlecode{\example{the revenue for} <num translation="\example{2003}"> \example{2003}
-  </num> \example{is higher than ...} }
-
-\vspace{1cm}
-Three types of XML input:
-\vspace{-2mm}
-\begin{itemize} \itemsep -2mm 
-  \item Exclusive \\
-    \emph{Only} possible translation is given in XML 
-  \item Inclusive \\
-  Translation is given in XML is in addition to phrase-table
-  \item Constraint \\
-  Only use translations from phrase-table if it match XML specification
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Constraint XML}
-\vspace{1cm}
-\begin{itemize}
-\item Specifically for translating terminology
-\begin{itemize} 
-  \item consistently translate particular phrase in a document
-  \item may have learned larger phrase pairs that contain terminology term
-\end{itemize} 
-
-\item Example: \\[4mm]
-\littlecode{\example{Microsoft} <option translation="\example{Windows}"> \example{Windows}
-  </option> \example{8 ...} }
-
-\item Allows use of phrase pair only if maps \example{Windows} to  \example{Windows}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Placeholders}
-\begin{itemize} \itemsep -2mm
-\item Translate:
-\begin{itemize} \vspace{-2mm}
-  \item \example{You owe me 100 dollars !}
-  \item \example{You owe me 200 dollars !}
-  \item \example{You owe me 9.56 dollars !}
-\end{itemize}
-\item Problem: need translations for
-\begin{itemize} \vspace{-2mm}
-  \item \example{100}
-  \item \example{200}
-  \item \example{9.56}
-\end{itemize}
-\item Some things are better off being handled by simple rules:
-\begin{itemize} \vspace{-2mm}
-  \item Numbers
-  \item Dates
-  \item Currency
-  \item Named entities
-\end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Placeholders}
-\vspace{2cm}
-\begin{itemize}
-\item Input \\
-\example{You owe me 100 dollars !}
-\item Replace numbers with {\tt @num@}\\[4mm]
- \littlecode{\example{You owe me} @num@ \example{dollars !}}
-\item Specification\\[4mm]
- \littlecode{\example{You owe me}  <ne translation="@num@" entity="\example{100}">@num@</ne> \example{dollars !}}
-\end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Walls and Zones}
-\vspace{10mm}
-\begin{itemize}
-\item Specification of reordering constraints
-\item Zone\\[2mm] sequence to be translated without reordering with outside material
-\item Wall\\[2mm] hard reordering constraint, no words may be reordered across
-\item Local wall\\[2mm] wall within a zone, not valid outside zone
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Walls and Zones: Examples}
-\vspace{10mm}
-\begin{itemize}
-\item Requiring the translation of quoted material as a block\\
-\littlecode{\example{He said} <zone> \example{" yes "} </zone> . }
-\item Hard reordering constraint\\
-\littlecode{\example{Number 1 : }<wall/> \example{the beginning .}}
-\item Local hard reordering constraint within zone\\
-\littlecode{\example{A new plan} <zone> \example{(} <wall/> \example{maybe not new} <wall/> \example{)} </zone> \example{emerged .}}
-\item Nesting\\
-\littlecode{\example{The} <zone> \example{" new} <zone> \example{( old )} </zone> \example{"} </zone> \example{proposal .}}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Preserving Markup}
-\begin{itemize}
-\item How do you translate this:
-\begin{center}
-\example{$<$h1$>$My Home Page$<$/h1$>$\\
-I really like to $<$b$>$eat$<$/b$>$ chicken!}
-\end{center}
-\item Solution 1: XML translations, walls and zones\\[5mm]
-\littlecode{<x translation="\example{$<$h1$>$}"/> <wall/> \example{My Home Page} <wall/>}\\[-2mm]
-\littlecode{<x translation="\example{$<$/h1$>$}"/>}\\[2mm]
-\littlecode{\example{I really like to} <zone><x translation="\example{$<$b$>$}"/> <wall/> \example{eat} <wall/>}\\[-2mm]
-\littlecode{<x translation="\example{$<$/b$>$}"/> </zone> \example{chicken !}}\\[5mm]
-(note: special XML characters like \example{$<$} and \example{$>$} need to be escaped)
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Preserving Markup}
-\begin{itemize}
-\item Solution 2: Handle markup externally
-\begin{itemize} \itemsep 5mm
-\item track word positions and their markup
-\begin{center}
-\begin{tabular}{ccccccc}
-\example{I} & \example{really} & \example{like} & \example{to} & \example{$<$b$>$eat$<$/b$>$} & \example{chicken} & \example{!} \\
-1 & 2 & 3 & 4 & 5 & 6 & 7\\
--&-&-&-&\example{$<$b$>$}&-&-\\
-\end{tabular}
-\end{center}
-
-\item translate without markup
-\begin{center}
-\example{I really like to eat chicken !}
-\end{center}
-
-\item keep word alignment to source
-\begin{center}
-\begin{tabular}{cccccc}
-\example{Ich} & \example{esse} & \example{wirklich} & \example{gerne} & \example{H{\"u}hnchen} & \example{!} \\
-1 & 5 & 2 & 3-4 & 6 & 7\\
-\end{tabular}
-\end{center}
-
-\item re-insert markup
-\begin{center}
-\example{Ich $<$b$>$esse$<$/b$>$ wirklich gerne H{\"u}hnchen!}
-\end{center}
-
-\end{itemize}
-\end{itemize}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Transliteration}
@@ -2664,189 +2307,6 @@ I really like to $<$b$>$eat$<$/b$>$ chicken!}
 \item {Incremental Training}
 \end{itemize}
 }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Example: Misspelt Words}
-\vspace{10mm}
-\begin{itemize}
-\item Misspelt sentence: 
-\begin{center}
-\example{The room was *exellent but the hallway was *filty .}
-\end{center}
-\item Strategies for dealing with spelling errors:
-\begin{itemize} \itemsep 7mm
-  \item Create correct sentence with correction \\
-  		\textcolor{red}{$\times$}  problem: if not corrected properly, adds more errors  
-  \item Create many sentences with different corrections \\
-  		\textcolor{red}{$\times$} problem: have to decode each sentence, slow
-		\end{itemize}
-\end{itemize}
-
-% speeling correction is not perfect
-% ever txt'ed on mobile, know that suggested would sometime right, often wrong
-% better to get the list of possible corrections and decide during decoding
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Confusion Network}
-\vspace{10mm}
-\begin{center}
-\example{The room was *exellent but the hallway was *filty .}\\[10mm]
-Input to decoder:\\[10mm]
-\includegraphics[scale=0.9]{confusion-network.png}\\[5mm]
-Let the decoder decide
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Example: Diacritics}
-\vspace{-3mm}
-\begin{itemize}
-\item Correct sentence \vspace{-5mm}
-\begin{center}
-\includegraphics[scale=0.8]{vietnamese.png}
-\end{center}
-\item Something a non-native person might type  \vspace{-2mm}
-\begin{center}
-	Trung Quoc canh bao My ve luat tien te
-\end{center}
-
-\item Confusion network \vspace{-8mm}
-\begin{center}
-\includegraphics[scale=0.8]{confusion-network-2.png}
-\end{center}
-\end{itemize}
-
-%Motivation - diacritics. 
-% happens for many languages that have adapted roman characters. Can be used for arabic or hebrew - optional vowel characters
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Confusion Network Specification}
-\begin{center}
-\textcolor{red}{Argument on command line}\\[3mm]
-\begin{SaveVerbatim}{myverb}
- ./moses -inputtype 1
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\vspace{10mm}
-\textcolor{red}{Input to moses}\\[3mm]
-{\small
-\begin{SaveVerbatim}{myverb}
-the 1.0
-room 1.0
-was 1.0
-excel 0.33 excellent 0.33 excellence 0.33
-but 1.0
-the 1.0
-hallway 1.0
-was 1.0
-guilty 0.5 filthy 0.5
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Lattice}
-\begin{center}
-\bf Example: Chinese Word Segmentation
-\end{center}
-
-\vspace{5mm}
-\begin{itemize}
-\item  Unsegmented sentence
-\vspace{-5mm}
-\begin{center}
-\includegraphics[scale=1]{chinese-unsegmented.png}
-\end{center}
-
-\item  Incorrect segmention
-\vspace{-5mm}
-\begin{center}
-\includegraphics[scale=1]{chinese-segmented-incorrect.png}
-\end{center}
-
-\item  Correct segmention
-\vspace{-5mm}
-\begin{center}
-\includegraphics[scale=1]{chinese-segmented-correct.png}
-\end{center}
-
-\end{itemize}
-
-%Follow on from confusion network.
-%Motivation - chinese segmentation
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Lattice}
-\vspace{20mm}
-\begin{center}
-Input to decoder:\\[10mm]
-\includegraphics[scale=1.4]{lattice-chinese.png}\\[10mm]
-Let the decoder decide
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Example: Compound Splitting}
-\begin{itemize}
-\item Input sentence 
-\begin{center}
-\example{einen wettbewerbsbedingten preissturz}
-\end{center}
-\item Different compound splits
-\begin{center}
-\includegraphics[scale=0.6]{lattice-german.png}
-\end{center}
-\item Let the decoder decide
-\end{itemize}
-
-% a competition-induced price fall
-% german decompounding - unlikely to have seen many of the compund forms but have seen the separated words
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Lattice Specification}
-\vspace{5mm}
-%
-%\begin{center}
-%\textcolor{red}{Argument to command line}\\
-%\begin{SaveVerbatim}{myverb}
-% ./moses -inputtype 2
-%\end{SaveVerbatim}
-%\colorbox{gray}{\BUseVerbatim{myverb}}
-%\end{center}
-
-\begin{tabular}{ p{10cm}p{12cm} }
-Command line argument & Input to Moses {\tiny (PLF format - Python Lattice Format)} \\
-\vspace{-10.6cm}
-\littlecode{./moses -inputtype 1} &
-\tiny
-\begin{SaveVerbatim}{myverb}
- (
-  (
-   ('einen', 1.0, 1),
-  ),
-  (
-   ('wettbewerbsbedingten', 0.5, 2),
-   ('wettbewerbs', 0.25, 1),
-   ('wettbewerb', 0.25, 1),
-  ),
-  (
-   ('bedingten', 1.0, 1),
-  ),
-  (
-   ('preissturz', 0.5, 2),
-   ('preis', 0.5, 1),
-  ),
-  (
-   ('sturz', 1.0, 1),
-  ),
- )
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\end{tabular}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -3076,89 +2536,6 @@ Argument to command line\\[2mm]
 \item {Incremental Training}
 \end{itemize}
 }
-
-	 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\small
-\begin{itemize} \itemsep -1mm
-%\item {How do I get started?}
-%\item {Experiment Management System}
-\item {Faster Training}
-\item {Faster Decoding}
-\item {Moses Server}
-\item {Data and domain adaptation}
-\item {Instructions to decoder}
-\item {Input formats}
-\item {Output formats}
-%\item {Translation models}
-\item \currenttopic{Incremental Training}
-\end{itemize}
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Incremental Training}
-\begin{center}
-\includegraphics[scale=2]{wikitrans.pdf}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Incremental Training}
-\vspace{1cm}
-\begin{itemize}
-\item Incremental word alignment
-\begin{itemize}
-\item requires modified version of GIZA++\\
-(available at http://code.google.com/p/inc-giza-pp/)
-\item only works for HMM alignment (not the common IBM Model 4)
-\end{itemize}
-\item Translation model is defined by parallel corpus\\[5mm]
-\begin{SaveVerbatim}{myverb}
-PhraseDictionaryBitextSampling \ 
-    path=/path/to/corpus \
-    L1=source language extension \
-    L2=target language extension
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Update Word Alignment}
-\vspace{2cm}
-\begin{itemize}
-\item Uses original word alignment models\\
-(with additional model files stored after training)
-\item Incremental GIZA++ loads model
-\item New sentence pairs is aligned on the fly
-\item Typically, GIZA++ processes are run in both directions, symmetrized
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Update Translation Model}
-\vspace{3cm}
-\begin{itemize}
-\item Translation table is stored as word-aligned parallel corpus
-\item Update = add word aligned sentence pair
-\item Updating a running Moses instance via XML RPC
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Beyond Moses: CASMACAT Workbench}
-%\vfill
-\begin{center}
-%\resizebox{\linewidth}{!}{
-\includegraphics[scale=0.48]{casmacat-workbench.jpg}
-%}
-\end{center}
-%\vfill
-
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

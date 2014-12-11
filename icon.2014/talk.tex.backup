@@ -82,7 +82,7 @@
 \begin{document}
 \title[Machine Translation with Open Source Software]{{\sc \huge Moses}\\[3mm] Machine Translation with Open Source Software}
 \author[Hoang, Huck and Koehn]{Hieu Hoang and Matthias Huck}
-\date{\vspace{-5mm}October 2014}
+\date{\vspace{-5mm}December 2014}
 \maketitle
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,7 +100,7 @@
 \vfill
 
 Slides downloadable from \\ \\
-\littlecode{\normalsize http://www.statmt.org/moses/amta.2014.pdf} % TODO: upload slides
+\littlecode{\normalsize http://www.statmt.org/moses/icon.2014.pdf} % TODO: upload slides
 \\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1364,54 +1364,7 @@ sortable by most improvement, deterioration
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{IRSTLM: Training}
-\vspace{10mm}
-\begin{itemize}
-
-\item Developed by FBK-irst, Trento, Italy
-
-\item Specialized training for large corpora
-	\begin{itemize}
-	\item parallelization
-	\item reduce memory usage
-	\end{itemize}
-
-\item Quantization of probabilities
-	\begin{itemize}
-	\item reduces memory but lose accuracy
-	\item probability stored in 1 byte instead of 4 bytes
-	\end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{IRSTLM: Training}
-
-\begin{itemize}
-
-\item Training: \\[3mm]
-\begin{SaveVerbatim}{myverb} 
-build-lm.sh -i "gunzip -c corpus.gz" -n 3 
-      -o train.irstlm.gz -k 10
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\begin{itemize}
-\item \littlecode{-n 3} = n-gram order
-\item \littlecode{-k 10} = split training procedure into 10 steps
-\end{itemize}
-
-\item EMS:  \\[3mm]
-  \begin{SaveVerbatim}{myverb} 
-  irst-dir = [IRST path]
-  lm-training = "$moses-script-dir/generic/trainlm-irst.perl 
-		  -cores NUM -irst-dir $irst-dir"
-  \end{SaveVerbatim}
-  \colorbox{gray}{\BUseVerbatim{myverb}}
-
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{New: KENLM Training}
+\slide{KENLM Training}
 \vspace{5mm}
 \begin{itemize}
 \item Can train very large language models with limited RAM\\
@@ -1586,77 +1539,41 @@ Typical Europarl file sizes:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Create Binary Tables}
-\small
-Phrase Table:  
+\slide{Binary Phrase Tables}
+Create:
 \begin{center}
-\small
-\textcolor{red}{Phrase-based} \\
 \begin{SaveVerbatim}{myverb} 
-  export LC_ALL=C 
-  cat pt.txt | sort | ./processPhraseTable -ttable 0 0 -  \
-      -nscores 4 -out out.file
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\begin{SaveVerbatim}{myverb} 
-  export LC_ALL=C   ./CreateOnDiskPt 1 1 4 100 2 pt.txt out.folder
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\end{center}
-
-
-\begin{center}
-\small
-\textcolor{red}{Hierarchical / Syntax} \\
-\begin{SaveVerbatim}{myverb} 
-  export LC_ALL=C ./CreateOnDiskPt 1 1 4 100 2 pt.txt out.folder
+  ./CreateOnDiskPt 1 1 4 100 2 pt.txt out.folder
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
 \end{center}
 
-Lexical Reordering Table:  
+Change ini file: \\[-6mm]
 \begin{center}
-\small
 \begin{SaveVerbatim}{myverb} 
-  export LC_ALL=C
+[feature]
+PhraseDictionaryBinary name=TranslationModel0 \
+   table-limit=20 \ num-features=4 \
+   path=/.../phrase-table
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Lexical Reordering Table}
+
+Create:
+\begin{center}
+\begin{SaveVerbatim}{myverb} 
+  export LC_ALL=C \
   processLexicalTable -in r-t.txt -out out.file
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
 \end{center}
 
-Language Models (later)
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Specify Binary Tables}
-
-Change ini file \\[-6mm]
+Change ini file: \\[-6mm]
 \begin{center}
-\textcolor{red}{Phrase Table} \\[2mm]
-{\small
-\begin{SaveVerbatim}{myverb} 
-[feature]
-PhraseDictionaryBinary name=TranslationModel0 table-limit=20 \ 
-   num-features=4 path=/.../phrase-table
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-}
-\vspace{5mm}
-
-\textcolor{red}{Hierarchical / Syntax} \\[2mm]
-{\small
-\begin{SaveVerbatim}{myverb} 
-[feature]
-PhraseDictionaryOnDisk name=TranslationModel0 table-limit=20 \ 
-   num-features=4 path=/.../phrase-table
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-}
-\vspace{5mm}
-
-\textcolor{red}{Lexical Reordering Table} \\
 automatically detected
 \end{center}
 
@@ -1668,70 +1585,31 @@ automatically detected
 \begin{itemize}
 \item phrase table 6--7 times smaller than on-disk binary table
 \item lexical reordering table 12--15 times smaller than on-disk binary table
+\item Fastest phrase-table implementation
 \end{itemize}
-\item Stored in RAM
-\item May be memory mapped
-\item Train with \littlecode{processPhraseTableMin}
-\item Specify with \littlecode{PhraseDictionaryCompact}
-\end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{IRSTLM}
-\vspace{20mm}
-\begin{itemize}
-\item Developed by FBK-irst, Trento, Italy
-\item Create a binary format which can be read from disk as needed
-	\begin{itemize}
-	\item reduces memory but slower decoding 
-	\end{itemize}
-\item Quantization of probabilities
-	\begin{itemize}
-	\item reduces memory but lose accuracy
-	\item probability stored in 1 byte instead of 4 bytes
-	\end{itemize}
-\item Not multithreaded	
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{IRSTLM in Moses}
-\vspace{20mm}
-\begin{itemize}
-\item Compile the decoder with IRSTLM library \\
+\item Create with
+\begin{center}
 \begin{SaveVerbatim}{myverb} 
-./configure --with-irstlm=[root dir of the IRSTLM toolkit] 
+processPhraseTableMin
+processLexicalTableMin
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
-
-\item Create binary format: \\[3mm]
+\end{center}
+\item Specify with 
+\begin{center}
 \begin{SaveVerbatim}{myverb} 
-compile-lm language-model.srilm language-model.blm
+PhraseDictionaryCompact
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
-
-\item Load-on-demand: \\[3mm]
-\begin{SaveVerbatim}{myverb} 
-rename file .mm  
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\item Change ini file to use IRSTLM implementation \\
-\begin{SaveVerbatim}{myverb} 
-[feature]
-IRSTLM name=LM0 factor=0 path=/.../lm order=5
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
+\end{center}
 \end{itemize}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{KENLM}
 \vspace{10mm}
 \begin{itemize}
-\item Developed by Kenneth Heafield (CMU / Edinburgh / Stanford)
+\item Developed by Kenneth Heafield (CMU / Edinburgh / Stanford / Bloomberg)
 \item Fastest and smallest language model implementation
 \item Compile from LM trained with SRILM\\[5mm]
 \begin{SaveVerbatim}{myverb} 
@@ -1745,61 +1623,6 @@ KENLM name=LM0 factor=0 path=/.../model.binlm order=5
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
 \end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{New: OSM (Operations Sequence Model) }
-
-\begin{itemize}
-  \item A model that
-  \begin{itemize}
-    \item considers source and target contextual information across phrases
-    \item integrates translation and reordering into a single model
-  \end{itemize}
-  \item Convert a bilingual sentence to a sequence of operations
-  \begin{itemize}
-    \item Translate (Generate a minimal translation unit)
-    \item Reordering (Insert a gap or Jump)
-  \end{itemize}
-  \item P(e,f,a) = N-gram model over resulting operation sequences 
-  \item Overcomes phrasal independence assumption
-  \begin{itemize}
-    \item Considers source and target contextual information across phrases 
-  \end{itemize}
-  \item Better reordering model
-  \begin{itemize}
-    \item Translation and reordering decisions influence each
-    \item Handles local and long distance reorderings in a unified manner
-  \end{itemize}
-  \item No spurious phrasal segmentation problem
-  \item Average gain of +0.40 on news-test2013 across 10 pairs
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{New: OSM (Operations Sequence Model) }
-
-\begin{center}
- \includegraphics[scale=0.8]{osm.pdf}
-\end{center}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-%\item {How do I get started?}
-%\item {Experiment Management System}
-\item {Faster Training}
-\item {Faster Decoding}
-  \begin{itemize}
-  \item {Multi-threading}
-  \item {Speed vs. Memory}
-  \item \currenttopic{Speed vs. Quality}
-  \end{itemize}
-\end{itemize}
-\ldots
-}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3389,11 +3212,53 @@ class MyFeatureFunction : public Stateless/Statefull...
 \begin{itemize}
   \item Video Demos
   \begin{itemize}
-
+    \item Adding a Feature Function to Moses
+    \item Compiling the Moses SMT toolkit with Eclipse
   \end{itemize}
 
 \end{itemize}
     
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{Properties}
+
+\begin{itemize}
+  \item Feature Function
+  \begin{itemize}
+    \item Score a translation
+  \end{itemize}
+  \item Property
+  \begin{itemize}
+    \item Store arbitrary information in each translation rule
+    \item Extra information
+    \begin{itemize}
+      \item Not just source, target, scores
+      \item syntax/semantic information
+      \item domain information
+    \end{itemize} 
+    \item can be used by any feature function
+  \end{itemize}
+  
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{Properties}
+\small
+\begin{itemize}
+  \item Standard translation rule
+
+  \begin{SaveVerbatim}{myverb}
+  j' ai ||| I have ||| 0.1 0.2 0.3 0.4 
+  \end{SaveVerbatim}
+  \colorbox{gray}{\BUseVerbatim{myverb}}
+
+  \item With properties information
+
+  \begin{SaveVerbatim}{myverb}
+  j' ai ||| I have ||| 0.1 0.2 0.3 0.4 ||| ||| ||| ||| {{key value}}
+  \end{SaveVerbatim}
+  \colorbox{gray}{\BUseVerbatim{myverb}}
+\end{itemize}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
 
