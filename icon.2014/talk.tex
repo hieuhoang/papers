@@ -26,6 +26,9 @@
 \usepackage{framed}
 \usepackage{scrextend}
 \usepackage{bold-extra}
+\usepackage{xstring}
+\usepackage{xspace}
+\usepackage[export]{adjustbox}
 
 \usepackage{tikz}
 \usepackage{tikz-qtree}
@@ -79,6 +82,11 @@
 \newcommand{\highlightOrange}[1]{\colorbox{lightorange}{#1}}
 \newcommand{\highlightGreen}[1]{\colorbox{lightgreen}{#1}}
 \newcommand{\highlightBlue}[1]{\colorbox{lightblue}{#1}}
+
+\newcommand{\fragileAcronym}[1]{\StrLen{#1}[\stringlength]\ifnum\stringlength<3\uppercase{#1}\else\textsc{#1}\fi}
+\newcommand{\acronym}[1]{\protect\fragileAcronym{#1}}
+\newcommand{\cyk}{\acronym{cyk}\xspace}
+\DeclareRobustCommand{\cykplus}{\acronym{cyk}\hspace*{-.2ex}\raisebox{0.2ex}{$\scriptstyle +$}\xspace}
 
 \bibliography{mt,more}
 
@@ -261,12 +269,14 @@ Slides downloadable from \\ \\
 \item {\bf Hierarchical translation}
   \begin{itemize}
   \item Allows for \emph{gaps} in the phrases
-  \item Formalization as a synchronous context-free grammar
-  \item Parsing-based decoding
+  \item Formalization as a synchronous context-free grammar (SCFG)
+  \item Parsing-based decoding (\cykplus)
   \end{itemize}
 \item {\bf Syntax-based translation}
   \begin{itemize}
   \item Comparable to hierarchical, but with \emph{linguistic well-formedness constraints}
+  \item Source syntax, target syntax, or both
+  \item SCFG or synchronous tree substitution grammar (STSG)
   \end{itemize}
 \end{itemize}
 \vfill
@@ -688,10 +698,11 @@ slap the green witch)
 \begin{itemize}
 \item {\bf Phrase table}: contains all phrases $(\overline{e} , \overline{f})$ extracted from the data
 \item We need to assign {\bf probabilities} to extracted phrases
-\item Score by relative frequency:\vspace{-5mm}
+\item Score by relative frequency:
+%\vfill
 \maths{\begin{equation*}
 \begin{split} 
-  \phi(\bar{e}|\bar{f}) = \frac{\mbox{count}(\bar{e},\bar{f})}{\sum_{\bar{e}'}\mbox{count}(\bar{e}',\bar{f})}\\
+  \phi(\bar{e}|\bar{f}) = \frac{\mbox{count}(\bar{e},\bar{f})}{\sum_{\bar{e}'}\mbox{count}(\bar{e}',\bar{f})}\\ \\
 \phi(\bar{f}|\bar{e}) = \frac{\mbox{count}(\bar{e},\bar{f})}{\sum_{\bar{f}'}\mbox{count}(\bar{e},\bar{f}')}
 \end{split} 
 \end{equation*}}
@@ -701,9 +712,11 @@ slap the green witch)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Real Example}
+\vfill
 \begin{itemize}
 \item Phrase translations for \example{den Vorschlag} from German into English: % learned from the Europarl corpus:
 \end{itemize}
+\vfill
 \begin{center}
 \begin{tabular}{|l|r||l|r|} \hline
 {\bf English} & \maths{$\phi(\bar{e}|\bar{f})$} &
@@ -726,14 +739,16 @@ slap the green witch)
 ... & ... \\ \hline
 \end{tabular}
 \end{center}
+\vfill
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{More Features}
-\vfill
-\begin{itemize}
+\vspace*{-1ex}
+\begin{itemize} \itemsep -0.2ex
 \item The decoder will employ the phrase translation probabilities along with other features to assign an overall score to each possible hypothesis
 \item {\bf Standard features}:
+\vspace*{-1ex}
 \begin{itemize}
   \item Phrase translation log-probabilities
   \item Lexical translation log-probabilities (from single-word based models)
@@ -743,8 +758,15 @@ slap the green witch)
   \item Distortion cost based on jump distances
   \item Lexicalized reordering score
 \end{itemize}
+\item {\bf Feature types}:
+\vspace*{-1ex}
+\begin{itemize}
+  \item phrase-local vs.\ context-aware
+  \item stateless vs.\ stateful
+  \item dense vs.\ sparse
 \end{itemize}
-\vfill
+\end{itemize}
+\vspace*{-2ex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -752,19 +774,19 @@ slap the green witch)
 \vfill
 \begin{itemize} %\itemsep -2em
 \item Decoding: Given the model, find the best translation
-\vspace*{-0.7em}
+\vspace*{-0.7ex}
 \maths{
 \begin{equation*}
   {\bf e}_{\mbox{\small best}} =  \; \mbox{argmax}_{\bf e} \; p({\bf e}|{\bf f})
-\vspace*{-0.5em}
+\vspace*{-0.5ex}
 \end{equation*}
 }
 \item Our model is a {\bf weighted combination} of many components
-\vspace*{-0.7em}
+\vspace*{-0.7ex}
 \maths{
 \begin{equation*}
 p({\bf e}|{\bf f}) \propto \exp \sum_{k=1}^m \; \lambda_k\cdot h_k({\bf e}, {\bf f}) 
-\vspace*{-0.5em}
+\vspace*{-0.5ex}
 \end{equation*}
 }
 where $h_k({\bf e}, {\bf f})$ are {\bf feature functions} and $\lambda_k$ are {\bf feature weights}
@@ -851,7 +873,7 @@ create hypotheses for all other translation options
 \slide{Decoding: Hypothesis Expansion}
 \begin{center} 
 \includegraphics[scale=1.3]{decoding-step5.pdf}\\
-also create hypotheses from created partial hypothesis
+also create hypotheses from created partial hypotheses
 \end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -911,9 +933,6 @@ backtrack from highest scoring complete hypothesis
 \item Good metrics correlate well with human judgement
 \end{itemize}
 \item Decode a held-out test set and -- after postprocessing (detokenization, truecasing) -- score with an automatic metric to {\bf determine translation quality}
-\end{itemize}
-\vfill
-\begin{itemize}
 \item {\bf \sc bleu}
 \begin{itemize}
 \item Most commonly used metric
@@ -1043,6 +1062,23 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 \end{tabular}
 \end{center}
 }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Chart Parsing}
+\begin{addmargin}[-1em]{-1em}
+\begin{tabular}{lr}
+  \vspace{0pt} \includegraphics[scale=1]{chart-parsing-stacks.pdf} &
+  \vspace{0pt} \raisebox{12ex}{\includegraphics[scale=0.7]{chart-stacks-color.pdf}}
+\end{tabular}
+\end{addmargin}
+\vspace*{-1ex}
+\begin{itemize} \itemsep -0.2ex
+\item {\bf Bottom-up chart parsing} with \cykplus
+\item Chart cells cover contiguous spans of the source sentence
+\item Fill chart cells with hypotheses: {\bf cube pruning}
+\end{itemize}
+\vspace*{-2ex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
