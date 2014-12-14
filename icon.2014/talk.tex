@@ -23,6 +23,9 @@
 \usepackage{multicol}
 \usepackage{rotating}
 \usepackage[absolute]{textpos}
+\usepackage{framed}
+\usepackage{scrextend}
+\usepackage{bold-extra}
 
 \usepackage{tikz}
 \usepackage{tikz-qtree}
@@ -106,84 +109,6 @@ Slides downloadable from \\ \\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Basic Idea}
-\vfill
-\begin{center}
-  \hspace*{-6em}\includegraphics[scale=1.8]{basics.pdf}
-\end{center}
-\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{SMT Pipeline (1)}
-\vfill
-\begin{itemize}
-  \item {\bf Data collection}
-  \begin{itemize}
-  \item Parallel corpora for training translation model (TM)
-  \item Target-side monolingual corpora for training language model (LM)
-  \item Separate development and test sets for tuning
-  \end{itemize}
-\item {\bf Data preparation, preprocessing}
-  \begin{itemize}
-  \item Cleaning: unrealiable parts should be removed
-  \item Sentence segmentation, sentence alignment of parallel corpora
-  \item Preprocessing steps (word tokenization, segmentation, casing, \ldots)
-  \end{itemize}
-\end{itemize}
-\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{SMT Pipeline (2)}
-\vspace*{-1ex}
-\begin{itemize}
-\item {\bf Training}
-  \begin{itemize}
-  \item Language model estimation
-  \item Word alignment
-  \item Lexicon model
-  \item Phrase extraction
-  \item Lexicalized reordering model
-  \item \ldots
-  \end{itemize}
-\item {\bf Tuning} 
-  \begin{itemize}
-  \item The decoder combines a set of features in a log-linear framework
-  \item Each feature has a weight which determines its contribution to the overall model score
-  \item We can optimize the values of the feature weights such that translation quality is maximized on a held-out development set 
-  \end{itemize}
-\end{itemize}
-%\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{SMT Pipeline (3)}
-\vspace*{-1ex}
-\begin{itemize}
-\item {\bf Decoding}
-  \begin{itemize}
-  \item Translate unseen source text
-  \item Decoding $=$ searching the space of possible translations for the best hypothesis according to the model score
-  \item Dynamic programming
-  \item Pruning and reordering constraints to keep the task feasible
-  \end{itemize}
-\vspace*{-0.5ex}
-\item {\bf Postprocessing}
-  \begin{itemize}
-  \item Detokenization, recasing, \ldots
-  \end{itemize}
-\vspace*{-0.5ex}
-\item {\bf Evaluation}
-  \begin{itemize}
-  \item Automatic metrics to assess translation quality by comparing the hypothesis with a reference translation: {\sc bleu}, {\sc ter}, {\sc meteor}, \ldots
-  \item Human judgment
-  \end{itemize}
-\end{itemize}
-\vspace*{-2ex}
-%\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % \slide{Statistical Machine Translation History}
 % \vspace{10mm}
@@ -298,7 +223,57 @@ Slides downloadable from \\ \\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Phrase-based Translation}
+\slide{SMT: Basic Idea}
+\vfill
+\begin{center}
+  \hspace*{-6em}\includegraphics[scale=1.8]{basics.pdf}
+\end{center}
+\vfill
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Different Paradigms (1)}
+\vfill
+\begin{itemize}
+\item {\bf Word-based translation}
+  \begin{itemize}
+  \item Word-based models translate {\em words} as atomic units
+  \end{itemize}
+\item {\bf Phrase-based translation}
+  \begin{itemize}
+  \item Phrase-based models translate {\em phrases} as atomic units
+  \item Dominant approach nowadays
+  \item Advantages:
+  \begin{itemize}
+  \item larger atomic units capture more context in translation
+  \item local word reorderings are handled within phrases
+  \item the more training data, the longer phrases can be learned reliably
+  \end{itemize}
+  \end{itemize}
+\end{itemize}
+\vfill
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Different Paradigms (2)}
+\vfill
+\begin{itemize}
+\item {\bf Hierarchical translation}
+  \begin{itemize}
+  \item Allows for \emph{gaps} in the phrases
+  \item Formalization as a synchronous context-free grammar
+  \item Parsing-based decoding
+  \end{itemize}
+\item {\bf Syntax-based translation}
+  \begin{itemize}
+  \item Comparable to hierarchical, but with \emph{linguistic well-formedness constraints}
+  \end{itemize}
+\end{itemize}
+\vfill
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Phrase-based Approach}
 \begin{center} \vspace{15mm}
 \includegraphics[scale=1.4]{phrase-model-alignment.pdf}
 \end{center}\vspace{5mm}
@@ -308,24 +283,502 @@ Slides downloadable from \\ \\
 \item Phrases are reordered
 \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{SMT Pipeline (1)}
+\vfill
+\begin{itemize}
+  \item {\bf Data collection}
+  \begin{itemize}
+  \item Parallel corpora for training translation model (TM)
+  \item Target-side monolingual corpora for training language model (LM)
+  \item Separate development and test sets for tuning
+  \end{itemize}
+\item {\bf Data preparation, preprocessing}
+  \begin{itemize}
+  \item Cleaning: unrealiable parts should be removed
+  \item Sentence segmentation, sentence alignment of parallel corpora
+  \item Preprocessing steps (word tokenization, segmentation, casing, \ldots)
+  \end{itemize}
+\end{itemize}
+\vfill
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{SMT Pipeline (2)}
+\vspace*{-1ex}
+\begin{itemize}
+\item {\bf Training}
+  \begin{itemize}
+  \item Word alignment
+  \item Phrase extraction
+  \item Language model estimation
+  \item Lexicalized reordering model
+  \item Single-word based lexicon model
+  \item \ldots
+  \end{itemize}
+\item {\bf Tuning} 
+  \begin{itemize}
+  \item The decoder combines a set of features in a log-linear framework
+  \item Each feature has a weight which determines its contribution to the overall model score
+  \item We can optimize the values of the feature weights such that translation quality is maximized on a development set 
+  \end{itemize}
+\end{itemize}
+%\vfill
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{SMT Pipeline (3)}
+\vspace*{-1ex}
+\begin{itemize}
+\item {\bf Decoding}
+  \begin{itemize}
+  \item Translate unseen source text
+  \item Decoding $=$ searching the space of possible translations for the best hypothesis according to the model score
+  \item Dynamic programming
+  \item Pruning, recombination, and reordering constraints to keep the task feasible
+  \end{itemize}
+\vspace*{-0.5ex}
+\item {\bf Postprocessing}
+  \begin{itemize}
+  \item Detokenization, recasing, \ldots
+  \end{itemize}
+\vspace*{-0.5ex}
+\item {\bf Evaluation}
+  \begin{itemize}
+  \item Automatic metrics to assess translation quality by comparing the hypothesis with a reference translation: {\sc bleu}, {\sc ter}, {\sc meteor}, \ldots
+  \item Human judgment
+  \end{itemize}
+\end{itemize}
+\vspace*{-2ex}
+%\vfill
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Data Collection}
+%\vfill
+\vspace*{-1ex}
+\begin{center}
+\includegraphics[height=\textheight]{nc-english.png}
+\end{center}
+%\vfill
+%\vspace*{-2ex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Data Collection}
+%\vfill
+\vspace*{-1ex}
+\begin{center}
+\includegraphics[height=\textheight]{nc-german.png}
+\end{center}
+%\vfill
+%\vspace*{-2ex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Sentence Segmentation}
+
+\vfill
+\small
+\begin{framed}
+Roxy Ann Peak is a 3,576-foot-tall (1,090 m) mountain in the Western Cascade Range in the U.S. state of Oregon. Composed of several geologic layers, the majority of the peak is of volcanic origin and dates to the early Oligocene. It is primarily covered by oak savanna and open grassland on its lower slopes, and mixed coniferous forest on its upper slopes and summit. Despite the peak's relatively small topographic prominence of 753 feet (230 m), it rises 2,200 feet (670 m) above Medford, and it is the city's most important viewshed, open space reserve, and recreational resource.
+\end{framed}
+\normalsize
+\vfill
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Sentence Segmentation}
+
+\vfill
+%\vspace*{-1ex}
+\small
+\FrameSep5pt
+\begin{framed}
+Roxy Ann Peak is a 3,576-foot-tall (1,090 m) mountain in the Western Cascade Range in the U.S. state of Oregon.
+\end{framed}
+\begin{framed}
+Composed of several geologic layers, the majority of the peak is of volcanic origin and dates to the early Oligocene.
+\end{framed}
+\begin{framed}
+It is primarily covered by oak savanna and open grassland on its lower slopes, and mixed coniferous forest on its upper slopes and summit.
+\end{framed}
+\begin{framed}
+Despite the peak's relatively small topographic prominence of 753 feet (230 m), it rises 2,200 feet (670 m) above Medford, and it is the city's most important viewshed, open space reserve, and recreational resource.
+\end{framed}
+\normalsize
+\vfill
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Parallel Sentence Alignment}
+
+\vfill
+\small
+\begin{addmargin}[-2em]{-1em}
+\tikzstyle{corpus} =  [draw=black, fill = yellow!30, rounded corners, font=\small]
+\begin{flushleft}
+\begin{tikzpicture}
+
+\node[corpus] (fr) {%
+  \begin{minipage}{0.58\textwidth}
+%  \scriptsize
+Je vous invite \`a vous lever pour cette minute de silence.\\
+(Le Parlement, debout, observe une minute de silence)\\
+Madame la Pr\'esidente, c'est une motion de proc\'edure.
+  \end{minipage}
+};
+
+\node[corpus] (en) [right of = fr, node distance = 0.57\textwidth] {%
+  \begin{minipage}{0.5\textwidth}
+%  \scriptsize
+Please rise, then, for this minute's silence.\\
+(The House rose and observed a minute's silence)\\
+Madam President, on a point of order.
+  \end{minipage}
+};
+\end{tikzpicture}
+\end{flushleft}
+
+\vfill
+
+\tikzstyle{corpus} =  [draw=black, fill = blue!30, rounded corners, font=\small]
+\begin{flushleft}
+\begin{tikzpicture}
+
+\node[corpus] (fr) {%
+  \begin{minipage}{0.58\textwidth}
+%  \scriptsize
+  Astronomes Introduction Vid\'eo d'introduction\\ 
+  Qu'est-ce que l'astronomie?\\
+  Souvent consid\'er\'e comme la plus ancienne des sciences, elle d\'ecoule de notre \'etonnement et de nos questionnements envers le ciel L'astronomie est la science qui \'etudie l'Univers au-del\`a de l'atmosph\`ere terrestre.
+  \end{minipage}
+};
+\node[corpus] (en) [right of = fr, node distance = 0.57\textwidth] {%
+  \begin{minipage}{0.5\textwidth}
+%  \scriptsize
+  Astronomers Introduction Introduction video\\
+  What is Astronomy?\\
+  Often considered the oldest science, it was born of our amazement at the sky and our need to question Astronomy is the science of space beyond Earth's atmosphere.
+  \end{minipage}
+};
+\end{tikzpicture}
+\end{flushleft}
+\end{addmargin}
+\normalsize
+\vfill
+\begin{itemize}
+\item Gale and Church algorithm or similar methods
+\item E.g.\ Microsoft Bilingual Sentence Aligner
+\end{itemize}
+\vfill
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Word Alignment}
+
+\vspace*{-1ex}
+\begin{itemize}
+\item After further preprocessing (tokenization, word segmentation), \\train word alignment
+\vspace*{-2.5ex}
+\item Typically IBM/HMM sequence of models with subsequent symmetrization
+%\vspace*{-1ex}
+%\item Or alternatives like discriminative word aligners
+\end{itemize}
+\vspace*{-3.7ex}
+
+\begin{center}
+\newlength{\alignsize}
+\setlength{\alignsize}{1cm}
+\begin{tikzpicture}
+\tikzstyle{aligned}=[draw=black, anchor = south west,  rectangle, minimum height=\alignsize, minimum width=\alignsize, fill=black]
+\tikzstyle{english}=[minimum height=\alignsize, anchor = south west, node distance=\alignsize, text width =3cm, inner sep = 0pt, outer sep = 0pt]
+\tikzstyle{foreign}=[minimum height=\alignsize, minimum width=3cm, text width = 3cm, anchor = north east, rotate = 90, node distance=\alignsize]
+\draw  (0,0) grid +(9,7);
+\node [aligned] at (0,6) {};
+\node [aligned] at (1,4) {};
+\node [aligned] at (1,5) {};
+\node [aligned] at (2,3) {};
+\node [aligned] at (3,3) {};
+\node [aligned] at (4,3) {};
+\node [aligned] at (5,2) {};
+\node [aligned] at (6,2) {};
+\node [aligned] at (7,0) {};
+\node [aligned] at (8,1) {};
+\node[english] (e1) at (-2,6) {Mary};
+\node[english] (e2) [below of = e1] {did};
+\node[english] (e3) [below of = e2]  {not};
+\node[english] (e4) [below of = e3]  {slap};
+\node[english] (e5) [below of = e4]  {the};
+\node[english] (e6) [below of = e5]  {green};
+\node[english] (e7) [below of = e6]  {witch};
+\node[foreign] (f1) at (0,10.5) {Mar\'ia};
+\node[foreign] (f2) [below of = f1] {no};
+\node[foreign] (f3) [below of = f2] {daba};
+\node[foreign] (f4) [below of = f3] {una};
+\node[foreign] (f5) [below of = f4] {bofetada};
+\node[foreign] (f6) [below of = f5] {a};
+\node[foreign] (f7) [below of = f6] {la};
+\node[foreign] (f8) [below of = f7] {bruja};
+\node[foreign] (f9) [below of = f8] {verde};
+\end{tikzpicture}
+%\includegraphics[scale=1.2]{michael-alignment.pdf}
+\end{center}
+\vspace*{-2ex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Phrase Extraction}
+\begin{center}
+\includegraphics[width=0.39\textwidth]{waiph1.pdf}
+\end{center}
+\vspace{-1mm}
+{\bf \footnotesize \textcolor{blue}{ 
+(Maria, Mary),
+(no, did not),
+(slap, daba una bofetada),
+(a la, the),
+(bruja, witch),
+(verde, green) \\ \vspace{-1mm}
+} }
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Phrase Extraction}
+\begin{center}
+\includegraphics[width=0.39\textwidth]{waiph2.pdf}
+\end{center}
+\vspace{-1mm}
+{\bf \footnotesize \textcolor{blue}{
+(Maria, Mary),
+(no, did not),
+(slap, daba una bofetada),
+(a la, the),
+(bruja, witch),
+(verde, green),\\ \vspace{-1mm}
+} \textcolor{green}{
+(Maria no, Mary did not),
+(no daba una bofetada, did not slap), 
+(daba una bofetada a la, slap the),\\ \vspace{-1mm}
+(bruja verde, green witch) \\ \vspace{-1mm} 
+} }
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Phrase Extraction}
+\begin{center}
+\includegraphics[width=0.39\textwidth]{waiph3.pdf}
+\end{center}
+\vspace{-1mm}
+{\bf \footnotesize \textcolor{blue}{
+(Maria, Mary),
+(no, did not),
+(slap, daba una bofetada),
+(a la, the),
+(bruja, witch),
+(verde, green), \\ \vspace{-1mm}
+} \textcolor{green}{
+(Maria no, Mary did not),  
+(no daba una bofetada, did not slap), 
+(daba una bofetada a la, slap the), \\ \vspace{-1mm}
+(bruja verde, green witch),
+} \textcolor{red}{
+(Maria no daba una bofetada, Mary did not slap), \\ \vspace{-1mm}
+(no daba una bofetada a la, did not slap the),
+(a la bruja verde, the green witch) \\ \vspace{-1mm}
+} }
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Phrase Extraction}
+\begin{center}
+\includegraphics[width=0.39\textwidth]{waiph4.pdf}
+\end{center}
+\vspace{-1mm}
+{\bf \footnotesize \textcolor{blue}{
+(Maria, Mary),
+(no, did not),
+(slap, daba una bofetada),
+(a la, the),
+(bruja, witch), 
+(verde, green),
+} \textcolor{green}{ \\ \vspace{-1mm}
+(Maria no, Mary did not), 
+(no daba una bofetada, did not slap), 
+(daba una bofetada a la, slap the), \\ \vspace{-1mm}
+(bruja verde, green witch), 
+} \textcolor{red}{
+(Maria no daba una bofetada, Mary did not slap), \\ \vspace{-1mm}
+(no daba una bofetada a la, did not slap the),
+(a la bruja verde, the green witch), \\ \vspace{-1mm}
+} \textcolor{magenta}{
+(Maria no daba una bofetada a la, Mary did not slap the), \\ \vspace{-1mm}
+(daba una bofetada a la bruja verde, slap the green witch) \\ \vspace{-1mm}
+} }
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Phrase Extraction}
+\begin{center}
+\includegraphics[width=0.39\textwidth]{waiph5.pdf}
+\end{center}
+\vspace{-1mm}
+{\bf \footnotesize \textcolor{blue}{
+(Maria, Mary),
+(no, did not),
+(slap, daba una bofetada),
+(a la, the),
+(bruja, witch), 
+(verde, green),
+} \textcolor{green}{ \\ \vspace{-1mm}
+(Maria no, Mary did not), 
+(no daba una bofetada, did not slap), 
+(daba una bofetada a la, slap the), \\ \vspace{-1mm}
+(bruja verde, green witch),
+} \textcolor{red}{
+(Maria no daba una bofetada, Mary did not slap), \\ \vspace{-1mm}
+(no daba una bofetada a la, did not slap the),
+(a la bruja verde, the green witch), \\ \vspace{-1mm}
+} \textcolor{magenta}{
+(Maria no daba una bofetada a la, Mary did not slap the), 
+(daba una bofetada a la bruja verde, \\ \vspace{-1mm} slap the green witch), 
+} \textcolor{orange}{
+(no daba una bofetada a la bruja verde, did not slap the green
+witch), \\ \vspace{-1mm}
+} \textcolor{cyan}{
+ (Maria no daba una bofetada a la bruja verde, Mary did not
+slap the green witch)
+} }
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Phrase Translation Probabilities}
+\vfill
+\begin{itemize}
+\item {\bf Phrase table}: contains all phrases $(\overline{e} , \overline{f})$ extracted from the data
+\item We need to assign {\bf probabilities} to extracted phrases
+\item Score by relative frequency:\vspace{-5mm}
+\maths{\begin{equation*}
+\begin{split} 
+  \phi(\bar{e}|\bar{f}) = \frac{\mbox{count}(\bar{e},\bar{f})}{\sum_{\bar{e}'}\mbox{count}(\bar{e}',\bar{f})}\\
+\phi(\bar{f}|\bar{e}) = \frac{\mbox{count}(\bar{e},\bar{f})}{\sum_{\bar{f}'}\mbox{count}(\bar{e},\bar{f}')}
+\end{split} 
+\end{equation*}}
+\end{itemize}
+\vfill
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Real Example}
+\begin{itemize}
+\item Phrase translations for \example{den Vorschlag} from German into English: % learned from the Europarl corpus:
+\end{itemize}
+\begin{center}
+\begin{tabular}{|l|r||l|r|} \hline
+{\bf English} & \maths{$\phi(\bar{e}|\bar{f})$} &
+{\bf English} & \maths{$\phi(\bar{e}|\bar{f})$} \\ \hline \hline
+\example{the proposal} & 0.6227 &
+\example{the suggestions} & 0.0114 \\ \hline
+\example{'s proposal} & 0.1068 &
+\example{the proposed} & 0.0114 \\ \hline
+\example{a proposal} & 0.0341 &
+\example{the motion} & 0.0091 \\ \hline
+\example{the idea} & 0.0250 &
+\example{the idea of} & 0.0091 \\ \hline
+\example{this proposal} & 0.0227 &
+\example{the proposal ,} & 0.0068 \\ \hline
+\example{proposal} & 0.0205 &
+\example{its proposal} & 0.0068 \\ \hline
+\example{of the proposal} & 0.0159 &
+\example{it} & 0.0068 \\ \hline
+\example{the proposals} & 0.0159 &
+... & ... \\ \hline
+\end{tabular}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{More Features}
+\vfill
+\begin{itemize}
+\item The decoder will employ the phrase translation probabilities along with other features to assign an overall score to each possible hypothesis
+\item {\bf Standard features}:
+\begin{itemize}
+  \item Phrase translation log-probabilities
+  \item Lexical translation log-probabilities (from single-word based models)
+  \item Language model log-probability (from a target-side $n$-gram LM)
+  \item Phrase count
+  \item Word count
+  \item Distortion cost based on jump distances
+  \item Lexicalized reordering score
+\end{itemize}
+\end{itemize}
+\vfill
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Log-linear Model}
+\vfill
+\begin{itemize} %\itemsep -2em
+\item Decoding: Given the model, find the best translation
+\vspace*{-0.7em}
+\maths{
+\begin{equation*}
+  {\bf e}_{\mbox{\small best}} =  \; \mbox{argmax}_{\bf e} \; p({\bf e}|{\bf f})
+\vspace*{-0.5em}
+\end{equation*}
+}
+\item Our model is a {\bf weighted combination} of many components
+\vspace*{-0.7em}
+\maths{
+\begin{equation*}
+p({\bf e}|{\bf f}) \propto \exp \sum_{k=1}^m \; \lambda_k\cdot h_k({\bf e}, {\bf f}) 
+\vspace*{-0.5em}
+\end{equation*}
+}
+where $h_k({\bf e}, {\bf f})$ are {\bf feature functions} and $\lambda_k$ are {\bf feature weights}
+\end{itemize}
+\vfill
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Tuning}
+\vspace*{2ex}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{discriminative.pdf}
+\end{center}
+\begin{itemize} %\itemsep -2em
+\item MERT, MIRA, PRO, \ldots
+\end{itemize}
+\vspace*{-2ex}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Phrase Translation Options}
-\vspace{-5mm}
-\begin{center} 
+\slide{Phrase-based Decoding}
+\vspace*{-1ex}
+%\begin{center} 
 \includegraphics[scale=1.5]{translation-options.pdf}
-\end{center}\vspace{-10mm}
+%\end{center}\vspace{-10mm}
 \begin{itemize}
+\vspace*{-4ex}
 \item Many translation options to choose from
 \end{itemize}
+\vspace*{-2ex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Phrase Translation Options}
-\vspace{-5mm}
-\begin{center} 
+\slide{Phrase-based Decoding}
+\vspace*{-1ex}
+%\begin{center} 
 \includegraphics[scale=1.5]{translation-options-correct.pdf}
-\end{center}  \vspace{-12mm}
+%\end{center}  \vspace{-12mm}
+\vspace*{-4ex}
 \begin{itemize}
 \item The machine translation decoder does not know the right answer\vspace{-4mm}
 \begin{itemize}
@@ -334,6 +787,7 @@ Slides downloadable from \\ \\
 \end{itemize}
 \item[$\rightarrow$] Search problem solved by beam search
 \end{itemize}
+\vspace*{-2ex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -382,6 +836,68 @@ also create hypotheses from created partial hypothesis
 \includegraphics[scale=1.3]{decoding-step6.pdf}\\[1mm]
 backtrack from highest scoring complete hypothesis
 \end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Pruning}
+\vfill
+\begin{itemize}
+\item Heuristically discard weak hypotheses early: {\bf beam search}
+\item Organize hypotheses in {\bf stacks} (actually priority queues), e.g.\ by
+{\begin{itemize} \vspace{-4mm}
+\item same source words covered
+\item same number of source words covered 
+%\item \important{same number} of English words produced
+\end{itemize} }
+\item Compare hypotheses in stacks, discard bad ones
+{\begin{itemize} \vspace{-4mm}
+\item {\bf histogram pruning}: keep top $k$ hypotheses in each stack (e.g., $k$=100)
+\item {\bf threshold pruning}: keep hypotheses that are at most $\alpha$
+  times the cost of best hypothesis in stack (e.g., $\alpha$ = 0.001)
+\end{itemize} }
+\end{itemize}
+\vfill
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Hypothesis Stacks}
+\vfill
+\begin{center}
+\includegraphics[width=15cm]{hypothesis-stacks.pdf}
+\end{center}
+\begin{itemize}
+\item Organization of hypotheses into stacks
+{\begin{itemize}
+  \item here: based on {\bf number of source words} translated
+\item during translation all hypotheses from one stack are expanded
+\item expanded hypotheses are placed into next stacks
+\end{itemize} }
+\end{itemize}
+\vfill
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Evaluation}
+\vfill
+\begin{itemize}
+\item {\bf Automatic evaluation metrics}
+\begin{itemize}
+\item Measure similarity between machine translation output \\and human-generated reference translation
+\item Good metrics correlate well with human judgement
+\end{itemize}
+\item Decode a held-out test set and -- after postprocessing (detokenization, truecasing) -- score with an automatic metric to {\bf determine translation quality}
+\end{itemize}
+\vfill
+\begin{itemize}
+\item {\bf \sc bleu}
+\begin{itemize}
+\item Most commonly used metric
+\item $n$-gram precision ($n = 1 \ldots 4$), brevity penalty
+\end{itemize}
+%\item {\bf \sc ter}
+%\item {\bf \sc meteor}
+\end{itemize}
+\vfill
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -497,11 +1013,11 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{}
-\vspace{-2.5cm}
-\begin{center}
-\includegraphics[width=26cm]{ems-syntax-viz.png}
-\end{center}
+% \slide{}
+% \vspace{-2.5cm}
+% \begin{center}
+% \includegraphics[width=26cm]{ems-syntax-viz.png}
+% \end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -545,16 +1061,18 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 %   \end{itemize}
 \item {\bf Collect your data}
   \begin{itemize}
-  \item Parallel data 
-        \begin{itemize}
-        \item Freely available data, e.g.\ Europarl, MultiUN, WIT3, OPUS, \ldots
+%  \item Parallel data 
+%        \begin{itemize}
+%        \item Freely available data, e.g.\ Europarl, MultiUN, WIT3, OPUS, \ldots
+        \item Available corpora like Europarl, MultiUN, WIT3, OPUS, CommonCrawl
+        \item Data from open MT evaluation campaigns (WMT, IWSLT, \ldots)
         \item TAUS, Linguistic Data Consortium (LDC), \ldots
-        \end{itemize}
-  \item Monolingual data
-        \begin{itemize}
-        \item CommonCrawl, WMT News Crawl corpus, \ldots
-        \end{itemize}
-  \item If not done yet, carry out sentence segmentation \\and parallel sentence alignment
+%        \end{itemize}
+%  \item Monolingual data
+%        \begin{itemize}
+%        \item CommonCrawl, WMT News Crawl corpus, \ldots
+%        \end{itemize}
+  \item If data is not prepared yet, carry out cleaning, sentence segmentation, and parallel sentence alignment
 %  \item Translation memories
   \end{itemize}
 \item {\bf Build system}
@@ -2597,7 +3115,7 @@ Argument to command line\\[2mm]
 \end{center}
 \end{table}
 \begin{center}
-\ldots and many more.
+\ldots and many more
 \end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
