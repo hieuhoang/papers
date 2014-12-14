@@ -529,7 +529,7 @@ Madam President, on a point of order.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{slide}{Phrase Extraction}
+\slide{Phrase Extraction}
 \begin{center}
 \includegraphics[width=0.39\textwidth]{waiph1.pdf}
 \end{center}
@@ -542,11 +542,10 @@ Madam President, on a point of order.
 (bruja, witch),
 (verde, green) \\ \vspace{-1mm}
 } }
-\end{slide}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{slide}{Phrase Extraction}
+\slide{Phrase Extraction}
 \begin{center}
 \includegraphics[width=0.39\textwidth]{waiph2.pdf}
 \end{center}
@@ -564,11 +563,10 @@ Madam President, on a point of order.
 (daba una bofetada a la, slap the),\\ \vspace{-1mm}
 (bruja verde, green witch) \\ \vspace{-1mm} 
 } }
-\end{slide}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{slide}{Phrase Extraction}
+\slide{Phrase Extraction}
 \begin{center}
 \includegraphics[width=0.39\textwidth]{waiph3.pdf}
 \end{center}
@@ -590,11 +588,10 @@ Madam President, on a point of order.
 (no daba una bofetada a la, did not slap the),
 (a la bruja verde, the green witch) \\ \vspace{-1mm}
 } }
-\end{slide}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{slide}{Phrase Extraction}
+\slide{Phrase Extraction}
 \begin{center}
 \includegraphics[width=0.39\textwidth]{waiph4.pdf}
 \end{center}
@@ -619,11 +616,10 @@ Madam President, on a point of order.
 (Maria no daba una bofetada a la, Mary did not slap the), \\ \vspace{-1mm}
 (daba una bofetada a la bruja verde, slap the green witch) \\ \vspace{-1mm}
 } }
-\end{slide}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{slide}{Phrase Extraction}
+\slide{Phrase Extraction}
 \begin{center}
 \includegraphics[width=0.39\textwidth]{waiph5.pdf}
 \end{center}
@@ -654,7 +650,6 @@ witch), \\ \vspace{-1mm}
  (Maria no daba una bofetada a la bruja verde, Mary did not
 slap the green witch)
 } }
-\end{slide}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -935,7 +930,71 @@ backtrack from highest scoring complete hypothesis
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\slide{Hierarchical Translation}
+%\begin{center}
+\hspace*{3em} 
+\includegraphics[scale=1.4]{hierarchical-phrase-extraction1.pdf}
+%\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Hierarchical Translation}
+%\begin{center}
+\hspace*{3em} 
+\includegraphics[scale=1.4]{hierarchical-phrase-extraction2.pdf}
+%\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Hierarchical Translation}
+%\begin{center}
+\hspace*{3em} 
+\includegraphics[scale=1.4]{hierarchical-phrase-extraction3.pdf}
+%\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Hierarchical Translation}
+%\begin{center}
+\hspace*{3em} 
+\includegraphics[scale=1.4]{hierarchical-phrase-extraction4.pdf}
+%\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \slide{Syntax-based Translation}
+%\vspace*{-1em} 
+%\begin{center}
+\begin{tabular}{rl}
+\includegraphics[scale=1.17]{hierarchical-phrase-extraction-syntax1.pdf}
+& 
+\parbox{85mm}{\footnotesize \phantom{.}\vspace{-6cm}
+
+\example{\Tree [.{\sc pro} Ihnen ] }
+\hspace{2mm} {\Large $=$} \hspace{2mm}
+\example{\Tree [.{\sc pp} [.{\sc to} to ] [.{\sc prp} you ] ] \vspace{-1cm}\phantom{.}}
+}
+\end{tabular}
+%\end{center}
+\vspace*{-2em} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \slide{Constraints on Syntactic Rules}
+% \vspace{15mm}
+% \begin{itemize}
+% \item Same word alignment constraints as hierarchical models
+% \item Hierarchical: rule can cover any span\\
+% $\Leftrightarrow$ syntactic rules must cover constituents in the tree
+% \item Hierarchical: gaps may cover any span\\
+% $\Leftrightarrow$ gaps must cover constituents in the tree
+% \vspace{10mm}
+% \item Much less rules are extracted (all things being equal)
+% \end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Syntax-based Translation: Variants}
 \vspace{5mm}
 {\small
 \begin{center}
@@ -1084,7 +1143,7 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 \slide{Open Source Components}
 \vspace*{-1ex}
 \begin{itemize}
-\item {\bf Moses statistical machine translation system}
+\item {\bf Moses} %statistical machine translation system}
   \begin{itemize}
   \item \url{http://www.statmt.org/moses/}
   \item LGPL license
