@@ -285,6 +285,36 @@ Slides downloadable from \\ \\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% \slide{Data-driven MT}
+% \vfill
+% 
+% \begin{center}\begin{tikzpicture}
+% \node[processing, text width=12em, align=center](ptraining){Training};
+% \node[input, text width=12em, align=center, above=1.5cm of ptraining](train){Parallel Training Data};
+% \node[model, text width=12em, align=center, below=1cm of ptraining](tm){Translation Model};
+% \draw[arr] (train) -- (ptraining);
+% \draw[arr] (ptraining) -- (tm);
+% 
+% \node[input, text width=12em, align=center, right=2cm of train](monotrain){Monolingual Training Data};
+% \node[model, text width=12em, align=center, right=2cm of tm] (lm) {Language Model};
+% \node[processing, text width=12em, align=center, right=2cm of ptraining] (lmtrain) {LM Estimation};
+% \draw[arr] (monotrain) -- (lmtrain);
+% \draw[arr] (lmtrain) -- (lm);
+% 
+% \node[processing, text width=12em, align=center, below right=2.5cm  and 1cm of tm.center] (tuning) {Tuning};
+% \node[input, text width=8em, align=center, right=2cm of tuning](dev){Development Set};
+% \node[model, text width=12em, align=center, below=1.5cm of tuning] (system) {SMT System};
+% \draw[arr, shorten >=4mm ] (lm) -- (tuning);
+% \draw[arr, shorten >=4mm] (tm) -- (tuning);
+% \draw[arr] (dev) -- (tuning);
+% \draw[arr] (tuning) -- (system);
+% 
+% \end{tikzpicture}\end{center}
+% 
+% \vfill
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \slide{SMT Pipeline (1)}
 \vfill
 \begin{itemize}
@@ -347,7 +377,7 @@ Slides downloadable from \\ \\
 \item {\bf Evaluation}
   \begin{itemize}
   \item Automatic metrics to assess translation quality by comparing the hypothesis with a reference translation: {\sc bleu}, {\sc ter}, {\sc meteor}, \ldots
-  \item Human judgment
+  \item Human judgement
   \end{itemize}
 \end{itemize}
 \vspace*{-2ex}
@@ -1080,28 +1110,6 @@ $\Rightarrow$ \example{Marie manque \`a Jean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%\slide{Advanced Features}
-%\small
-%\vspace{-5mm}
-%\textcolor{darkgrey}{
-%\begin{itemize} \itemsep -1mm
-%%\item \currenttopic{How do I get started?}
-%%\item {Experiment Management System}
-%\item {Faster Training}
-%\item {Faster Decoding}
-%\item {Moses Server}
-%\item {Data and domain adaptation}
-%\item {Instructions to decoder}
-%\item {Input formats}
-%\item {Output formats}
-%\item {Translation models}
-%\item {Incremental Training}
-%\end{itemize}
-%}
-%\normalsize
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \slide{How do I get started?}
 
 \vfill
@@ -1190,36 +1198,6 @@ mteval-v13.pl ...
 %\item Change a part of the process, execute everything again
 \end{itemize}
 \vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Data-driven MT}
-% \vfill
-% 
-% \begin{center}\begin{tikzpicture}
-% \node[processing, text width=12em, align=center](ptraining){Training};
-% \node[input, text width=12em, align=center, above=1.5cm of ptraining](train){Parallel Training Data};
-% \node[model, text width=12em, align=center, below=1cm of ptraining](tm){Translation Model};
-% \draw[arr] (train) -- (ptraining);
-% \draw[arr] (ptraining) -- (tm);
-% 
-% \node[input, text width=12em, align=center, right=2cm of train](monotrain){Monolingual Training Data};
-% \node[model, text width=12em, align=center, right=2cm of tm] (lm) {Language Model};
-% \node[processing, text width=12em, align=center, right=2cm of ptraining] (lmtrain) {LM Estimation};
-% \draw[arr] (monotrain) -- (lmtrain);
-% \draw[arr] (lmtrain) -- (lm);
-% 
-% \node[processing, text width=12em, align=center, below right=2.5cm  and 1cm of tm.center] (tuning) {Tuning};
-% \node[input, text width=8em, align=center, right=2cm of tuning](dev){Development Set};
-% \node[model, text width=12em, align=center, below=1.5cm of tuning] (system) {SMT System};
-% \draw[arr, shorten >=4mm ] (lm) -- (tuning);
-% \draw[arr, shorten >=4mm] (tm) -- (tuning);
-% \draw[arr] (dev) -- (tuning);
-% \draw[arr] (tuning) -- (system);
-% 
-% \end{tikzpicture}\end{center}
-% 
-% \vfill
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1534,9 +1512,10 @@ mteval-v13.pl ...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{}
-\begin{center} \vspace{-5mm}
-\includegraphics[scale=1.41]{ems-agenda-composite.pdf}
-\end{center}
+\vspace*{-3.6ex}
+%\begin{center} \vspace{-5mm}
+\includegraphics[scale=1.5]{ems-agenda-composite.pdf}
+%\end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
