@@ -1974,21 +1974,16 @@ lmplz -o [order] -S [memory] < text > text.lm
 \slide{Advanced Features}
 \vspace{-5mm}
 \textcolor{darkgrey}{
-\small
 \begin{itemize} \itemsep -1mm
-%\item {How do I get started?}
-%\item {Experiment Management System}
 \item {Faster Training}
 \item \currenttopic{Faster Decoding}
 \item {Moses Server}
-\item {Data and domain adaptation}
-\item {Instructions to decoder}
-\item {Input formats}
+\item {Domain adaptation}
+\item {Transliteration}
 \item {Output formats}
-%\item {Translation models}
-\item {Incremental Training}
 \end{itemize}
 }
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2210,6 +2205,24 @@ KENLM name=LM0 factor=0 path=/.../model.binlm order=5
 \colorbox{gray}{\BUseVerbatim{myverb}}
 \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Advanced Features}
+\vspace{-5mm}
+\textcolor{darkgrey}{
+\begin{itemize} \itemsep -1mm
+%\item {How do I get started?}
+%\item {Experiment Management System}
+\item {Faster Training}
+\item {Faster Decoding}
+  \begin{itemize}
+  \item {Multi-threading}
+  \item Speed vs. Memory
+  \item \currenttopic{Speed vs. Quality}
+  \end{itemize}
+\end{itemize}
+\ldots
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
