@@ -1787,13 +1787,13 @@ mteval-v13.pl ...
 \begin{itemize} \itemsep -1mm
 %\item {How do I get started?}
 %\item {Experiment Management System}
-\item {Faster Training}
+\item Faster Training
   \begin{itemize}
-  \item {Tokenization}
-  \item {Tuning}
+  \item Tokenization
+  \item Tuning
   \item \currenttopic{Alignment}
-  \item Phrase-Table Extraction
-  \item Train language model
+  \item Phrase-table creation
+  \item Language model creation
   \end{itemize}
 \end{itemize}
 \ldots
@@ -1842,17 +1842,18 @@ mteval-v13.pl ...
 \begin{itemize} \itemsep -1mm
 %\item {How do I get started?}
 %\item {Experiment Management System}
-\item {Faster Training}
+\item Faster Training
   \begin{itemize}
-  \item {Tokenization}
-  \item {Tuning}
-  \item {Alignment}
-  \item \currenttopic{Phrase-Table Extraction}
-  \item Train language model
+  \item Tokenization
+  \item Tuning
+  \item Alignment
+  \item \currenttopic{Phrase-table creation}
+  \item Language model creation
   \end{itemize}
 \end{itemize}
 \ldots
 }
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1936,13 +1937,13 @@ mteval-v13.pl ...
 \begin{itemize} \itemsep -1mm
 %\item {How do I get started?}
 %\item {Experiment Management System}
-\item {Faster Training}
+\item Faster Training
   \begin{itemize}
-  \item {Tokenization}
-  \item {Tuning}
-  \item {Alignment}
-  \item {Phrase-Table Extraction}
-  \item \currenttopic{Train language model}
+  \item Tokenization
+  \item Tuning
+  \item Alignment
+  \item Phrase-table creation
+  \item \currenttopic{Language model creation}
   \end{itemize}
 \end{itemize}
 \ldots
@@ -1973,21 +1974,16 @@ lmplz -o [order] -S [memory] < text > text.lm
 \slide{Advanced Features}
 \vspace{-5mm}
 \textcolor{darkgrey}{
-\small
 \begin{itemize} \itemsep -1mm
-%\item {How do I get started?}
-%\item {Experiment Management System}
 \item {Faster Training}
 \item \currenttopic{Faster Decoding}
 \item {Moses Server}
-\item {Data and domain adaptation}
-\item {Instructions to decoder}
-\item {Input formats}
+\item {Domain adaptation}
+\item {Transliteration}
 \item {Output formats}
-%\item {Translation models}
-\item {Incremental Training}
 \end{itemize}
 }
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2209,6 +2205,24 @@ KENLM name=LM0 factor=0 path=/.../model.binlm order=5
 \colorbox{gray}{\BUseVerbatim{myverb}}
 \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Advanced Features}
+\vspace{-5mm}
+\textcolor{darkgrey}{
+\begin{itemize} \itemsep -1mm
+%\item {How do I get started?}
+%\item {Experiment Management System}
+\item {Faster Training}
+\item {Faster Decoding}
+  \begin{itemize}
+  \item {Multi-threading}
+  \item Speed vs. Memory
+  \item \currenttopic{Speed vs. Quality}
+  \end{itemize}
+\end{itemize}
+\ldots
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2287,17 +2301,12 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
-%\item {How do I get started?}
-%\item {Experiment Management System}
 \item {Faster Training}
 \item {Faster Decoding}
 \item \currenttopic{Moses Server}
-\item {Data and domain adaptation}
-\item {Instructions to decoder}
-\item {Input formats}
+\item {Domain adaptation}
+\item {Transliteration}
 \item {Output formats}
-%\item {Translation models}
-\item {Incremental Training}
 \end{itemize}
 }
 
@@ -2336,28 +2345,25 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 \slide{Advanced Features}
-\normalsize
 \vspace{-5mm}
 \textcolor{darkgrey}{
-\small
 \begin{itemize} \itemsep -1mm
-%\item {How do I get started?}
-%\item {Experiment Management System}
 \item {Faster Training}
 \item {Faster Decoding}
 \item {Moses Server}
-\item \currenttopic{Data and domain adaptation}
+\item \currenttopic{Domain adaptation}
   \begin{itemize}\vspace{-4mm}
   \item Train everything together
   \item Secondary phrase table
-\item Domain indicator features
-\item Interpolated language models
-%\item TM-MT integration
+  \item Domain indicator features
+  \item Interpolated language models
   \end{itemize}
+\item {Transliteration}
+\item {Output formats}
 \end{itemize}
 }
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2783,24 +2789,16 @@ Specification in EMS:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \slide{Advanced Features}
 \vspace{-5mm}
 \textcolor{darkgrey}{
-\small
 \begin{itemize} \itemsep -1mm
-%\item {How do I get started?}
-%\item {Experiment Management System}
 \item {Faster Training}
 \item {Faster Decoding}
 \item {Moses Server}
-\item {Data and domain adaptation}
-\item \currenttopic{Instructions to decoder}
-\item {Input formats}
+\item {Domain adaptation}
+\item \currenttopic{Transliteration}
 \item {Output formats}
-%\item {Translation models}
-\item {Incremental Training}
 \end{itemize}
 }
 
@@ -2874,45 +2872,20 @@ Specification in EMS:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\small
-\begin{itemize} \itemsep -1mm
-%\item {How do I get started?}
-%\item {Experiment Management System}
-\item {Faster Training}
-\item {Faster Decoding}
-\item {Moses Server}
-\item {Data and domain adaptation}
-\item {Instructions to decoder}
-\item \currenttopic{Input formats}
-\item {Output formats}
-%\item {Translation models}
-\item {Incremental Training}
-\end{itemize}
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Advanced Features}
 \vspace{-5mm}
 \textcolor{darkgrey}{
-\small
 \begin{itemize} \itemsep -1mm
-%\item {How do I get started?}
-%\item {Experiment Management System}
 \item {Faster Training}
 \item {Faster Decoding}
 \item {Moses Server}
-\item {Data and domain adaptation}
-\item {Instructions to decoder}
-\item {Input formats}
+\item {Domain adaptation}
+\item {Transliteration}
 \item \currenttopic{Output formats}
-%\item {Translation models}
-\item {Incremental Training}
 \end{itemize}
 }
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -3102,25 +3075,12 @@ Argument to command line\\[2mm]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\small
-\begin{itemize} \itemsep -1mm
-%\item {How do I get started?}
-%\item {Experiment Management System}
-\item {Faster Training}
-\item {Faster Decoding}
-\item {Moses Server}
-\item {Data and domain adaptation}
-\item {Instructions to decoder}
-\item {Input formats}
-\item {Output formats}
-%\item \currenttopic{Translation models}
-\item {Incremental Training}
-\end{itemize}
-}
+\slide{SMT: Basic Idea}
+\vfill
+\begin{center}
+  \hspace*{-6em}\includegraphics[scale=1.8]{FeatureFunction.pdf}
+\end{center}
+\vfill
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
