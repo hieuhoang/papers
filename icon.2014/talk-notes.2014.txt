@@ -174,8 +174,90 @@ compare it to ini file for hierarchical model
 
 [mapping]
   - we now want to use 2 phrase-table
+  - 1st normal phrase-table
+  - 2nd - glue rule
+      - concatenate any 2 translations together
+      - ensure that all input sentence has an output
 
+[non-terminals]
+  - LHS non-terminal label for unknown words
+  
+[max-chart-span]
+  - for each phrase-table in [mapping]
+     - what is the maximum number of source words the translation rule can cover
+     - 20 for the regular pt
+     - 1000 (or a lot!) for the glue rule
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[features]
+  - very nearly the same as for the phrase-based ini file
+      - don't have lexicalised reordering or distortion model
+      - have an extra phrase-table
+
+[weight]
+  - again, need weight for every score in every ff
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Tuning
+
+Every score in every ff needs a weight. 
+
+How do we pick the right weight so that we get good translation quality?
+
+Several algorithms to do this
+  - they all have some things in common
+Iterative process which repeatedly run decoder
+  - compare output with reference translation
+Therefore, need around 1000-2000 input sentences, and manually translated sentence
+  - must NOT be in the training data
+  - Best result - the tuning set must be similar to sentences you want to translate
+          - but not the same sentences
+ 
+Original algorithm is called
+  - MERT
+     - still excellent algorithm
+     - drawback - can't handle a large number of weights
+         - normal have just around a dozen weights.
+             - if 50, 100, 1m. MERT will give bad result
+  - last few years
+     - new algorithm been invented to tune with large number of weights
+     - these are available in Moses
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Evaluation
+
+So you've trained a system and tuned it.
+
+Need to ask
+  - how good is it?
+
+We can manually look at the output of the system
+  - take a long time
+  - expensive
+
+A faster way is to automatically compare system output
+  - to reference
+  - calculate a score/metric that says how good/bad your system is
+
+Many metrics 
+  - share the same idea
+  - translate minimum of 1000-2000 sentences
+  - give the metric the output and the reference
+  - let it give you a score
+
+Must understand how metric works
+  - test set dependent
+      - may give you 20 with 1 test set
+          - 30 with another set
+      - when comparing 2 systems, MUST compare with same test set
+  - relative to other system, not absolute scores
+      - can't say a system score 20 is bad, 50 good
+      - only say a systme that score 50 is better than system score 20
+
+These are some of the metric out there
+  - all available in Moses
+
+ 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Faster Training
 
