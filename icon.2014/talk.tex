@@ -1678,11 +1678,11 @@ mteval-v13.pl ...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
-\item \currenttopic{Faster Training}
+\item {Faster Training}
 \item {Faster Decoding}
 \item {Moses Server}
 \item {Domain adaptation}
@@ -1693,7 +1693,7 @@ mteval-v13.pl ...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -1737,7 +1737,7 @@ mteval-v13.pl ...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -1782,7 +1782,7 @@ mteval-v13.pl ...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -1824,7 +1824,7 @@ mteval-v13.pl ...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -1879,7 +1879,7 @@ mteval-v13.pl ...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -1908,6 +1908,7 @@ mteval-v13.pl ...
   \begin{itemize}
   \item Split training data into NUM equal parts
   \item Extract concurrently
+  \item Score concurrently
   \end{itemize}
   \begin{center}
     \littlecode{.../train-model.perl -cores NUM}
@@ -1974,7 +1975,7 @@ mteval-v13.pl ...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2014,7 +2015,7 @@ lmplz -o [order] -S [memory] < text > text.lm
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2030,7 +2031,7 @@ lmplz -o [order] -S [memory] < text > text.lm
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2049,7 +2050,7 @@ lmplz -o [order] -S [memory] < text > text.lm
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2083,7 +2084,7 @@ lmplz -o [order] -S [memory] < text > text.lm
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2176,7 +2177,7 @@ Change ini file: \\[-6mm]
 \begin{center}
 \begin{SaveVerbatim}{myverb} 
 [feature]
-PhraseDictionaryBinary name=TranslationModel0 \
+PhraseDictionaryOnDisk name=TranslationModel0 \
    table-limit=20 \ num-features=4 \
    path=/.../phrase-table
 \end{SaveVerbatim}
@@ -2219,7 +2220,7 @@ processLexicalTableMin
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
 \end{center}
-\item Specify with 
+\item Change moses.ini file to use
 \begin{center}
 \begin{SaveVerbatim}{myverb} 
 PhraseDictionaryCompact
@@ -2250,7 +2251,7 @@ KENLM name=LM0 factor=0 path=/.../model.binlm order=5
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2340,7 +2341,7 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2389,7 +2390,7 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2446,7 +2447,7 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2512,7 +2513,7 @@ Specification in EMS:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2686,7 +2687,7 @@ Specification in EMS:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2728,7 +2729,7 @@ Specification in EMS:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2767,7 +2768,7 @@ Specification in EMS:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%\slide{Advanced Features}
+%\slide{Optimization}
 %\vspace{-5mm}
 %\textcolor{darkgrey}{
 %\begin{itemize} \itemsep -1mm
@@ -2832,7 +2833,7 @@ Specification in EMS:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2916,7 +2917,7 @@ Specification in EMS:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm

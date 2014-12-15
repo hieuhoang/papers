@@ -257,7 +257,22 @@ Must understand how metric works
 These are some of the metric out there
   - all available in Moses
 
- 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Now you know what each step of the training and tuning does
+  - lets go through it again
+  - in detail
+  - look at how to optimize it
+      - for speed
+      - to minimize
+  - these optimization are not just nice to know
+      - in some cases, without them, 
+      - memory requirement would be so great
+      - can't possibly run Moses without them
+      - some of these optimization are mandatory
+If you use the EMS, it implements most of them
+  - still need to know how to turn it on
+  - off, or tweak it
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Faster Training
 
@@ -266,8 +281,8 @@ Training may take a day to week.
   - and the machine you're running on
   
   - to speed it it up, we are looking to make the most use of all the cores on our server
-     - currents servers have at least 2 cores or more. Our edinburgh server, for instance has 16 cores.
- 	 - as you can imagine, being able to use 16 cores results in a significant speedup.
+     - even currents servers have at least 2 cores or more. Our edinburgh server, for instance has 32 cores.
+ 	 - as you can imagine, being able to use 32 cores results in a significant speedup.
 %%%
 This is a list of the time consuming steps
    - focus on reducing the runnning time for these processes
@@ -353,33 +368,17 @@ The 2nd line does exactly exactly the same thing
 %%%
 Training Language Model
 
-The original toolkit to train a language is SRILM
-  - most people in the MT community have used it.
-  - has several disadvantages
-  - it's not free for commercial use
-  - need lots of memory with training large amount of data
-  - can't use multiple cores
-  
-The IRST toolkit created was designed to solve these problems.
-%%%
-If you want to train a language model with IRST manually
-  - execute this command.
-IRST LM training is also available in the EMS
-  - specify these in the config file, instead of the SRI verion
+There are many toolkits that you can use to create a language model
+  - SRILM, IRSTLM
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-In the last few years
-  - Kenneth Heafield has been implementing a lot of useful tools
-     - for LM
-  - he's also created a program 
-      - called LM please
-     - like IRSTLM, open source
-     - much more efficient that IRSTLM
-        - faster 
-        - can create LM from huge amount of data
-The other good thing about LM & all of KenLM
-  - its bundled as part of Moses
-  - no need to separately download another piece of softrware
+In my experience, KenLM is more efficient than any of the others.
+  - takes less time, uses less memory
+  - able to handle huge amount of input data
+  - also the newest
+  - available as part of Moses
+    - no need to separately download another piece of softrware
+  - if all you want standard, pruned, backoff n-gram LM
+     - it can't be beat
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Now that you've trained your translation system
@@ -429,20 +428,19 @@ In most cases, better
   - slower decoding, but
        - near instantaneous startup time
        - server won't crash due to running out of memory.
-         
+  - we call these binary models. Or load-on-demand models
 %%%
 Speed v Memory
 
+There are many different implementations of binary phrase-tables
+  - The 1 that's applicable to both phrase-based and hierarchical model is
+   
 To binarize a phrase table or lexical reordering table
    - this is what you execute
-   - different for phrase-based and hierachical/syntax models
-
-%%%
-Speed v Memory
+   - convert it to a binary phrase-table
 
 Once you binarized the phrase-table
-  - have to tell the decoder to use it instead of the memory phrase-table
-
+  
 In the ini file
   - change the type of phrase-table it uses
      - if you're using a phrase-table that loads everything into memory
@@ -452,47 +450,34 @@ In the ini file
          - or PhraseDictionaryOnDisk
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Like the database market
-  - different databases comes along that are better and faster the the previous
-  - in the last few years, a new phrase-table format which is smaller and faster that the binary and ondisk phrase-table
+Same with the lexicalised reordering table
+- this is what you execute
+   
+Don't have to change the ini file
+  - it detects it automatically
 
-  - follow the same step as you do with the binary phrase table
-     - 1st - binarize the phrase table
-         - then change the ini file to tell the decoder to use it.
-
+These binary models are good, but not particularly fast
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-IRSTLM
 
-As well as language model training, the irst toolkit also contains a language model implementation during training
+In the last few years, a new binary implementation 
+  - smaller
+  - faster 
+then everything else
+  - called the compact phrase-table
 
-Like phrase table
-   - convert the LM into a db-like format
-   - make sure the name of the file is ends with .mm
-      - which tells the Moses decoder to load it on demand
+Follow the same step as you do with the binary phrase table
+ - 1st - binarize the phrase table
+ - then change the ini file to tell the decoder to use it.
+
       
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-IRSTLM
-
-to use it in the decoder
-   - compile the IRST library separately
-   - link moses decoder with it
-   
-When you want to use IRSTLM implementation instead of SRI
-  - change the 1st number to 1
-  - to tell the decoder to use IRST LM
-  
-%%%
 KenLM
 
-Another implementation of a binary, load-on-demand language model
-
-Advantage of KenLM
+Language models also need to be binarized. The best all-round implementation is KenLM
   - built right into Moses
-      - no need to download + compile a separate library
-  - Faster than IRST & SRI
+  - Fast
   - threadable. 
-  	  - decoder will crash if running multiple threads when using IRST
 
 Want to use kenlm during decoding
   - convert the language model file into a binary format
@@ -512,16 +497,17 @@ There is a rapidly diminishing rate of return after a relatively short time
 What you want to do
   - set decoding parameters so that it's fast and good enough for practical use
 %%%
-Philipp gave a general overview of how phrase-based decoding works.
+Matthias gave a general overview of how phrase-based decoding works.
 
 Decoding create a large number of hypotheses. More hypotheses means
   - more time required
   - better translation quality
+  
 %%%
 What we need to know
-  - where are the choke points that we can use to reduce the number of hypotheses?
+  - What parameters reduces the number of hypotheses?
 
-Number of hypothses created is roughly
+Number of hypothses created is roughly proportional
   sentence-length
   stack size
   translation options, ie. phrase pairs for each contingous span 
@@ -678,179 +664,10 @@ Merge the language models using the interpolated algorithm.
   - internally, it weights each language model according to maximise the performance 
   		- relative to a tuning set
 This is integrated into the EMS
-%%%%
-If you have TMXes from your clients
-  - may be so good
-  - that you can match the entire sentence
-      - except for 1 or 2 words
-We've imported this notion of fuzzy matching from the translation industry and put it into MT
-  - the fuzzy match find good long matches from the TMX
-And it also uses SMT to fill in the blanks
-
-If you have good TMX data, this is the best of both worlds
-%%%%
-This technique 
-   - best used when the TMX is very repetitive and consistant
-   - the fuzzy match has high confident when it find a long translation rule
-To use the fuzzy match rules
-   - word align your TMX data with GIZA++
-   - add an additional phrase-table to the normal 2 phrase-tables in a hierachical system. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Specifying Translations with XML
-
-Would you let SMT translate numbers?
-This is the translations for the number 2003 in the Moses phrase-table.
-  - it's likely to translate it correctly
-  - or it may translate it to 2000, or the word 'year', or 'the'
-
-there are some things that are so predictable that you don't need a statistical engine like SMT to translate.
-  - a rule-based approach or simple lookup is better in these cases.
-In this case, numbers, but it also goes for
-   - dates
-   - names
-   - trademarks, technical terms
-
-In these cases, need
- - force the word to be translated a particular way
-
-   - preprocess your input. Identify numbers, dates, names
-   - add XML tags to force the translation
- 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Walls and Zones
-
-Sometimes the decoder is a little to free with reordering.
-
-Restrict reordering.
-
-3 ways to do this
-  zones
-  walls
-  wall within a zone
-  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Walls and Zones
-
-Better to show with examples:
-
-Zone means - if you start translating a word in a zone, you translate the entire zone before translating anything else.
-
-In this example, " yes " has to be translated together
-  - don't want the quotes to leak out and surround the entire sentence, for instance.
-  
-Wall - must translate everything behind the wall, before translating anything in front of the wall
-
-The phrase "Number 1" has to be completely translated before the rest can be translated.
-
-Something that often happens in MT output is that the phrase inside brackets is broken up & partially moved outside of the bracket. This is almost always wrong.
-
-  - Use walls and zone together
-  - to ensure that once you begin translating inside the brackets, 
-  - completed before the closing brackets
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Preserving Markup
-
-Zones and walls are also good for translating text with marked ups
-
-Markups not only tell you something about how the text should be formatted
-  - often tells you how the text should be translated
-For instance, if a phrase has been highlighted
-  - likely that the highlighted phrase should stay together
-
-In this example, first 3 words have been higligted
-  - translate the tags using forced translation we saw earlier
-    
-Then we wall the entire phrase 
-   - ensure the translation is contained with the highlighted markup
-And the same with the bold mark-up for the singleton 'eat'
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Preserving Markup
-   
-The other solution to handling formatting
-    - remember the format of each word
-	- but discard the markup from the input
-	- when you decode
-   	   - track where each source word eventually ends up
-	- re-insert the markup after decoding
-	
-In this example, the word 'esse' can be seen to have come from the 5th word in the source sentence
-  - that was bolded. Theefore, the word esse should also be bolded
-  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Concludes XML part of moses.
-
-Any questions?
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Input formats
-
-Usually, a sentence of words is translated. However, the decoder can also translate graphs.
-
-Take an example, trying to translate sentences with spelling mistakes
-   - 2 mistakes here
-   
-1st strategy 
-	- correct the error
-	- translate
-	- However, error correction isn't perfect, may introduce more errors 
-	
-2nd strategy
-	- create many different sentences with corrections
-	- translate them all
-	- Slow
-	
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Confusion network
-
-Better strategy
-
-Encode the possible error correction in a graph
-
-Let the decoder decide which correction to use during decoding
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Confusion network
-
-Another use case for confusion network
-
-Imagine trying to create a translation system for English-speaking person to translation Vietnamese
-
-1st line 
-   - correct Vietnamese. Lots of diacritiques / accents
-2nd line
-	 - English speaking person - Doesn't understand the importance of the diatricics
-   
-   - types sentence without any accent
-   
-To be able to translate the 2nd line
-  - need to add back the diacritique
-	- the good way of doing this
-			- build a confusion
-			- each edge between two nodes have the same words
-			- different accent
-			
-Then let the decoder decide
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Confusion network
-
-To decode a lattice. Just add args on the command line or in the ini file
-
-This is the format of a confusion network input
-Each line contains alternative words from which to choose
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Lattice
-
-Another input type to the decoder is a lattice
-
-Taking an example a Chinese sentence. 
-  - we don't know the word boundaries
-  - important to get good results
-  - many different segmentation for this sentence
+Transliteration
+???
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Output format
