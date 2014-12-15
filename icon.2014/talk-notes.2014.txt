@@ -4,16 +4,178 @@ And I hope that the hands-on session has given you the appetite to go away and c
 
 Now i'm gonna spend about an hour going through some of the more advanced details of Moses
 
-I'm gonna show you how to 
-  - create an engine faster,
-  - translate faster
-  - how you can build Moses into your existing applications
-  - and tricks to produce better translation
-There's a lot of information
-  - it might be confusing
-  - so please interrupt if you don't understand something
-  - i'll try & deal with them there & then
-  
+I'm gonna tell you
+  - in more detail how each of these stages works
+  - how to optimize each stage
+		- train faster,
+		- decode faster
+
+  - how to add new feature function to score translation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Tokenize & Lowercase
+
+start with raw text
+tokenize
+  - split punctuation from words
+lowercase
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Tokenize
+
+Moses provides basic support for tokenizing 22 languages
+
+However, tokenization is the 1 area in SMT which is language specific
+May need to do different things, depending on language
+
+You have to think and experiment with different tokenization schemes
+   - could use external tokenzier
+      - MADA for arabic
+If your language has variations on how 
+   - words are spelt
+   - how the same characters are represented in Unicode
+   - need to normalise text
+If your language is synthetic or agglutinative
+   - 1 word often made of multiple words/morphemes stuck together
+   - need to split them
+These are not something I can tell you how to do for every language
+  - have to experiment yourself
+  - make a difference
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Casing
+
+something as seemingly easy as casing european languages
+  - many variations on how to do it
+Can lowercase everything at the start, then recase it before it's seen by user
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Word alignment
+
+Input to word alignment step
+  - corpus of parallel sentences
+Output 
+  - alignment of each word with corresponding word in the other language
+  - many-to-many alignment
+  - some words won't have any alignments
+Expressed as set of integer pairs
+  - source position - target position
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Phrase-extraction
+
+Takes parallel sentence with word alignments
+
+For each parallel sentence, apply an algorithm that extract translations
+  - single words
+  - multiple words
+At the moment, not a phrase-table
+  - many duplicates from different parallel sentence
+  - no probability scores that says how likely a translation is
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Phrase-table creation
+
+The step collates all the translations extracted from the parallel data
+  - sorts it, calculates probabilities for each translation
+  - these probabilties are
+     - in this order
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Phrase-table format
+
+Phrase-table may also contains lots of other information
+  - depending on what options you set 
+
+Split into columns
+  - separated by 3 pipe symbols
+3. most common word alignment
+7. Lots of people want to add information into the phrase table. Adding more columns wasn't such a good thing
+    last column 
+    - arbitary key-value pairs.
+    - anyone can add key-value pairs.
+    - ignored by decoder is doesn't understand the key
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Language model
+
+More precisely, backoff n-gram language model. 
+Markov model of text
+
+Input must be tokenized, cased in the same way as target side of your parallel data
+Output is the well-defined ARPA format for LM
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+moses.ini
+
+Once all the models have been built
+Need to tell the decoder where they are
+
+Also need to give other parameters to the decoder to tell it exactly what to do
+
+Do that in the moses.ini file
+
+Let's look at the ini file for a basic phrase-based model
+
+Several sections
+  - don't have to be in any order
+  - each section has its own format
+
+[input-factor]
+  - each word is just the surface form itself
+  - if your input has part-of-speech or lemma information
+     - add that as additional word factor
+
+[mapping]
+  - this says use the 1 phrase-table that's specified in the [feature] section
+  - the 0th phrase-table
+
+[distortion-limit]
+  - maximum reordering limit.
+  - usually set it to 6 or 7. OK for most language pairs
+  - 0 for no reordering
+  - -1 for no limit, ie. infinite reordering
+
+[feature]
+  - a list of feature functions that give a score to the translation
+  - minor ff no-one's told you about
+  - phrase-table
+  - reordering model
+  - language model
+
+[weight]
+  - each feature function emits a number of scores
+  - each score needs to be weighted
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+To run the decoder
+  - type
+
+To override any section in the ini file with an argument on the command line
+  - 'dash' name of section
+  - the parameter
+
+Many sections have shortcut names
+  - use these instead to avoid lots of typing
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Now see a basic phrase-based ini file
+
+compare it to ini file for hierarchical model
+
+[input-factor]
+  - same as before, input are just words. No POS tags or lemma factors
+
+[search-algorithm]
+  - default search agorithm = normal phrase-based model
+      - didn't need to specify it before
+  - now we have hierarchical model
+      - need to say that the search algorithm is CYK+
+
+[mapping]
+  - we now want to use 2 phrase-table
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Faster Training
 
