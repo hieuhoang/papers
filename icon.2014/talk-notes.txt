@@ -661,13 +661,40 @@ There is a similar technique to create a better language model when we want to m
 
 Train 1 language model for each data source you have
 Merge the language models using the interpolated algorithm.
-  - internally, it weights each language model according to maximise the performance 
+  - internally, it weights each language model to maximise the performance 
   		- relative to a tuning set
 This is integrated into the EMS
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Transliteration
-???
+
+When the decoder is asked to translate an unknown word
+  - default behaviour
+  - copy word from source to target as is
+THis is ok for European languages
+  - same writing script
+
+When translating between languages with different font
+  - readability will very bad
+Imagine seeing some Chinese characters in an English text
+
+The answer is to transliterate the unknown words
+  - convert it to the same writing script as the target language
+
+%%%%%
+Transliteration is integrated into Moses
+  - uses the phrase-based Moses decoder 
+      - decode characters in each word, rather than words in the sentence
+  - it trains on the same parallel data as the phrase-table
+
+  - during decoding of the sentence
+      1. post-edit output sentence, replacing unknown word with transliterated word
+      2. use a transliteration module as a type of phrase-table
+            - returns translation rules for unknown words
+						- used like any other translation rule for any other phrase-table
+%%%%
+To use it in the EMS
+  - simply add these command to your config file
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Output format
@@ -728,175 +755,26 @@ To get the search graph
       output-search-graph
       the file you want to output to
       
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Translation Model
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Told you everything you need to be able to run your own experiments
+  - take EMS config file from the hands-on session
+  - adapt it to your own server and use it
 
-Moses supports 3 different types of translation model
-  - phrase-based model
-  - hierarchical
-  - syntax
-What is the difference between them, 
-	- and how do you use it?
-%%%%
-Phrase-based model
-  - very fast
-  - and doesn't use much memory
-  - out-performs other models for all but some language pairs
-To run
-  - give it the ini file and the input
-  - output to standard error
-%%%%
-Hierarchical models 
-  - known to do better for chinese-english
-  - for other languages 
-      - same as phrase-based, or slightly worse quality
-However, 
-   - slower
-   - uses more memory
-   - uses more disk space
-to run 
-  - use a different executable
-  - also give the decoder an ini file and input sentence   
+This last section
+  - gonna tell you how to program with Moses
+  - specifically
+      - score a translation
+      - use this to implement a new fast, small LM like KenLM
+			- or, implement faster phrase-table
+      - create entirely new way of scoring a translation
+				- using neural networks for instance
+Giving a score to a translation
+  - only 1 part of the decoder, of course
+  - but essential component of the decoder
+But there are many other things in decoding, tuning, training
+  - not going to tell you have to program today
+  - if you want to, ask us after the session
+      - or via email
 
-%%%%
-Syntax models
+ 
 
-Syntax models are similar to hierarchical
-  - make use of syntactic information from linguistic parsers
-A promising area of research
-
-For various reasons, 
-   - quality is still significantly below phrase-based and hiero
-      
-%%%%
-Training pb
-
-Moses was originally built for phrase-based
-To train, execute the 
-  train-model.perl script
-OR use the EMS
-%%%%
-Training hiero
-
-To train, execute the 
-  train-model.perl 
-script as before, 
-  - but give it the 
-  	 -hierarchical 
-  	switch
-%%%%
-SKIP
-%%%%
-I said that the hierarchical model is 
-  - bigger, 
-  - slower, 
-  - and worse 
-than the phrase-based model
-  - for most languages
-Here are some numbers to back this up
-  - in most cases, there's not much difference in quality
-  - however, the size of the phrase-table and speed means it's often a challenge to run
-If this was a talk to acadmemics, i'l say use it
-  - it's the frontier of MT
-  - since most people here want to commercialise MT
-     - advice is more circumspect
-     - use it if you see gains
-        - especially if you're using the TMX fuzzy match
-	    - otherwise stick with pb for now
-END
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-Still  
-
-Domain Adaptation
-
-If you have lots of data from lots of source
-   -  however, better to keep them separate & train them indepenetly. Use all the models all during translation.
-
-    - Moses supports using multiple phrase-tables and multiple languages.
-
-   For example, if you wants to build an MT system to translate marketing material, and you already have lots of translation memories in the same domain. 
-      - By all means europarl corpus and train a translation model with that. However, train a separate translation just from your marketing memories.
-      - The same goes for language models.
-      
-Essential that you tune in the same domain as your test set. If you create a system to translation marketing material, don't tune with a Europarl tuning sentences, otherwise your translation will come out like it was written by a politician!
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Language Model
-
-Doesn't tell you how like the translation is
-   - how likely the output sentence
-   - very important to improve fluency
-
-Only requirement monolingual data to create LM
-   - easy to collect
-   - can collect lots of data
-   
-Like phrase table
-  - long load time
-  - large memory requirement
-  - also, takes a long time to train a LM
-  
-Where these 2 special LM libraries comes in. Both work with Moses
-   
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-RANDLM
-
-For very large corpora
-   - not even load on demand
-   - quantization is enough
-   
-   - don't have the disk space to store the LM
-   
-Like quantization
-	- lossy compression
-	- makes particular type of mistake
-	- false postive mistake
-			- may give you a probability for an n-gram when it doesn't exist
-	- LM much smaller than SRI or IRST on similar data
-
-Too approximate
-	- shouldn't use as the only LM
-	- secondary LM to complement conventional LM
-	
-	- perhaps trained with gigabytes of data scraped from the web
-	- high-order n-gram
-	
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-RANDLM
-
-Like with IRST:
-
-to use it in the decoder
-   - compile RandLM library separately
-   - link moses decoder with it
-   
-When you want to use RandLM 
-  - change the 1st number to 5
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-RANDLM
-
-Usually, too much data
-	- requires specialised programs to do it
-	
-However, can convert a normal ARPA file to RandLM
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Conclude LM
-
-Any questions?
-
-MBR
-
-The maximum a pos- teriori translation may be an outlyer. Most of the probability mass may be concentrated in a different area of the search space. Given the uncertainties with our probability estimates, why risk on betting on that outlier, if we are more confident that the best translation is somewhere in the dense area?
-Formally, the decision rule for minimum Bayes risk decoding is embr = argmax	􏰆 L((e, a), (e′, a′)) p(e′, a′|f)	(9.38)
-best	e
-e′ ,a′ The translation embr that is selected by this decision rule can be viewed
-best
-as a consensus translation, since it is not only very probable but also very similar to the other most probable translations.
