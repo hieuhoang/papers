@@ -562,6 +562,20 @@ PhraseDictionaryCompact
 \includepdf[pages={1-47}]{compact-pt.pdf}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{Suffix-Array Phrase-table}
+
+\begin{itemize}
+  \item stores word-aligned parallel corpus
+  \item smaller than phrase-table
+  \item Dynamic
+    \begin{itemize}
+    \item Add more data during decoding
+    \item incremental training
+    \end{itemize}
+  \item Phrase-base only (for the moment)
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{KENLM}
 \vspace{10mm}
@@ -611,6 +625,27 @@ Three language models in 1
 \begin{center} 
 \includegraphics[scale=1.0]{DALM.png}\vspace{-20mm}
 \end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Decoding paradigms/algorithms}
+
+Multiple algorithms
+\begin{itemize}
+  \item Phrase-models
+    \begin{itemize}
+    \item Standard
+    \item Cube-Pruning
+    \end{itemize}
+  \item Synchronous CFG
+    \begin{itemize}
+    \item Cube-Pruning
+    \item Scope-3
+    \item incremental (Ken's)
+    \end{itemize}
+  \item Synchronous TSG
+  
+\end{itemize}
 
 \end{document}
 

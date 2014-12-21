@@ -174,39 +174,6 @@ Slides downloadable from \\ \\
 
 \end{itemize}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Faster Training}
-3 steps
-\begin{itemize} \itemsep 0mm
-\small
-\item Extract
-  \begin{itemize}
-  \item Extract rules per aligned sentence
-  \item Easily parallelizable
-
-    \begin{SaveVerbatim}{myverb} 
-extract-parallel.perl extract.exe [arguments]
-    \end{SaveVerbatim}
-    \colorbox{gray}{\BUseVerbatim{myverb}}  
-  \item Multiple extract.exe - extract, extract-rules, extract-ghkm
-  \end{itemize}
-\item Score
-  \begin{itemize}
-  \item Calculate maximum likelihood
-  \item Parallelizable
-
-      \begin{SaveVerbatim}{myverb} 
-score-parallel.perl score.exe [arguments]
-    \end{SaveVerbatim}
-    \colorbox{gray}{\BUseVerbatim{myverb}}  
-  \end{itemize}
-  \item Consolidate
-    \begin{itemize}
-    \item Merge p(e$|$f) and p(f$|$e) score into 1 phrase-table
-%    \item Not parallelizable
-   \end{itemize}
-\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -267,9 +234,14 @@ score-parallel.perl score.exe [arguments]
 
 \slide{Faster Training}
 
+Fast-align
 \begin{itemize} \itemsep -1mm
+  \item by Chris Dyer @ CMU
+  \item Bias towards diagonal alignment
+  \item Not multi-threaded
+  \item Integrated into EMS
+\end{itemize} 
 
-       
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Optimization}
@@ -309,62 +281,37 @@ score-parallel.perl score.exe [arguments]
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \slide{Faster Training}
-\vspace{10mm}
-\begin{itemize} \itemsep -1mm
-\item {Sorting}
+3 steps
+\begin{itemize} \itemsep 0mm
+\small
+\item Extract
   \begin{itemize}
-  \item Rely heavily on Unix 'sort' command
-    \item may take 50\%+ of translation model build time 
-  \item Need to optimize for
-     \begin{itemize}
-      \item speed
-      \item disk usage
-     \end{itemize}
+  \item Extract rules per aligned sentence
+  \item Easily parallelizable
 
-  \item Dependent on
-    \begin{itemize}
-    \item      sort version
-    \item      Unix version
-    \item      available memory
-    \end{itemize}
-  \end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Faster Training}
-\vspace{-5mm}
-  \begin{itemize} \itemsep -1mm 
-  \item Plain sorted\\[2mm]
-  \begin{SaveVerbatim}{myverb}
- sort < extract.txt > extract.sorted.txt
-  \end{SaveVerbatim}
-  \colorbox{gray}{\BUseVerbatim{myverb}}
-
-  \item Optimized for large server\\[2mm]
-  \begin{SaveVerbatim}{myverb}
- sort --buffer-size 10G --parallel 5
-      --batch-size 253 --compress-program [gzip/pigz] ...
-  \end{SaveVerbatim}
-  \colorbox{gray}{\BUseVerbatim{myverb}}
-    \begin{itemize}
-    \item Use 10GB of RAM --- the more the better
-    \item 5 CPUs --- the more the better
-    \item merge\-sort at most 253 files
-    \item compress intermediate files --- less disk i/o
-    \end{itemize}
-
-\item In Moses:\\[2mm]
-    \begin{SaveVerbatim}{myverb}
- .../train-model.perl -sort-buffer-size 10G -sort-parallel 5 
-      -sort-batch-size 253 -sort-compress pigz 
+    \begin{SaveVerbatim}{myverb} 
+extract-parallel.perl extract.exe [arguments]
     \end{SaveVerbatim}
-    \colorbox{gray}{\BUseVerbatim{myverb}}
-
+    \colorbox{gray}{\BUseVerbatim{myverb}}  
+  \item Multiple extract.exe - extract, extract-rules, extract-ghkm
   \end{itemize}
+\item Score
+  \begin{itemize}
+  \item Calculate maximum likelihood
+  \item Parallelizable
 
+      \begin{SaveVerbatim}{myverb} 
+score-parallel.perl score.exe [arguments]
+    \end{SaveVerbatim}
+    \colorbox{gray}{\BUseVerbatim{myverb}}  
+  \end{itemize}
+  \item Consolidate
+    \begin{itemize}
+    \item Merge p(e$|$f) and p(f$|$e) score into 1 phrase-table
+%    \item Not parallelizable
+   \end{itemize}
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -405,22 +352,53 @@ lmplz -o [order] -S [memory] < text > text.lm
 	      \end{itemize}
 \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{IRSTLM: Training}
+\vspace{10mm}
+\begin{itemize}
+
+\item Developed by FBK-irst, Trento, Italy
+
+\item Specialized training for large corpora
+	\begin{itemize}
+	\item parallelization
+	\item reduce memory usage
+	\end{itemize}
+
+\item Quantization of probabilities
+	\begin{itemize}
+	\item reduces memory but lose accuracy
+	\item probability stored in 1 byte instead of 4 bytes
+	\end{itemize}
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{IRSTLM: Training}
 
-\slide{Optimization}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-\item {Faster Training}
-\item \currenttopic{Faster Decoding}
-\item {Moses Server}
-\item {Domain adaptation}
-\item {Transliteration}
-\item {Output formats}
+\begin{itemize}
+
+\item Training: \\[3mm]
+\begin{SaveVerbatim}{myverb} 
+build-lm.sh -i "gunzip -c corpus.gz" -n 3 
+      -o train.irstlm.gz -k 10
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
+
+\begin{itemize}
+\item \littlecode{-n 3} = n-gram order
+\item \littlecode{-k 10} = split training procedure into 10 steps
 \end{itemize}
-}
 
+\item EMS:  \\[3mm]
+  \begin{SaveVerbatim}{myverb} 
+  irst-dir = [IRST path]
+  lm-training = "$moses-script-dir/generic/trainlm-irst.perl 
+		  -cores NUM -irst-dir $irst-dir"
+  \end{SaveVerbatim}
+  \colorbox{gray}{\BUseVerbatim{myverb}}
+
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -440,40 +418,6 @@ lmplz -o [order] -S [memory] < text > text.lm
 \end{itemize}
 \ldots
 }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Optimization}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-%\item {How do I get started?}
-%\item {Experiment Management System}
-\item {Faster Training}
-\item {Faster Decoding}
-  \begin{itemize}
-  \item \currenttopic{Multi-threading}
-  \item Speed vs. Memory
-  \item Speed vs. Quality
-  \end{itemize}
-\end{itemize}
-\ldots
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Faster Decoding}
-
-\vspace{15mm}
-\begin{itemize}
-\item Multi-threaded decoding 
-\begin{center}
-\littlecode{.../moses --threads NUM}
-\end{center}
-\item Easy speed-up
-
-\end{itemize}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -527,33 +471,6 @@ Typical Europarl file sizes:
 \includegraphics[scale=1.4]{less-memory-europarl.pdf}
 \end{tabular}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Speed vs. Memory Use}
-\vspace{10mm}
-\begin{tabular}{p{13cm}c}
-\vspace{-7cm}
-\begin{itemize}
-\item Load into memory
-	\begin{itemize}
-	\item long load time
-	\item large memory usage
-	\item fast decoding
-	\end{itemize}
-\end{itemize}
-& \includegraphics[scale=0.8]{less-memory-europarl.pdf} \\[1cm]
-\vspace{-4.5cm}
-\begin{itemize}
-\item Load-on-demand
-	\begin{itemize}
-  	\item store indexed model on disk
-	\item binary format
-	\item minimal start-up time, memory usage
-	\item slower decoding
-	\end{itemize}
-\end{itemize}
-&  \includegraphics[scale=0.8]{less-memory-europarl-on-disk.pdf}
-\end{tabular}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -577,23 +494,42 @@ PhraseDictionaryOnDisk name=TranslationModel0 \
 \colorbox{gray}{\BUseVerbatim{myverb}}
 \end{center}
 
+Notes:
+\begin{itemize} \itemsep -1mm
+  \item Prune target phrases
+  \item Does not sort by weighted score
+\end{itemize}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Lexical Reordering Table}
-
-Create:
+\slide{Create Binary Tables}
+Create:  
 \begin{center}
+\small
 \begin{SaveVerbatim}{myverb} 
-  export LC_ALL=C \ 
-  processLexicalTable -in r-t.txt -out out.file
+  export LC_ALL=C 
+  cat pt.txt | sort | ./processPhraseTable -ttable 0 0 -  \
+      -nscores 4 -out out.file
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
+
 \end{center}
 
 Change ini file: \\[-6mm]
 \begin{center}
-automatically detected
+\begin{SaveVerbatim}{myverb} 
+[feature]
+PhraseDictionaryBinary name=TranslationModel0 \
+   table-limit=20 \ num-features=4 \
+   path=/.../phrase-table
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
 \end{center}
+
+Notes:
+\begin{itemize} \itemsep -1mm
+  \item Does not support hierarchical model
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -623,6 +559,22 @@ PhraseDictionaryCompact
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\includepdf[pages={1-47}]{compact-pt.pdf}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{Suffix-Array Phrase-table}
+
+\begin{itemize}
+  \item stores word-aligned parallel corpus
+  \item smaller than phrase-table
+  \item Dynamic
+  \begin{itemize}
+  \item Add more data during decoding
+  \item incremental training
+  \end{itemize}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{KENLM}
 \vspace{10mm}
@@ -644,1013 +596,34 @@ KENLM name=LM0 factor=0 path=/.../model.binlm order=5
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Optimization}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-%\item {How do I get started?}
-%\item {Experiment Management System}
-\item {Faster Training}
-\item {Faster Decoding}
+\slide{KENLM}
+
+Three language models in 1
+\begin{itemize}
+\item Probing
   \begin{itemize}
-  \item {Multi-threading}
-  \item Speed vs. Memory
-  \item \currenttopic{Speed vs. Quality}
+  \item Fast
+  \item Uses hash table
+  \end{itemize}
+\item Trie
+  \begin{itemize}
+  \item Small
+  \item Uses sorted arrays
+  \end{itemize}
+\item Chop
+  \begin{itemize}
+  \item Smaller
+  \item Trie with compressed pointers
   \end{itemize}
 \end{itemize}
-\ldots
-}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Speed vs. Quality}
-\vspace{5mm}
+\slide{DALM (Double Array Language Model)}
+
 \begin{center} 
-\includegraphics[scale=1.4]{quality-vs-speed.pdf}\vspace{-20mm}
+\includegraphics[scale=1.0]{DALM.png}\vspace{-20mm}
 \end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Speed vs. Quality}
-\begin{center} 
-\includegraphics[scale=0.95]{decoding-step5.pdf}
-\end{center}
-\begin{itemize} \itemsep -1mm
-\item Decoder search creates very large number of partial translations ("hypotheses")
-\item Decoding time $\sim$ number of hypotheses created
-\item Translation quality $\sim$ number of hypothesis created
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Hypothesis Stacks}
-\begin{center} 
-\includegraphics[scale=1]{hypothesis-stacks-fw.pdf}
-\end{center}
-\vspace{-2mm}
-\begin{itemize} \itemsep -2mm
-\item Phrase-based: One stack per number of input words covered
-\item Number of hypothesis created = \\
-sentence length $\times$ stack size $\times$ applicable translation options
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Pruning Parameters}
-\begin{itemize}
-\item Regular beam search
-\begin{itemize}
-\item \littlecode{--stack NUM} max. number of hypotheses contained in each stack
-\item \littlecode{--ttable-limit NUM} max. num. of translation options per input phrase
-\vspace{2mm}
-\item search time roughly linear with respect to each number
-\end{itemize}
-\item Cube pruning\\
-(fixed number of hypotheses are added to each stack)
-\begin{itemize}
-\item \littlecode{--search-algorithm 1} turns on cube pruning
-\item \littlecode{--cube-pruning-pop-limit NUM} number of hypotheses added to each stack
-\vspace{2mm}
-\item search time roughly linear with respect to pop limit
-\vspace{2mm}
-\item note: stack size and translation table limit have little impact in speed
-\end{itemize}
-\end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Syntax Hypothesis Stacks}
-\begin{center} 
-\includegraphics[scale=1.5]{chart-stacks.pdf}
-\end{center}
-\vspace{-5mm}
-\begin{itemize} \itemsep -2mm
-\item One stack per input word span
-\item Number of hypothesis created = \\
-sentence length$^2$ $\times$  number of hypotheses added to each stack\\
-\littlecode{--cube-pruning-pop-limit NUM} number of hypotheses added to each stack
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Optimization}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-\item {Faster Training}
-\item {Faster Decoding}
-\item \currenttopic{Moses Server}
-\item {Domain adaptation}
-\item {Transliteration}
-\item {Output formats}
-\end{itemize}
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Moses Server}
-\begin{itemize} \itemsep -1mm
-\item Moses command line:\\[3mm]
-\begin{SaveVerbatim}{myverb} 
-  .../moses -f [ini] < [input file] > [output file]
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-    \begin{itemize}
-      \item Not practical for commercial use
-    \end{itemize}
-
-
-\item Moses Server:\\[3mm]
-    \begin{SaveVerbatim}{myverb} 
- .../mosesserver -f [ini] --server-port [PORT] --server-log [LOG]
-    \end{SaveVerbatim}
-    \colorbox{gray}{\BUseVerbatim{myverb}}
-    \begin{itemize}
-      \item Accept HTTP input. XML SOAP format
-    \end{itemize}
-
-\item Client:
-    \begin{itemize}
-      \item Communicate via http
-      \item Example clients in Java and Perl
-      \item Write your own client
-      \item Integrate into your own application
-    \end{itemize}
-    
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-\slide{Optimization}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-\item {Faster Training}
-\item {Faster Decoding}
-\item {Moses Server}
-\item \currenttopic{Domain adaptation}
-  \begin{itemize}\vspace{-4mm}
-  \item Train everything together
-  \item Secondary phrase table
-  \item Domain indicator features
-  \item Interpolated language models
-  \end{itemize}
-\item {Transliteration}
-\item {Output formats}
-\end{itemize}
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Data}
-\vspace{15mm}
-\begin{itemize}
-\item Parallel corpora $\rightarrow$ translation model
-\begin{itemize}
-\item sentence-aligned translated texts
-\item translation memories are parallel corpora
-\item dictionaries are parallel corpora
-\end{itemize}
-\item Monolingual corpora $\rightarrow$ language model
-\begin{itemize}
-\item text in the target language
-\item billions of words easy to handle
-\end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Domain Adaptation}
-\vspace{10mm}
-\begin{itemize}
-\item The more data, the better
-\item The more in-domain data, the better\\
-(even in-domain monolingual data very valuable)
-%\item Multiple models 
-%\begin{itemize}
-%\item train a translation model for each domain corpus
-%\item train a language model for each domain corpus
-%\item use all, tune weights for each model
-%\item alternative: interpolate language model
-%\end{itemize}
-\item Always tune towards target domain
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Optimization}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-%\item {How do I get started?}
-%\item {Experiment Management System}
-\item {Faster Training}
-\item {Faster Decoding}
-\item {Moses Server}
-\item {Data and domain adaptation}
-  \begin{itemize}\vspace{-5mm}
-  \item \currenttopic{Train everything together}
-  \item Secondary phrase table
-\item Domain indicator features
-\item Interpolated language models
-%\item TM-MT integration
-  \end{itemize}
-\end{itemize}
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Default: Train Everything Together}
-\vspace{20mm}
-\begin{itemize} \itemsep 10mm
- 
-\item Easy to implement
-  \begin{itemize}
-  \item Concatenate new data with existing data
-  \item Retrain
-  \end{itemize}
-\item Disadvantages: 
-  \begin{itemize}
-  \item Slower training for large amount of data
-  \item Cannot weight old and new data separately
-  \end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Default: Train Everything Together}
-\vspace{-1mm}
-Specification in EMS:
-\begin{itemize} \itemsep 5mm
-\item Phrase-table\\[4mm] \small
-    \begin{SaveVerbatim}{myverb} 
-      [CORPUS]
-      [CORPUS:in-domain]
-      raw-stem = ....    
-      [CORPUS:background]
-      raw-stem = ....
-    \end{SaveVerbatim}
-    \colorbox{gray}{\BUseVerbatim{myverb}}
-\item LM\\[4mm] \small
-   \begin{SaveVerbatim}{myverb} 
-      [LM]
-      [LM:in-domain]
-      raw-corpus = ....
-      [LM:background]
-      raw-corpus = ....
-    \end{SaveVerbatim}
-    \colorbox{gray}{\BUseVerbatim{myverb}}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Optimization}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-%\item {How do I get started?}
-%\item {Experiment Management System}
-\item {Faster Training}
-\item {Faster Decoding}
-\item {Moses Server}
-\item {Data and domain adaptation}
-  \begin{itemize}\vspace{-5mm}
-  \item {Train everything together}
-  \item \currenttopic{Secondary phrase table}
-\item Domain indicator features
-\item Interpolated language models
-%\item TM-MT integration
-  \end{itemize}
-\end{itemize}
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%\slide{TM-MT Integration}
-%\begin{itemize}
-%\item Input sentence: \vspace{-5mm}
-%\begin{center}
-%\example{The second paragraph of Article \highlightOrange{21} is deleted .}
-%\end{center}
-%\item Fuzzy match in translation memory: \vspace{-5mm}
-%\begin{center}
-%\example{The second paragraph of Article \highlight{5} is deleted .}\\
-%=\\
-%\example{\highlightGreen{{\`A} l' article} \highlight{5} \highlightGreen{, le texte du deuxi{\'e}me alin{\'e}a est supprim{\'e} .}}
-%\end{center}
-%\item[] \textcolor{darkgreen}{\bf Output word(s) taken from the target TM}  \vspace{-5mm}
-%\item[] \textcolor{darkorange}{\bf Input word(s) that still need to be translated by SMT}
-%\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-%\slide{TM-MT Integration}
-
-%\begin{itemize} \itemsep -1mm
-%\item Translation memory-style fuzzy match
-%  \begin{itemize}
-%  \item For hierarchical decoding
-%  \item Create long translation rule 'templates'
-%  \item Best for use with parallel corpus with lots of repetition
-%  \end{itemize}
-
-%\item Add TM and word alignment as a special phrase table
-%  \begin{itemize}
-%    \item Use in addition to normal phrase table
-%  \end{itemize}
-%  \begin{SaveVerbatim}{myverb} 
-%   [ttable-file]
-%   11 0 0 3 source-corpus;target-corpus;word-alignment 
-%   2 0 0 3 phrase table
-%   6 0 0 3 glue-rules
-%  \end{SaveVerbatim}
-%  \colorbox{gray}{\BUseVerbatim{myverb}}
-
-%\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Secondary Phrase Table}
-\begin{itemize} \itemsep -1mm
-\item Train initial phrase table and LM on baseline data
-
-\item Train secondary phrase table and LM new/in-domain data
-
-\item Use both in Moses
-  \begin{itemize}
-
-  \item Secondary phrase table
-  \begin{SaveVerbatim}{myverb} 
-    [feature]
-    PhraseDictionaryMemory path=.../path.1
-    PhraseDictionaryMemory path=.../path.2
-    
-    [mapping]
-    0 T 0
-    1 T 1
-  \end{SaveVerbatim}
-  \colorbox{gray}{\BUseVerbatim{myverb}}
-
-  \end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Secondary Phrase Table}
-\begin{itemize} \itemsep -1mm
-  \item
-  \begin{itemize}
-  \item Secondary LM\\[4mm]
-  \begin{SaveVerbatim}{myverb} 
-    [feature]
-    KENLM path=.../path.1
-    KENLM path=.../path.2
-  \end{SaveVerbatim}
-  \colorbox{gray}{\BUseVerbatim{myverb}}
-
-  \end{itemize}
-
-  \item Can give different weights for primary and secondary tables
-  \item Not integrated into the EMS
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Secondary Phrase Table}
-\small
-\begin{itemize} \itemsep -1mm
-\item Terminology/Glossary database
-  \begin{itemize}
-    \item fixed translation
-    \item per client, project, etc
-  \end{itemize}
-\item Primary phrase table
-  \begin{itemize}
-    \item backoff to 'normal' phrase-table if no glossary term
-
-  \begin{SaveVerbatim}{myverb} 
-    [feature]
-    PhraseDictionaryMemory path=.../glossary
-    PhraseDictionaryMemory path=.../normal.phrase.table
-    
-    [mapping]
-    0 T 0
-    1 T 1
-    
-    [decoding-graph-backoff]
-    0
-    1
-  \end{SaveVerbatim}
-  \colorbox{gray}{\BUseVerbatim{myverb}}
-
-    \end{itemize}
-\end{itemize}
-\normalsize 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 
-% \slide{Incremental training}
-% \begin{itemize}
-% \item Retrain everything
-% \item Secondary phrase table
-% \item \currenttopic{Incremental GIZA++ and dynamic suffix arrays}
-% \item TM-MT integration
-% 
-% \end{itemize}
-% 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 
-% \slide{Incremental GIZA++ and Dynamic Suffix Arrays}
-% 
-% \begin{itemize}
-% \item Don't extract phrase table
-% \item Store entire parallel corpus in memory
-% 	\\ Suffix Array
-% \item Add new parallel data to suffix array
-% \\
-% \item Need word alignment
-%   \\ Use customized version of GIZA++
-%   \\ Reuse word-alignment model from primary parallel data
-% 
-% \item Bleeding edge. Not integrated into EMS
-% \end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Optimization}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-%\item {How do I get started?}
-%\item {Experiment Management System}
-\item {Faster Training}
-\item {Faster Decoding}
-\item {Moses Server}
-\item {Data and domain adaptation}
-  \begin{itemize} \vspace{-5mm}
-  \item {Train everything together}
-  \item {Secondary phrase table}
-  \item \currenttopic{Domain indicator features}
-\item Interpolated language models
-%  \item TM-MT integration
-  \end{itemize}
-\end{itemize}
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Domain Indicator Features}
-\vspace{15mm}
-\begin{itemize} \itemsep 5mm
-\item One translation model
-\item Flag each phrase pair's origin
-\begin{itemize}
-\item indicator: binary flag if it occurs in specific domain
-\item ratio: how often it occurs in specific domain relative to all
-\item subset: similar to indicator, but if in multiple domains, marked with multiple-domain feature
-\end{itemize}
-\item In EMS:\\[4mm] \small
-\begin{SaveVerbatim}{myverb}
-  [TRAINING]
-  domain-features = "indicator"
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Optimization}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-%\item {How do I get started?}
-%\item {Experiment Management System}
-\item {Faster Training}
-\item {Faster Decoding}
-\item {Moses Server}
-\item {Data and domain adaptation}
-  \begin{itemize} \vspace{-5mm}
-  \item {Train everything together}
-  \item {Secondary phrase table}
-  \item Domain indicator features
-\item \currenttopic{Interpolated language models}
-%  \item TM-MT integration
-  \end{itemize}
-\end{itemize}
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Interpolated Language Models}
-\vspace{5mm}
-\begin{itemize} \itemsep 5mm
-\item Train one language model per corpus
-\item Combine them by weighting each according to its importance
-\begin{itemize}
-\item weights obtained by optimizing perplexity\\ of resulting language model on tuning set\\
-(not the same as machine translation quality) \vspace{2mm}
-\item models are linearly combined
-\end{itemize}
-\item EMS provides a section {\tt [INTERPOLATED-LM]} that needs to be commented out
-\item Alternative: use multiple language models\\
-(disadvantage: larger process, slower)
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%\slide{Optimization}
-%\vspace{-5mm}
-%\textcolor{darkgrey}{
-%\begin{itemize} \itemsep -1mm
-%%\item {How do I get started?}
-%%\item {Experiment Management System}
-%\item {Faster Training}
-%\item {Faster Decoding}
-%\item {Moses Server}
-%\item {Data and domain adaptation}
-%  \begin{itemize} \vspace{-5mm}
-%  \item {Train everything together}
-%  \item {Secondary phrase table}
-%  \item Domain indicator features
-%\item Interpolated language models
-%  \item \currenttopic{TM-MT integration}
-%  \end{itemize}
-%\end{itemize}
-%}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%\slide{TM-MT Integration}
-%\begin{itemize}
-%\item Input sentence: \vspace{-5mm}
-%\begin{center}
-%\example{The second paragraph of Article \highlightOrange{21} is deleted .}
-%\end{center}
-%\item Fuzzy match in translation memory: \vspace{-5mm}
-%\begin{center}
-%\example{The second paragraph of Article \highlight{5} is deleted .}\\
-%=\\
-%\example{\highlightGreen{{\`A} l' article} \highlight{5} \highlightGreen{, le texte du deuxi{\'e}me alin{\'e}a est supprim{\'e} .}}
-%\end{center}
-%\item[] \textcolor{darkgreen}{\bf Output word(s) taken from the target TM}  \vspace{-5mm}
-%\item[] \textcolor{darkorange}{\bf Input word(s) that still need to be translated by SMT}
-%\end{itemize}
-
-
-%\slide{TM-MT Integration}
-
-%\begin{itemize} \itemsep -1mm
-%\item Translation memory-style fuzzy match
-%  \begin{itemize}
-%  \item For hierarchical decoding
-%  \item Create long translation rule 'templates'
-%  \item Best for use with parallel corpus with lots of repetition
-%  \end{itemize}
-
-%\item Add TM and word alignment as a special phrase table
-%  \begin{itemize}
-%    \item Use in addition to normal phrase table
-%  \end{itemize}
-%  \begin{SaveVerbatim}{myverb} 
-%   [feature]
-%   PhraseDictionaryFuzzyMatch ...
-%   PhraseDictionaryMemory path=phrase-table.gz ...
-%   PhraseDictionaryMemory path=glue-rules ...
-%  \end{SaveVerbatim}
-%  \colorbox{gray}{\BUseVerbatim{myverb}}
-
-%\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Optimization}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-\item {Faster Training}
-\item {Faster Decoding}
-\item {Moses Server}
-\item {Domain adaptation}
-\item \currenttopic{Transliteration}
-\item {Output formats}
-\end{itemize}
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Transliteration}
-\begin{itemize}
-  \item Languages are written in different scripts 
-  \begin{itemize}
-    \item Russian, Bulgarian and Serbian - written in Cyrillic script
-    \item Urdu, Farsi and Pashto - written in Arabic script
-    \item Hindi, Marathi and Nepalese - written in Devanagri
-  \end{itemize}
-  \item Transliteration can be used to translate OOVs and Named Entities
-  \item Problem: Transliteration corpus is not always available
-  \item Naive Solution:
-  \begin{itemize}
-    \item Crawl training data from Wikipedia titles
-    \item Build character-based transliteration model
-    \item Replace OOV words with 1-best transliteration
-  \end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Transliteration}
-
-\begin{itemize}
-  \item 2 methods to integrate into MT
-  \item Post-decoding method
-  \begin{itemize}  
-    \item Use language model to pick best transliteration
-    \item Transliteration features
-  \end{itemize}
-  \item In-decoding method
-  \begin{itemize}  
-    \item Integrate transliteration inside decoder
-    \item Words can be translated OR transliterated
-  \end{itemize}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Transliteration}
-
-\begin{itemize}
-  \item EMS:
-  
-  \begin{SaveVerbatim}{myverb}
-  [TRAINING]
-  transliteration-module = "yes"
-  \end{SaveVerbatim}
-  \colorbox{gray}{\BUseVerbatim{myverb}}
-  
-  \item Post-processing method
-
-  \begin{SaveVerbatim}{myverb} 
-   post-decoding-transliteration = "yes"
-  \end{SaveVerbatim}
-  \colorbox{gray}{\BUseVerbatim{myverb}}
-  
-  \item In-decoding method
-
-  \begin{SaveVerbatim}{myverb} 
-   in-decoding-transliteration = "yes"
-   transliteration-file = /list of words to be transliterated/
-  \end{SaveVerbatim}
-  \colorbox{gray}{\BUseVerbatim{myverb}}
- 
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-\slide{Optimization}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-\item {Faster Training}
-\item {Faster Decoding}
-\item {Moses Server}
-\item {Domain adaptation}
-\item {Transliteration}
-\item \currenttopic{Output formats}
-\end{itemize}
-}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{N-Best List}
-
-\begin{itemize}
-\item Input \vspace{-5mm}
-\begin{center}
-\example{es gibt verschiedene andere meinungen .}
-\end{center}
-
-\item  Best Translation \vspace{-5mm}
-\begin{center}
-\example{there are various different opinions .}
-\end{center}
-
-\item  Next nine best translations \vspace{-5mm}
-{\footnotesize \begin{center}
-\example{
-there are various other opinions . \\
-there are different different opinions . \\
-there are other different opinions . \\
-we are various different opinions . \\
-there are various other opinions of . \\
-it is various different opinions . \\
-there are different other opinions . \\
-it is various other opinions . \\
-it is a different opinions .}
-\end{center}}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Uses of N-Best Lists}
-\vspace{20mm}
-\begin{itemize}
-\item  Let the translator choose from possible translations
-\item  Reranker
-	\begin{itemize}
-	\item add more knowledge sources
-	\item can take global view
-	\item coherency of whole sentence
-	\item coherency of document
-	\end{itemize}
-\item  Used to tune component weights
-\end{itemize}
-
-%n-best translations
-%
-%1. Best translation for the each input sentence
-%2. 10-best translation for each input sentence
-%- in sorted orde of best first
-%      - think that the decoder can get good translation
-%      - but not confident that the decoder will do a good job of finding the best translation.
-%      - give 10 translations for the user to decide
-%      
-%      - in general, can ask the decoder to return the n-best sentences
-%      
-%      - more often used to give to a post-processing step. 
-%      - let another algorithm decide which 1 really is the best sentence. Based on other critieria not in the decoder
-%          - document level information.
-%          
-%          - pronoun translation from chinese/vietnamese to english.
-%          - dependent on context.
-%             -  no word for 'me'. Could be translated as nephew, uncle, grandfather, friend, depending on who you're talking to
-%             -  'you' could be translated as nephew, uncle, grandfather, friend.
-%   - external tools which looks at the whole document might do a better job finding the most appropriate. 
-%   - give it 100-best translation, let it decide
-% 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{N-Best Lists in Moses}
-\vspace{5mm}
-\begin{center}
-Argument to command line\\[2mm]
-\begin{SaveVerbatim}{myverb}
- ./moses -n-bestlist n-best.file.txt [distinct] 100
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\vspace{10mm}
-Output\\[2mm]
-{\footnotesize \begin{SaveVerbatim}{myverb}
-0 ||| there are various different opinions .  ||| d: 0 lm: -21.6664 w: -6 ...  ||| -113.734
-0 ||| there are various other opinions .  ||| d: 0 lm: -25.3276 w: -6 ... ||| -114.004
-0 ||| there are different different opinions .  ||| d: 0 lm: -27.8429 w: -6 ...  ||| -117.738
-0 ||| there are other different opinions .  ||| d: -4 lm: -25.1666 w: -6 ...  ||| -118.007
-0 ||| we are various different opinions .  ||| d: 0 lm: -28.1533 w: -6 ...  ||| -118.142
-0 ||| there are various other opinions of .  ||| d: 0 lm: -33.7616 w: -7 ...  ||| -118.153
-0 ||| it is various different opinions .  ||| d: 0 lm: -29.8191 w: -6  ... ||| -118.222
-0 ||| there are different other opinions .  ||| d: 0 lm: -30.426 w: -6 ...  ||| -118.236
-0 ||| it is various other opinions .  ||| d: 0 lm: -32.6824 w: -6 ... ||| -118.395
-0 ||| it is a different opinions .  ||| d: 0 lm: -20.1611 w: -6 ...  ||| -118.434
-
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}}
-\end{center}
- 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Search Graph}
-
-\begin{itemize}
-\item  Input \vspace{-10mm}
-\begin{center}
-\example{er geht ja nicht nach hause}
-\end{center}
-
-\item Return internal structure from the decoder \vspace{-5mm}
-\begin{center}
-\includegraphics[scale=1.2]{search-graph.png}
-\end{center}
-
-\item Encode millions of other possible translations\\
-(every path through the graph = 1 translation)
-
-\end{itemize}
-
-
-%Alternative to getting n-best translation.
-%Get back internal structure of the decoder.
-%
-%Directed graph 
-%  - left most node is represents a hypothesis that has translated nothing
-%  - right most nodes have translated all words
-%  - a path from the left to the right is a translation of the input sentence
-%  - best translation is 1 of these paths
-%  
-%Many such paths (millions)
-%  - each path is a translation that the decoder has considered
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Uses of Search Graphs}
-\begin{tabular}{p{9cm}c}
-\vspace{-12cm}
-\begin{itemize}
-\item  Let the translator choose
-	\begin{itemize}
-	\item Individual words or phrases
-	\item 'Suggest' next phrase
-	\end{itemize}
-\item  Reranker
-\item  Used to tune component weights
-	\begin{itemize}
-	\item More difficult than with n-best list
-	\end{itemize}
-
-\end{itemize}
-
-&
-
-\includegraphics[scale=1]{lattice-caitra.png}
-
-\end{tabular}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Search Graphs in Moses}
-\vspace{5mm}
-\begin{center}
-Argument to command line\\[2mm]
-\begin{SaveVerbatim}{myverb}
- ./moses -output-search-graph search-graph.file.txt 
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-\end{center}
-\vspace{5mm}
-
-\begin{center}
-Argument to command line\\[2mm]
-{\small \begin{SaveVerbatim}{myverb}
-0 hyp=0 stack=0 forward=36 fscore=-113.734
-0 hyp=75 stack=1 back=0 score=-104.943 ... covered=5-5 out=.
-0 hyp=72 stack=1 back=0 score=-8.846 ... covered=4-4 out=opinions
-0 hyp=73 stack=1 back=0 score=-10.661 ... covered=4-4 out=opinions of
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\vspace{-10mm}
-\begin{tabular}{p{15cm}}
-\begin{itemize} \itemsep -2mm
-\item hyp - hypothesis id
-\item  stack - how many words have been translated
-\item score - total weighted score
-\item covered - which words were translated by this hypothesis
-\item out - target phrase
-\end{itemize}
-\end{tabular}}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\includepdf[pages={1-14}]{FeatureFunction.pdf}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\slide{Contribute to Machine Translation}
-\vspace{5mm}
-\begin{itemize}
-\item  Code 
-  \begin{itemize}
-  \item Moses
-  \item GIZA++
-  \item MGIZA
-  \item KenLM
-  \item Joshua
-  \item cdec
-  \end{itemize}
-\item Data
-  \begin{itemize}
-  \item Parallel corpora
-  \item Monolingual corpora
-  \end{itemize}
-\item Answer questions on the mailing list
-\end{itemize}
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Acknowledgements}
-\vspace{5mm}
-\begin{table}[h]
-\begin{center}
-\begin{tabular}{ c  c  c } 
-
-\includegraphics[scale=0.3]{univ-edinburgh.pdf}
-&
-\includegraphics[scale=0.07]{charles.png}
-&
-\includegraphics[scale=1]{fbk.png}
-\\[1cm]
-\includegraphics[scale=0.6]{maryland.png}
-&
-\includegraphics[scale=1.5]{mit.png}
-&
-\includegraphics[scale=1]{aachen.png}
-\\[1cm]
-\includegraphics[scale=0.5]{mosescore-logo-transp.png}
-&
-&
-\includegraphics[scale=1.2]{logo_eubridge_hgwhite.png}
-\end{tabular}
-\end{center}
-\end{table}
-\begin{center}
-\ldots and many more
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\slide{Moses Developers}
-%\vspace{10mm}
-%\begin{center}
-%\footnotesize \rm
-%\begin{tabular}{cccc} 
-%Abhishek Arun & 
-%Adam Lopez & 
-%Ales Tamchyna & 
-%Alex \\
-%Amittai Axelrod &
-%Ankit Srivastava &
-%Anthony Rousseau &
-%Benjamin Gottesman \\ 
-%Barry Haddow &
-%Ondrej Bojar &
-%Chris Callison-Burch & 
-%Christine Corbett \\
-%Christian Hardmeier &
-%Christian Federmann &
-%Lane Schwartz &
-%David Talbot \\
-%Edmund Huber &
-%Evan Herbst &
-%Andreas Eisele &
-%Eva Hasler \\
-%Frederic Blain &
-%Brooke Cowan &
-%Grace M. Ngai&
-%Kenneth Heafield \\
-%Hieu Hoang &
-%H. Leal Fontes &
-%Holger Schwenk &
-%Josh Schroeder \\
-%Jean-Baptiste Fouet &
-%Joern Wuebker &
-%Jorge Civera &
-%Konrad Rawlik \\
-%Abby Levenberg &
-%Alexandra Birch &
-%Bo Fu &
-%M.J.Bellino-Machado \\
-%Mauro Cettolo &
-%Marcello Federico &
-%Michael Auli &
-%John Joseph Morgan \\
-%Mark Fishel &
-%Gabriele Antonio Musillo &
-%Miles Osborne &
-%Nadi Tomeh \\
-%Nicola Bertoldi &
-%Oliver Wilson &
-%Pascual Martinez &
-%Philipp Koehn \\
-%Phil Williams &
-%Bruno Pouliquen &
-%Raphael Payen &
-%Chris Dyer \\
-%Joao Luís Rosas &
-%Rico Sennrich &
-%Herve Saint-Amand &
-%Felipe Sanchez Martinez \\
-%Sara Stymne &
-%Steven B. Parks &
-%Steven Buraje Poggel &
-%Andre Lynum \\
-%Yizhao Ni &
-%David Kolovratnak &
-%Sergio Penkale &
-%Stephan \\
-%Suzy Howlett &
-%Wade Shen &
-%Yang Gao &
-%Tsuyoshi Okita \\
-%Alexander Fraser &
-%Richard Zens
-%
-%\end{tabular}
-%\end{center}
-
-
-\begin{comment}
-\end{comment}
-
 
 \end{document}
 
