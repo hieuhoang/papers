@@ -26,6 +26,9 @@
 \usepackage{framed}
 \usepackage{scrextend}
 \usepackage{bold-extra}
+\usepackage{xstring}
+\usepackage{xspace}
+\usepackage[export]{adjustbox}
 
 \usepackage{tikz}
 \usepackage{tikz-qtree}
@@ -80,11 +83,16 @@
 \newcommand{\highlightGreen}[1]{\colorbox{lightgreen}{#1}}
 \newcommand{\highlightBlue}[1]{\colorbox{lightblue}{#1}}
 
+\newcommand{\fragileAcronym}[1]{\StrLen{#1}[\stringlength]\ifnum\stringlength<3\uppercase{#1}\else\textsc{#1}\fi}
+\newcommand{\acronym}[1]{\protect\fragileAcronym{#1}}
+\newcommand{\cyk}{\acronym{cyk}\xspace}
+\DeclareRobustCommand{\cykplus}{\acronym{cyk}\hspace*{-.2ex}\raisebox{0.2ex}{$\scriptstyle +$}\xspace}
+
 \bibliography{mt,more}
 
 \begin{document}
-\title[Machine Translation with Open Source Software]{{\sc \huge Moses}\\[3mm] Machine Translation with Open Source Software}
-\author[Hoang, Huck and Koehn]{Hieu Hoang and Matthias Huck}
+\title[(More) Machine Translation with]{{\sc \huge (More) Moses}\\[3mm]}
+\author[Hoang, Huck and Koehn]{Hieu Hoang}
 \date{\vspace{-5mm}December 2014}
 \maketitle
 
@@ -98,7 +106,8 @@
 \item[\small 09:30-10:15 $\;\;$] {\bf Introduction} % TODO: should check whether this schedule is realistic
 \item[\small 10:15-11:00 $\;\;$] {\bf Hands-on Session} --- you will need a laptop
 \item[\small 11:00-11:30 $\;\;$] Break
-\item[\small 11:30-12:30 $\;\;$] {\bf Advanced Topics}
+\item[\small 11:30-13:00 $\;\;$] {\bf Advanced Topics}
+\item[\small 13:00-Whenever / Wherever $\;\;$] {\bf Bring us your problems!}
 \end{description}
 \vfill
 
@@ -109,1537 +118,11 @@ Slides downloadable from \\ \\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-% \slide{Statistical Machine Translation History}
-% \vspace{10mm}
-% \begin{description}
-% \item[around 1990] $\;$\\[2mm] Pioneering work at IBM, inspired by success in speech recognition
-% \item[1990s] $\;$\\[2mm] Dominance of IBM's word-based models, support technologies
-% \item[early 2000s] $\;$\\[2mm] Phrase-based models
-% \item[late 2000s] $\;$\\[2mm] Tree-based models
-% \end{description}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Moses History}
-% \vspace{10mm}
-% \begin{description} \itemsep -0.2mm
-% \item[2002] $\;$ Pharaoh decoder, precursor to Moses (phrase-based models)
-% \item[2005] $\;$ Moses started by Hieu Hoang and Philipp Koehn (factored models)
-% \item[2006] $\;$ JHU workshop extends Moses significantly
-% \item[2006-2012] $\;$ Funding by EU projects EuroMatrix, EuroMatrixPlus
-% \item[2009] $\;$ Tree-based models implemented in Moses
-% \item[2012-2015] $\;$ MosesCore project. Full-time staff to maintain and enhance Moses
-% \end{description}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Moses in Academia}
-% \vspace{10mm}
-% \begin{itemize}
-% \item Built by academics, for academics
-% \item Reference implementation of state of the art
-% \begin{itemize}
-% \item researchers develop new methods on top of Moses
-% \item developers re-implement published methods
-% \item used by other researchers as black box
-% \end{itemize}
-% \item Baseline to beat
-% \begin{itemize}
-% \item researchers compare their method against Moses
-% \end{itemize}
-% \end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Developer Community}
-% \begin{itemize} \itemsep -1mm
-% \item Main development at University of Edinburgh, but also: \vspace{-3mm}
-% \begin{itemize}
-% \item Fondazione Bruno Kessler (Italy)
-% \item Charles University (Czech Republic)
-% \item DFKI (Germany)
-% \item RWTH Aachen (Germany)
-% \item others \ldots
-% \end{itemize}
-% \item Code shared on github.com
-% \item Main forum: Moses support mailing list
-% \item Main event: Machine Translation Marathon\vspace{-3mm}
-% \begin{itemize}
-% \item annual open source convention
-% \item presentation of new open source tools
-% \item hands-on work on new open source projects
-% \item summer school for statistical machine translation
-% \end{itemize}
-% \end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Other Open Source MT Systems}
-% \begin{itemize} \itemsep -3mm
-% \item {\bf Joshua} --- Johns Hopkins University\\
-% {\small \tt http://joshua.sourceforge.net/}
-% \item {\bf CDec} --- University of Maryland\\
-% {\small \tt http://cdec-decoder.org/}
-% \item {\bf Jane} --- RWTH Aachen\\
-% {\small \tt http://www.hltpr.rwth-aachen.de/jane/}
-% \item {\bf Phrasal} --- Stanford University\\
-% {\small \tt http://nlp.stanford.edu/phrasal/}
-% \item Very similar technology \vspace{-2mm}
-% \begin{itemize}
-% \item Joshua and Phrasal implemented in Java, others in C++
-% \item Joshua supports only tree-based models
-% \item Phrasal supports only phrase-based models
-% \end{itemize}
-% \item Open sourcing tools increasing trend in NLP research
-% \end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Moses in Industry}
-% \vspace{20mm}
-% \begin{itemize}
-% \item Distributed with LGPL --- free to use
-% \item Competitive with commercial SMT solutions\\ (Google, Microsoft, SDL Language Weaver, \ldots)
-% \item But:
-% \begin{itemize}
-% \item not easy to use
-% \item requires significant expertise for optimal performance
-% \item integration into existing workflow not straight-forward
-% \end{itemize}
-% \end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Case Studies}
-% \vspace{5mm}
-% \begin{description} \itemsep -1mm
-% \item[European Commission] ---\\  uses Moses in-house to aid human translators
-% \item[Autodesk] --- \\ showed productivity increases in translating manuals when post-editing output from a custom-build Moses system
-% \item[Systran] --- \\ developed statistical post-editing using Moses
-% \item[Asia Online] --- \\ offers translation technology and services based on Moses
-% \item[Many others] \ldots \\ World Trade Organisation, Adobe, Symantec, WIPO, Sybase, Safaba, Bloomberg, Pangeanic, KatanMT, Capita, \ldots
-% \end{description}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{SMT: Basic Idea}
-\vfill
-\begin{center}
-  \hspace*{-6em}\includegraphics[scale=1.8]{basics.pdf}
-\end{center}
-\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Different Paradigms (1)}
-\vfill
-\begin{itemize}
-\item {\bf Word-based translation}
-  \begin{itemize}
-  \item Word-based models translate {\em words} as atomic units
-  \end{itemize}
-\item {\bf Phrase-based translation}
-  \begin{itemize}
-  \item Phrase-based models translate {\em phrases} as atomic units
-  \item Dominant approach nowadays
-  \item Advantages:
-  \begin{itemize}
-  \item larger atomic units capture more context in translation
-  \item local word reorderings are handled within phrases
-  \item the more training data, the longer phrases can be learned reliably
-  \end{itemize}
-  \end{itemize}
-\end{itemize}
-\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Different Paradigms (2)}
-\vfill
-\begin{itemize}
-\item {\bf Hierarchical translation}
-  \begin{itemize}
-  \item Allows for \emph{gaps} in the phrases
-  \item Formalization as a synchronous context-free grammar
-  \item Parsing-based decoding
-  \end{itemize}
-\item {\bf Syntax-based translation}
-  \begin{itemize}
-  \item Comparable to hierarchical, but with \emph{linguistic well-formedness constraints}
-  \end{itemize}
-\end{itemize}
-\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Phrase-based Approach}
-\begin{center} \vspace{15mm}
-\includegraphics[scale=1.4]{phrase-model-alignment.pdf}
-\end{center}\vspace{5mm}
-\begin{itemize} \itemsep -1mm
-\item Foreign input is segmented in phrases 
-\item Each phrase is translated into English
-\item Phrases are reordered
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Data-driven MT}
-% \vfill
-% 
-% \begin{center}\begin{tikzpicture}
-% \node[processing, text width=12em, align=center](ptraining){Training};
-% \node[input, text width=12em, align=center, above=1.5cm of ptraining](train){Parallel Training Data};
-% \node[model, text width=12em, align=center, below=1cm of ptraining](tm){Translation Model};
-% \draw[arr] (train) -- (ptraining);
-% \draw[arr] (ptraining) -- (tm);
-% 
-% \node[input, text width=12em, align=center, right=2cm of train](monotrain){Monolingual Training Data};
-% \node[model, text width=12em, align=center, right=2cm of tm] (lm) {Language Model};
-% \node[processing, text width=12em, align=center, right=2cm of ptraining] (lmtrain) {LM Estimation};
-% \draw[arr] (monotrain) -- (lmtrain);
-% \draw[arr] (lmtrain) -- (lm);
-% 
-% \node[processing, text width=12em, align=center, below right=2.5cm  and 1cm of tm.center] (tuning) {Tuning};
-% \node[input, text width=8em, align=center, right=2cm of tuning](dev){Development Set};
-% \node[model, text width=12em, align=center, below=1.5cm of tuning] (system) {SMT System};
-% \draw[arr, shorten >=4mm ] (lm) -- (tuning);
-% \draw[arr, shorten >=4mm] (tm) -- (tuning);
-% \draw[arr] (dev) -- (tuning);
-% \draw[arr] (tuning) -- (system);
-% 
-% \end{tikzpicture}\end{center}
-% 
-% \vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{SMT Pipeline (1)}
-\vfill
-\begin{itemize}
-  \item {\bf Data collection}
-  \begin{itemize}
-  \item Parallel corpora for training translation model (TM)
-  \item Target-side monolingual corpora for training language model (LM)
-  \item Separate development and test sets for tuning
-  \end{itemize}
-\item {\bf Data preparation, preprocessing}
-  \begin{itemize}
-  \item Cleaning: unrealiable parts should be removed
-  \item Sentence segmentation, sentence alignment of parallel corpora
-  \item Preprocessing steps (word tokenization, segmentation, casing, \ldots)
-  \end{itemize}
-\end{itemize}
-\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{SMT Pipeline (2)}
-\vspace*{-1ex}
-\begin{itemize}
-\item {\bf Training}
-  \begin{itemize}
-  \item Word alignment
-  \item Phrase extraction
-  \item Language model estimation
-  \item Lexicalized reordering model
-  \item Single-word based lexicon model
-  \item \ldots
-  \end{itemize}
-\item {\bf Tuning} 
-  \begin{itemize}
-  \item The decoder combines a set of features in a log-linear framework
-  \item Each feature has a weight which determines its contribution to the overall model score
-  \item We can optimize the values of the feature weights such that translation quality is maximized on a development set 
-  \end{itemize}
-\end{itemize}
-%\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{SMT Pipeline (3)}
-\vspace*{-1ex}
-\begin{itemize}
-\item {\bf Decoding}
-  \begin{itemize}
-  \item Translate unseen source text
-  \item Decoding $=$ searching the space of possible translations for the best hypothesis according to the model score
-  \item Dynamic programming
-  \item Pruning, recombination, and reordering constraints to keep the task feasible
-  \end{itemize}
-\vspace*{-0.5ex}
-\item {\bf Postprocessing}
-  \begin{itemize}
-  \item Detokenization, recasing, \ldots
-  \end{itemize}
-\vspace*{-0.5ex}
-\item {\bf Evaluation}
-  \begin{itemize}
-  \item Automatic metrics to assess translation quality by comparing the hypothesis with a reference translation: {\sc bleu}, {\sc ter}, {\sc meteor}, \ldots
-  \item Human judgement
-  \end{itemize}
-\end{itemize}
-\vspace*{-2ex}
-%\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Data Collection}
-%\vfill
-\vspace*{-1ex}
-\begin{center}
-\includegraphics[height=\textheight]{nc-english.png}
-\end{center}
-%\vfill
-%\vspace*{-2ex}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Data Collection}
-%\vfill
-\vspace*{-1ex}
-\begin{center}
-\includegraphics[height=\textheight]{nc-german.png}
-\end{center}
-%\vfill
-%\vspace*{-2ex}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Sentence Segmentation}
-
-\vfill
-\small
-\begin{framed}
-Roxy Ann Peak is a 3,576-foot-tall (1,090 m) mountain in the Western Cascade Range in the U.S. state of Oregon. Composed of several geologic layers, the majority of the peak is of volcanic origin and dates to the early Oligocene. It is primarily covered by oak savanna and open grassland on its lower slopes, and mixed coniferous forest on its upper slopes and summit. Despite the peak's relatively small topographic prominence of 753 feet (230 m), it rises 2,200 feet (670 m) above Medford, and it is the city's most important viewshed, open space reserve, and recreational resource.
-\end{framed}
-\normalsize
-\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Sentence Segmentation}
-
-\vfill
-%\vspace*{-1ex}
-\small
-\FrameSep5pt
-\begin{framed}
-Roxy Ann Peak is a 3,576-foot-tall (1,090 m) mountain in the Western Cascade Range in the U.S. state of Oregon.
-\end{framed}
-\begin{framed}
-Composed of several geologic layers, the majority of the peak is of volcanic origin and dates to the early Oligocene.
-\end{framed}
-\begin{framed}
-It is primarily covered by oak savanna and open grassland on its lower slopes, and mixed coniferous forest on its upper slopes and summit.
-\end{framed}
-\begin{framed}
-Despite the peak's relatively small topographic prominence of 753 feet (230 m), it rises 2,200 feet (670 m) above Medford, and it is the city's most important viewshed, open space reserve, and recreational resource.
-\end{framed}
-\normalsize
-\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Parallel Sentence Alignment}
-
-\vfill
-\small
-\begin{addmargin}[-2em]{-1em}
-\tikzstyle{corpus} =  [draw=black, fill = yellow!30, rounded corners, font=\small]
-\begin{flushleft}
-\begin{tikzpicture}
-
-\node[corpus] (fr) {%
-  \begin{minipage}{0.58\textwidth}
-%  \scriptsize
-Je vous invite \`a vous lever pour cette minute de silence.\\
-(Le Parlement, debout, observe une minute de silence)\\
-Madame la Pr\'esidente, c'est une motion de proc\'edure.
-  \end{minipage}
-};
-
-\node[corpus] (en) [right of = fr, node distance = 0.57\textwidth] {%
-  \begin{minipage}{0.5\textwidth}
-%  \scriptsize
-Please rise, then, for this minute's silence.\\
-(The House rose and observed a minute's silence)\\
-Madam President, on a point of order.
-  \end{minipage}
-};
-\end{tikzpicture}
-\end{flushleft}
-
-\vfill
-
-\tikzstyle{corpus} =  [draw=black, fill = blue!30, rounded corners, font=\small]
-\begin{flushleft}
-\begin{tikzpicture}
-
-\node[corpus] (fr) {%
-  \begin{minipage}{0.58\textwidth}
-%  \scriptsize
-  Astronomes Introduction Vid\'eo d'introduction\\ 
-  Qu'est-ce que l'astronomie?\\
-  Souvent consid\'er\'e comme la plus ancienne des sciences, elle d\'ecoule de notre \'etonnement et de nos questionnements envers le ciel L'astronomie est la science qui \'etudie l'Univers au-del\`a de l'atmosph\`ere terrestre.
-  \end{minipage}
-};
-\node[corpus] (en) [right of = fr, node distance = 0.57\textwidth] {%
-  \begin{minipage}{0.5\textwidth}
-%  \scriptsize
-  Astronomers Introduction Introduction video\\
-  What is Astronomy?\\
-  Often considered the oldest science, it was born of our amazement at the sky and our need to question Astronomy is the science of space beyond Earth's atmosphere.
-  \end{minipage}
-};
-\end{tikzpicture}
-\end{flushleft}
-\end{addmargin}
-\normalsize
-\vfill
-\begin{itemize}
-\item Gale and Church algorithm or similar methods
-\item E.g.\ Microsoft Bilingual Sentence Aligner
-\end{itemize}
-\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Word Alignment}
-
-\vspace*{-1ex}
-\begin{itemize}
-\item After further preprocessing (tokenization, word segmentation), \\train word alignment
-\vspace*{-2.5ex}
-\item Typically IBM/HMM sequence of models with subsequent symmetrization
-%\vspace*{-1ex}
-%\item Or alternatives like discriminative word aligners
-\end{itemize}
-\vspace*{-3.7ex}
-
-\begin{center}
-\newlength{\alignsize}
-\setlength{\alignsize}{1cm}
-\begin{tikzpicture}
-\tikzstyle{aligned}=[draw=black, anchor = south west,  rectangle, minimum height=\alignsize, minimum width=\alignsize, fill=black]
-\tikzstyle{english}=[minimum height=\alignsize, anchor = south west, node distance=\alignsize, text width =3cm, inner sep = 0pt, outer sep = 0pt]
-\tikzstyle{foreign}=[minimum height=\alignsize, minimum width=3cm, text width = 3cm, anchor = north east, rotate = 90, node distance=\alignsize]
-\draw  (0,0) grid +(9,7);
-\node [aligned] at (0,6) {};
-\node [aligned] at (1,4) {};
-\node [aligned] at (1,5) {};
-\node [aligned] at (2,3) {};
-\node [aligned] at (3,3) {};
-\node [aligned] at (4,3) {};
-\node [aligned] at (5,2) {};
-\node [aligned] at (6,2) {};
-\node [aligned] at (7,0) {};
-\node [aligned] at (8,1) {};
-\node[english] (e1) at (-2,6) {Mary};
-\node[english] (e2) [below of = e1] {did};
-\node[english] (e3) [below of = e2]  {not};
-\node[english] (e4) [below of = e3]  {slap};
-\node[english] (e5) [below of = e4]  {the};
-\node[english] (e6) [below of = e5]  {green};
-\node[english] (e7) [below of = e6]  {witch};
-\node[foreign] (f1) at (0,10.5) {Mar\'ia};
-\node[foreign] (f2) [below of = f1] {no};
-\node[foreign] (f3) [below of = f2] {daba};
-\node[foreign] (f4) [below of = f3] {una};
-\node[foreign] (f5) [below of = f4] {bofetada};
-\node[foreign] (f6) [below of = f5] {a};
-\node[foreign] (f7) [below of = f6] {la};
-\node[foreign] (f8) [below of = f7] {bruja};
-\node[foreign] (f9) [below of = f8] {verde};
-\end{tikzpicture}
-%\includegraphics[scale=1.2]{michael-alignment.pdf}
-\end{center}
-\vspace*{-2ex}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Phrase Extraction}
-\begin{center}
-\includegraphics[width=0.39\textwidth]{waiph1.pdf}
-\end{center}
-\vspace{-1mm}
-{\bf \footnotesize \textcolor{blue}{ 
-(Maria, Mary),
-(no, did not),
-(slap, daba una bofetada),
-(a la, the),
-(bruja, witch),
-(verde, green) \\ \vspace{-1mm}
-} }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Phrase Extraction}
-\begin{center}
-\includegraphics[width=0.39\textwidth]{waiph2.pdf}
-\end{center}
-\vspace{-1mm}
-{\bf \footnotesize \textcolor{blue}{
-(Maria, Mary),
-(no, did not),
-(slap, daba una bofetada),
-(a la, the),
-(bruja, witch),
-(verde, green),\\ \vspace{-1mm}
-} \textcolor{green}{
-(Maria no, Mary did not),
-(no daba una bofetada, did not slap), 
-(daba una bofetada a la, slap the),\\ \vspace{-1mm}
-(bruja verde, green witch) \\ \vspace{-1mm} 
-} }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Phrase Extraction}
-\begin{center}
-\includegraphics[width=0.39\textwidth]{waiph3.pdf}
-\end{center}
-\vspace{-1mm}
-{\bf \footnotesize \textcolor{blue}{
-(Maria, Mary),
-(no, did not),
-(slap, daba una bofetada),
-(a la, the),
-(bruja, witch),
-(verde, green), \\ \vspace{-1mm}
-} \textcolor{green}{
-(Maria no, Mary did not),  
-(no daba una bofetada, did not slap), 
-(daba una bofetada a la, slap the), \\ \vspace{-1mm}
-(bruja verde, green witch),
-} \textcolor{red}{
-(Maria no daba una bofetada, Mary did not slap), \\ \vspace{-1mm}
-(no daba una bofetada a la, did not slap the),
-(a la bruja verde, the green witch) \\ \vspace{-1mm}
-} }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Phrase Extraction}
-\begin{center}
-\includegraphics[width=0.39\textwidth]{waiph4.pdf}
-\end{center}
-\vspace{-1mm}
-{\bf \footnotesize \textcolor{blue}{
-(Maria, Mary),
-(no, did not),
-(slap, daba una bofetada),
-(a la, the),
-(bruja, witch), 
-(verde, green),
-} \textcolor{green}{ \\ \vspace{-1mm}
-(Maria no, Mary did not), 
-(no daba una bofetada, did not slap), 
-(daba una bofetada a la, slap the), \\ \vspace{-1mm}
-(bruja verde, green witch), 
-} \textcolor{red}{
-(Maria no daba una bofetada, Mary did not slap), \\ \vspace{-1mm}
-(no daba una bofetada a la, did not slap the),
-(a la bruja verde, the green witch), \\ \vspace{-1mm}
-} \textcolor{magenta}{
-(Maria no daba una bofetada a la, Mary did not slap the), \\ \vspace{-1mm}
-(daba una bofetada a la bruja verde, slap the green witch) \\ \vspace{-1mm}
-} }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Phrase Extraction}
-\begin{center}
-\includegraphics[width=0.39\textwidth]{waiph5.pdf}
-\end{center}
-\vspace{-1mm}
-{\bf \footnotesize \textcolor{blue}{
-(Maria, Mary),
-(no, did not),
-(slap, daba una bofetada),
-(a la, the),
-(bruja, witch), 
-(verde, green),
-} \textcolor{green}{ \\ \vspace{-1mm}
-(Maria no, Mary did not), 
-(no daba una bofetada, did not slap), 
-(daba una bofetada a la, slap the), \\ \vspace{-1mm}
-(bruja verde, green witch),
-} \textcolor{red}{
-(Maria no daba una bofetada, Mary did not slap), \\ \vspace{-1mm}
-(no daba una bofetada a la, did not slap the),
-(a la bruja verde, the green witch), \\ \vspace{-1mm}
-} \textcolor{magenta}{
-(Maria no daba una bofetada a la, Mary did not slap the), 
-(daba una bofetada a la bruja verde, \\ \vspace{-1mm} slap the green witch), 
-} \textcolor{orange}{
-(no daba una bofetada a la bruja verde, did not slap the green
-witch), \\ \vspace{-1mm}
-} \textcolor{cyan}{
- (Maria no daba una bofetada a la bruja verde, Mary did not
-slap the green witch)
-} }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Phrase Translation Probabilities}
-\vfill
-\begin{itemize}
-\item {\bf Phrase table}: contains all phrases $(\overline{e} , \overline{f})$ extracted from the data
-\item We need to assign {\bf probabilities} to extracted phrases
-\item Score by relative frequency:\vspace{-5mm}
-\maths{\begin{equation*}
-\begin{split} 
-  \phi(\bar{e}|\bar{f}) = \frac{\mbox{count}(\bar{e},\bar{f})}{\sum_{\bar{e}'}\mbox{count}(\bar{e}',\bar{f})}\\
-\phi(\bar{f}|\bar{e}) = \frac{\mbox{count}(\bar{e},\bar{f})}{\sum_{\bar{f}'}\mbox{count}(\bar{e},\bar{f}')}
-\end{split} 
-\end{equation*}}
-\end{itemize}
-\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Real Example}
-\begin{itemize}
-\item Phrase translations for \example{den Vorschlag} from German into English: % learned from the Europarl corpus:
-\end{itemize}
-\begin{center}
-\begin{tabular}{|l|r||l|r|} \hline
-{\bf English} & \maths{$\phi(\bar{e}|\bar{f})$} &
-{\bf English} & \maths{$\phi(\bar{e}|\bar{f})$} \\ \hline \hline
-\example{the proposal} & 0.6227 &
-\example{the suggestions} & 0.0114 \\ \hline
-\example{'s proposal} & 0.1068 &
-\example{the proposed} & 0.0114 \\ \hline
-\example{a proposal} & 0.0341 &
-\example{the motion} & 0.0091 \\ \hline
-\example{the idea} & 0.0250 &
-\example{the idea of} & 0.0091 \\ \hline
-\example{this proposal} & 0.0227 &
-\example{the proposal ,} & 0.0068 \\ \hline
-\example{proposal} & 0.0205 &
-\example{its proposal} & 0.0068 \\ \hline
-\example{of the proposal} & 0.0159 &
-\example{it} & 0.0068 \\ \hline
-\example{the proposals} & 0.0159 &
-... & ... \\ \hline
-\end{tabular}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{More Features}
-\vfill
-\begin{itemize}
-\item The decoder will employ the phrase translation probabilities along with other features to assign an overall score to each possible hypothesis
-\item {\bf Standard features}:
-\begin{itemize}
-  \item Phrase translation log-probabilities
-  \item Lexical translation log-probabilities (from single-word based models)
-  \item Language model log-probability (from a target-side $n$-gram LM)
-  \item Phrase count
-  \item Word count
-  \item Distortion cost based on jump distances
-  \item Lexicalized reordering score
-\end{itemize}
-\end{itemize}
-\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Log-linear Model}
-\vfill
-\begin{itemize} %\itemsep -2em
-\item Decoding: Given the model, find the best translation
-\vspace*{-0.7em}
-\maths{
-\begin{equation*}
-  {\bf e}_{\mbox{\small best}} =  \; \mbox{argmax}_{\bf e} \; p({\bf e}|{\bf f})
-\vspace*{-0.5em}
-\end{equation*}
-}
-\item Our model is a {\bf weighted combination} of many components
-\vspace*{-0.7em}
-\maths{
-\begin{equation*}
-p({\bf e}|{\bf f}) \propto \exp \sum_{k=1}^m \; \lambda_k\cdot h_k({\bf e}, {\bf f}) 
-\vspace*{-0.5em}
-\end{equation*}
-}
-where $h_k({\bf e}, {\bf f})$ are {\bf feature functions} and $\lambda_k$ are {\bf feature weights}
-\end{itemize}
-\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Tuning}
-\vspace*{2ex}
-\begin{center}
-\includegraphics[width=0.8\textwidth]{discriminative.pdf}
-\end{center}
-\begin{itemize} %\itemsep -2em
-\item MERT, MIRA, PRO, \ldots
-\end{itemize}
-\vspace*{-2ex}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Phrase-based Decoding}
-\vspace*{-1ex}
-%\begin{center} 
-\includegraphics[scale=1.5]{translation-options.pdf}
-%\end{center}\vspace{-10mm}
-\begin{itemize}
-\vspace*{-4ex}
-\item Many translation options to choose from
-\end{itemize}
-\vspace*{-2ex}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Phrase-based Decoding}
-\vspace*{-1ex}
-%\begin{center} 
-\includegraphics[scale=1.5]{translation-options-correct.pdf}
-%\end{center}  \vspace{-12mm}
-\vspace*{-4ex}
-\begin{itemize}
-\item The machine translation decoder does not know the right answer\vspace{-4mm}
-\begin{itemize}
-\item picking the right translation options
-\item arranging them in the right order \vspace{-6mm}
-\end{itemize}
-\item[$\rightarrow$] Search problem solved by beam search
-\end{itemize}
-\vspace*{-2ex}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Decoding: Precompute Translation Options}
-\begin{center}
-\includegraphics[scale=1.3]{decoding-step1.pdf}\\[69mm]
-consult phrase translation table for all input phrases
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Decoding: Start with Initial Hypothesis}
-\begin{center} 
-\includegraphics[scale=1.3]{decoding-step2.pdf}\\[22mm]
-initial hypothesis: no input words covered, no output produced
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Decoding: Hypothesis Expansion}
-\begin{center}
-\includegraphics[scale=1.3]{decoding-step3.pdf}\\[22mm]
-pick any translation option, create new hypothesis
-\end{center} 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Decoding: Hypothesis Expansion}
-\begin{center} 
-\includegraphics[scale=1.3]{decoding-step4.pdf}\\[5mm]
-create hypotheses for all other translation options
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Decoding: Hypothesis Expansion}
-\begin{center} 
-\includegraphics[scale=1.3]{decoding-step5.pdf}\\
-also create hypotheses from created partial hypothesis
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Decoding: Find Best Path}
-\begin{center}
-\includegraphics[scale=1.3]{decoding-step6.pdf}\\[1mm]
-backtrack from highest scoring complete hypothesis
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Pruning}
-\vfill
-\begin{itemize}
-\item Heuristically discard weak hypotheses early: {\bf beam search}
-\item Organize hypotheses in {\bf stacks} (actually priority queues), e.g.\ by
-{\begin{itemize} \vspace{-4mm}
-\item same source words covered
-\item same number of source words covered 
-%\item \important{same number} of English words produced
-\end{itemize} }
-\item Compare hypotheses in stacks, discard bad ones
-{\begin{itemize} \vspace{-4mm}
-\item {\bf histogram pruning}: keep top $k$ hypotheses in each stack (e.g., $k$=100)
-\item {\bf threshold pruning}: keep hypotheses that are at most $\alpha$
-  times the cost of best hypothesis in stack (e.g., $\alpha$ = 0.001)
-\end{itemize} }
-\end{itemize}
-\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Hypothesis Stacks}
-\vfill
-\begin{center}
-\includegraphics[width=15cm]{hypothesis-stacks.pdf}
-\end{center}
-\begin{itemize}
-\item Organization of hypotheses into stacks
-{\begin{itemize}
-  \item here: based on {\bf number of source words} translated
-\item during translation all hypotheses from one stack are expanded
-\item expanded hypotheses are placed into next stacks
-\end{itemize} }
-\end{itemize}
-\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Evaluation}
-\vfill
-\begin{itemize}
-\item {\bf Automatic evaluation metrics}
-\begin{itemize}
-\item Measure similarity between machine translation output \\and human-generated reference translation
-\item Good metrics correlate well with human judgement
-\end{itemize}
-\item Decode a held-out test set and -- after postprocessing (detokenization, truecasing) -- score with an automatic metric to {\bf determine translation quality}
-\end{itemize}
-\vfill
-\begin{itemize}
-\item {\bf \sc bleu}
-\begin{itemize}
-\item Most commonly used metric
-\item $n$-gram precision ($n = 1 \ldots 4$), brevity penalty
-\end{itemize}
-%\item {\bf \sc ter}
-%\item {\bf \sc meteor}
-\end{itemize}
-\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%\slide{Computational Complexity}
-%\begin{itemize}\vspace{35mm} \itemsep 5mm
-%\item The suggested process creates exponential number of hypothesis 
-%\item Reduction of search space: pruning
-%\item[$\rightarrow$] Decoder may not find the model-best translation
-%\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Factored Translation}
-% \begin{itemize}
-% \item Factored represention of words 
-% \begin{center} \vspace{-8mm}
-% \includegraphics[width=155mm]{factors.pdf}
-% \end{center} \vspace{-22mm}
-% \item Goals  \vspace{-3mm}
-% \begin{itemize}
-% \item generalization, e.g. by translating lemmas, not surface forms
-% \item richer model, e.g. using syntax for reordering, language modeling
-% \end{itemize}
-% \end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Factored Model}
-% \begin{center}
-% Example:\\
-% \includegraphics[scale=1.6]{factored-morphgen.pdf}\\
-% Decomposing the translation step\\
-% Translating lemma and morphological information more robust
-% \end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Hierarchical Translation}
-%\begin{center}
-\hspace*{3em} 
-\includegraphics[scale=1.4]{hierarchical-phrase-extraction1.pdf}
-%\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Hierarchical Translation}
-%\begin{center}
-\hspace*{3em} 
-\includegraphics[scale=1.4]{hierarchical-phrase-extraction2.pdf}
-%\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Hierarchical Translation}
-%\begin{center}
-\hspace*{3em} 
-\includegraphics[scale=1.4]{hierarchical-phrase-extraction3.pdf}
-%\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Hierarchical Translation}
-%\begin{center}
-\hspace*{3em} 
-\includegraphics[scale=1.4]{hierarchical-phrase-extraction4.pdf}
-%\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Syntax-based Translation}
-%\vspace*{-1em} 
-%\begin{center}
-\begin{tabular}{rl}
-\includegraphics[scale=1.17]{hierarchical-phrase-extraction-syntax1.pdf}
-& 
-\parbox{85mm}{\footnotesize \phantom{.}\vspace{-6cm}
-
-\example{\Tree [.{\sc pro} Ihnen ] }
-\hspace{2mm} {\Large $=$} \hspace{2mm}
-\example{\Tree [.{\sc pp} [.{\sc to} to ] [.{\sc prp} you ] ] \vspace{-1cm}\phantom{.}}
-}
-\end{tabular}
-%\end{center}
-\vspace*{-2em} 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Constraints on Syntactic Rules}
-% \vspace{15mm}
-% \begin{itemize}
-% \item Same word alignment constraints as hierarchical models
-% \item Hierarchical: rule can cover any span\\
-% $\Leftrightarrow$ syntactic rules must cover constituents in the tree
-% \item Hierarchical: gaps may cover any span\\
-% $\Leftrightarrow$ gaps must cover constituents in the tree
-% \vspace{10mm}
-% \item Much less rules are extracted (all things being equal)
-% \end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Syntax-based Translation: Variants}
-\vspace{5mm}
-{\small
-\begin{center}
-\begin{tabular}{cc}
-\textcolor{black}{\bf String-to-String} & \textcolor{black}{\bf String-to-Tree} \\
-\example{John misses Mary}
-& \example{John misses Mary}\\
-$\Rightarrow$  Marie manque \`a Jean
-& $\Rightarrow$ \hspace{-2cm} \Tree [.S [.NP \example{Marie} ] [.VP [.V \example{manque} ] [.PP [.P \example{\`a} ] [.NP \example{Jean} ]  ]  ]  ] \\[5mm]
-
-\textcolor{black}{\bf Tree-to-String} & \textcolor{black}{\bf Tree-to-Tree} \\
-\Tree [.S [.NP \example{John} ] [.VP [.V \example{misses} ] [.NP \example{Mary} ]  ]  ] 
-&  \Tree [.S [.NP \example{John} ] [.VP [.V \example{misses} ] [.NP \example{Mary} ]  ]  ] \hspace{-1cm} $\Rightarrow$ \hspace{-2cm}\Tree [.S [.NP \example{Marie} ] [.VP [.V \example{manque} ] [.PP [.P \example{\`a} ] [.NP \example{Jean} ]  ]  ]  ] \\[-1cm]
-$\Rightarrow$ \example{Marie manque \`a Jean}  	
-& 
-\end{tabular}
-\end{center}
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Syntax-based Decoding}
-\vspace{-31mm}
-\begin{center}
-\includegraphics[scale=1.15]{chart-parsing0.pdf}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Syntax-based Decoding}
-\vspace{-31mm}
-\begin{center}
-\includegraphics[scale=1.15]{chart-parsing1.pdf}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Syntax-based Decoding}
-\vspace{-31mm}
-\begin{center}
-\includegraphics[scale=1.15]{chart-parsing2.pdf}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Syntax-based Decoding}
-\vspace{-31mm}
-\begin{center}
-\includegraphics[scale=1.15]{chart-parsing3.pdf}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Syntax-based Decoding}
-\vspace{-31mm}
-\begin{center}
-\includegraphics[scale=1.15]{chart-parsing4.pdf}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Syntax-based Decoding}
-\vspace{-31mm}
-\begin{center}
-\includegraphics[scale=1.15]{chart-parsing5.pdf}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Syntax-based Decoding}
-\vspace{-31mm}
-\begin{center}
-\includegraphics[scale=1.15]{chart-parsing.pdf}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{}
-% \vspace{-2.5cm}
-% \begin{center}
-% \includegraphics[width=26cm]{ems-syntax-viz.png}
-% \end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{How do I get started?}
-
-\vfill
-\begin{itemize} %\itemsep -1mm
-\item {\bf Set up Moses}
-%   \begin{itemize}
-%   \item Download source code for Moses, GIZA++, MGIZA
-%   \item Compile, install
-%   \item Or use precompiled Moses packages (Windows, Linux, Mac\,OS\,X)
-%         \begin{itemize}
-%         \item Installer for Windows with GUI
-%         \item Debian Linux RPMs
-%         \item Binaries for Cygwin/Linux/Mac\,OS\,X
-%         \end{itemize}
-%   \item More info: \url{http://www.statmt.org/moses/}
-%   \end{itemize}
-\item {\bf Collect your data}
-  \begin{itemize}
-%  \item Parallel data 
-%        \begin{itemize}
-%        \item Freely available data, e.g.\ Europarl, MultiUN, WIT3, OPUS, \ldots
-        \item Available corpora like Europarl, MultiUN, WIT3, OPUS, CommonCrawl
-        \item Data from open MT evaluation campaigns (WMT, IWSLT, \ldots)
-        \item TAUS, Linguistic Data Consortium (LDC), \ldots
-%        \end{itemize}
-%  \item Monolingual data
-%        \begin{itemize}
-%        \item CommonCrawl, WMT News Crawl corpus, \ldots
-%        \end{itemize}
-  \item If data is not prepared yet, carry out cleaning, sentence segmentation, and parallel sentence alignment
-%  \item Translation memories
-  \end{itemize}
-\item {\bf Train system}
-\end{itemize}
-\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Open Source Components}
-\vspace*{-1ex}
-\begin{itemize}
-\item {\bf Moses} %statistical machine translation system}
-  \begin{itemize}
-  \item \url{http://www.statmt.org/moses/}
-  \item LGPL license
-  \item Get stable release or snapshot from GitHub % \url{https://github.com/moses-smt/mosesdecoder}
-  \item User manual % \url{http://www.statmt.org/moses/manual/manual.pdf}
-        and support mailing list % \url{http://mailman.mit.edu/mailman/listinfo/moses-support}
-  \end{itemize}
-\vspace*{-0.5ex}
-\item {\bf External tools used by Moses}
-  \begin{itemize}
-  \item Word alignment: {\sc giza++}, {\sc mgiza}, {\sc BerkeleyAligner}, {\sc FastAlign}
-  \item Language model: {\sc kenlm}, {\sc irstlm}, {\sc srilm}
-  \item Evaluation: {\sc bleu}, {\sc ter}, {\sc meteor}
-  \end{itemize}
-\vspace*{-0.5ex}
-\item {\bf Other useful tools}
-  \begin{itemize}
-  \item Sentence aligner, syntactic parsers, part-of-speech taggers, \\morphological analyzers
-  \end{itemize}
-\vspace*{-2ex}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Moses Pipeline}
-%\vspace*{-1ex}
-\vfill
-\begin{itemize}
-\item Plenty steps, each with lots of possible configuration parameters
-\vfill
-\hspace*{2em}
-%\begin{center}
-\begin{SaveVerbatim}{myverb}
-tokenize < corpus.en > corpus.en.tok
-lowercase < corpus.en.tok > corpus.en.lc
-...
-train-model.perl ...
-mert.perl ...
-moses ...
-mteval-v13.pl ...
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-%\end{center}
-%\item Change a part of the process, execute everything again
-\end{itemize}
-\vfill
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Phrase-based Model Training with Moses}
-% \vspace{20mm}
-% \begin{itemize}
-% \item Command line
-% \begin{center}
-% \begin{SaveVerbatim}{myverb}
-% train-model.perl ...
-% \end{SaveVerbatim}
-% \colorbox{gray}{\BUseVerbatim{myverb}}
-% \end{center}
-% 
-% \item Example phrase from model
-% \begin{center}
-% \footnotesize
-% \begin{SaveVerbatim}{myverb}
-% BŸndnisse ||| alliances ||| 1 1 1 1 2.718 ||| ||| 1 1
-% General Musharraf betrat am ||| general Musharraf appeared on ||| 1 1 1 1 2.718 ||| ||| 1 1
-% 
-% \end{SaveVerbatim}
-% \colorbox{gray}{\BUseVerbatim{myverb}}
-% \end{center}
-% \end{itemize}
-% 
-% % phrase based
-% %  /Users/hieuhoang/workspace/sourceforge/trunk/scripts/training/train-model.perl -first-step 5 -last-step 6 --corpus corpus.1.0-0 -f de -e en -alignment-file /Users/hieuhoang/workspace/data/syntax-de-en-nc/10/aligned.1 -alignment  grow-diag-final-and -lexical-file lex 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Phrase-based Decoding with Moses}
-% 
-% \begin{itemize}
-% \item Command line   
-% \vspace{-4mm}
-% \begin{center}
-% \begin{SaveVerbatim}{myverb}
-% moses -f moses.ini -i in.txt > out.txt
-% \end{SaveVerbatim}
-% \colorbox{gray}{\BUseVerbatim{myverb}}
-% \end{center}
-% %\item Output
-% %\vspace{-4mm}
-% %\begin{center}
-% %\begin{SaveVerbatim}{myverb}
-% %there are various different opinions .
-% %\end{SaveVerbatim}
-% %\colorbox{gray}{\BUseVerbatim{myverb}}
-% %\end{center}
-% \item Advantages
-% \vspace{-1mm}
-% \begin{itemize}
-% \item fast --- under half a second per sentence for fast configuration
-% \item low memory requirements --- $\sim$200MB RAM for lowest configuration
-% %	\begin{itemize}
-% %	\item 200-300MB for lowest configuration
-% %	\item suitable for netbooks and mobile devices
-% %	\end{itemize}
-% \item state-of-the-art translation quality on most tasks,\\ especially for related language pairs
-% \item robust --- does not rely on any syntactic annotation
-% \end{itemize}
-% \item Disadvantages
-% \vspace{-1mm}
-% \begin{itemize}
-% \item poor modeling of linguistic knowledge and of long-distance dependencies
-% \end{itemize}
-% \end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Hierarchical Model Training with Moses}
-% %\vspace{5mm}
-% \begin{itemize}
-% \item Hierarchical model:\\ formally syntax-based, without linguistic annotation (string-to-string)
-% %\vspace{-5mm}
-% \item Command line
-% \begin{center}
-% \begin{SaveVerbatim}{myverb} 
-% train-model.perl -hierarchical ...
-% \end{SaveVerbatim}
-% \colorbox{gray}{\BUseVerbatim{myverb}}
-% \end{center}
-% %\vspace{-5mm}
-% \item Example rule from model
-% \begin{center}
-% \vspace{-15mm}
-% \littlecode{\tiny B\"undnisse [X][X] Kr\"aften [X] ||| alliances [X][X] forces [X] ||| 1 1 1 1 2.718 ||| 1-1 ||| 0.0526316 0.0526316}
-% \end{center}
-% \item Visualization of rule
-% \vspace{-10mm}
-% \begin{center}
-% \tikzset{level distance=72pt}
-% \Tree [.X [. B\"undnisse ]  [.X$_1$ ] [. Kr\"aften ] ] $\Rightarrow$ \Tree [.X [. alliances ]  [.X$_1$ ] [. forces ] ]
-% \end{center}
-% \end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Hierarchical Decoding with Moses}
-% 
-% \begin{itemize}
-% \item Command line   
-% \vspace{-4mm}
-% \begin{center}
-% \begin{SaveVerbatim}{myverb}
-% moses_chart -f moses.ini -i in.txt > out.txt
-% \end{SaveVerbatim}
-% \colorbox{gray}{\BUseVerbatim{myverb}}
-% \end{center}
-% 
-% %  /Users/hieuhoang/workspace/sourceforge/trunk/scripts/training/train-model.perl -first-step 5 -last-step 6 --corpus corpus.1.0-0 -f de -e en -alignment-file /Users/hieuhoang/workspace/data/syntax-de-en-nc/10/aligned.1 -alignment  grow-diag-final-and -lexical-file lex  -hierarchical
-% 
-% \item Advantages
-% \begin{itemize}
-% \item able to model non-contiguities like \emph{ne \ldots pas $\rightarrow$ not}
-% \item better at medium-range reordering
-% \item outperforms phrase-based systems when translating between widely different languages, e.g. Chinese-English
-% \end{itemize}
-% 
-% \item Disadvantages
-% \begin{itemize}
-% \item more disk usage --- translation model $\times$10 larger than phrase-based
-% \item slower --- 0.5 - 2 sec/sent.\ for fastest configuration
-% \item higher memory requirements --- more than 1GB RAM
-% \end{itemize}
-% 
-% \end{itemize}
-
-
-%Advantages
-%   - can outperform phrase-based models when translating between widely different languages
-%	- Chinese-English
-%         - only consistent perforance with hierarchical model 
-%   - better at medium range re-ordering
-%        
-%   - theoretical
-%       - language is recursive
-%       - embed clause within clause
-%       - e.g. 
-%        This is the house that Jack built.
-%
-%        This is the malt that lay in the house that Jack built.
-%
-%        This is the mouse that ate the malt that lay in the house that Jack built.
-%
-%        This is the cat that scared the mouse that ate the malt hat lay in the house that Jack built.
-%
-%        This is the dog that chased the cat that scared the mouse that ate the malt that lay in the house that Jack built.
-%
-%        This is the boy who loves the dog that chased the cat that scared the mouse that ate the malt that lay in the house that Jack built.
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%\slide{Hierarchical Model}
-%
-%Comparison with phrase-based model:
-%
-%\begin{table}[ht]
-%\begin{tabular}{| c c | c c |}
-%\hline 
-%		& 	& Phrase-based & Hierarchical \\
-%\hline
-%BLEU (Europarl) & fr-en & 25.10 & 24.58 \\
-%		& de-en & 18.11 & 17.99 \\
-%		& es-en & 25.81 & 25.17 \\
-%		& de-en & 18.11 & 17.99 \\
-%		& cs-en & 18.00 & 17.86 \\
-%\hline
-%Phrase-table size & fr-en & 2.5GB & 20.0GB \\
-%\hline
-%Decoding time (sec) & per sentence & 2.27 & 6.45 \\
-%		    & per word & 0.09 & 0.26 \\
-%\hline
-%\end{tabular}
-%
-%\end{table}
-%}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Syntax-based Model Training with Moses}
-% \vspace{20mm}
-% \begin{itemize}
-% \item Command line
-% \begin{center}
-% \begin{SaveVerbatim}{myverb} 
-% train-model.perl -ghkm ...
-% \end{SaveVerbatim}
-% \colorbox{gray}{\BUseVerbatim{myverb}}
-% \end{center}
-% 
-% \item Example rule from model
-% \begin{center}
-% \littlecode{\tiny [X][NP-SB] also wanted [X][ADJA] [X][NN] [X] ||| [X][NP-SB] wollten auch die [X][ADJA] [X][NN] [S-TOP] |||  ...}
-% \end{center}
-% \end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Syntax-based Decoding with Moses}
-% 
-% \begin{itemize} \itemsep -1mm
-% \item Command line   
-% \vspace{-4mm}
-% \begin{center}
-% \begin{SaveVerbatim}{myverb}
-% moses_chart -f moses.ini -i in.txt > out.txt
-% \end{SaveVerbatim}
-% \colorbox{gray}{\BUseVerbatim{myverb}}
-% \end{center}
-% \vspace{-4mm}
-% (like hierarchical)
-% 
-% \item Advantage \vspace{-2mm}
-% \begin{itemize}
-% \item can use outside linguistic information 
-% \item promises to solve important problems in SMT, e.g.\ long-range reordering
-% \end{itemize}
-% 
-% \item Disadvantages \vspace{-2mm}
-% \begin{itemize}
-% %\item difficult to get right
-% \item training slow and difficult to get right
-% \item requires syntactic parse annotation
-% 	\begin{itemize}
-% 	\item syntactic parsers available only for some languages % need to be trained with costly, hand-annotated treebank
-% 	\item not designed for machine translation
-% 	\item unreliable
-% 	\end{itemize}
-% \end{itemize}
-% \end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Moses Tree Representation}
-% \vspace{10mm}
-% \begin{center}
-% \Tree [.TOP [.NP [.NE Musharrafs ] [.ADJA letzter ] [.NN Akt ]  ]  [.PUNC  ? ]  ]  \\
-% 
-% \vspace{10mm}
-% 
-% \includegraphics[scale=1]{tree-xml.png} 
-%  \end{center}
-
-%
-%Training and input data is embellished with parse information
-%  - either the parse information is on the source side - tree-to-string
-%  - on the target side - string-to-tree
-%  - have parse information for both - tree-to-tree
-%
-%
-%Advantages
-%   - can use outside linguistic information
-%Disadvantages
-%   - difficult to get  right
-%   - many still underperform other models
-%   - parser information unreliable
-%      - not for correct domain
-%      - not available for many languages
-%          - need to be trained with costly treebank
-%      - not optmized or suited for machine translation
-%
-% do some slides on moses implementation
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Experiment Management System}
-\begin{itemize} \itemsep -1mm
-\item EMS automates the entire pipeline
-\item One configuration file for all settings: record of all experimental details
-\item Scheduler of individual steps in pipeline
-\begin{itemize}
-\item automatically keeps track of dependencies
-%\item runs on single machine, multi-core machine, GridEngine cluster
-\item parallel execution 
-\item crash detection
-\item automatic re-use of prior results
-\end{itemize}
-\item Fast to use
-\begin{itemize}
-\item set up a new experiment in minutes
-\item set up a variation of an experiment in seconds
-\end{itemize}
-
-\item Disadvantage: not all Moses features are integrated
-
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{How does the EMS work?}
-\vspace{20mm}
-\begin{itemize}
-\item Write a configuration file
-(typically by adapting an existing file)
-\vspace{5mm}
-\item Dryrun:
-\vspace{-10mm}
-\begin{center}
-\littlecode{\normalsize experiment.perl -config config}
-\end{center}
-\vspace{5mm}
-\item Execute:
-\vspace{-10mm}
-\begin{center}
-\littlecode{\normalsize experiment.perl -config config -exec}
-\end{center}
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{}
-\vspace*{-3.6ex}
-%\begin{center} \vspace{-5mm}
-\includegraphics[scale=1.5]{ems-agenda-composite.pdf}
-%\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Web Interface}
-% \begin{center}
-% \includegraphics[scale=1]{web-interface-experiments.png}\\[5mm]
-% List of experiments
-% \end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{List of Runs}
-% \begin{center}\vspace{-9mm}
-% \includegraphics[scale=1]{web-interface-runs}
-% \end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Analysis: Basic Statistics}
-% \begin{center}
-% \includegraphics[scale=1]{analysis-stats.png}
-% \end{center}
-% \begin{itemize}
-% \item Basic statistics
-% \begin{itemize}
-% \item n-gram precision
-% \item evaluation metrics
-% \item coverage of the input in corpus and translation model
-% \item phrase segmentations used
-% \end{itemize}
-% \end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Analysis: Unknown Words}
-% \begin{center}
-% grouped by count in test set\\[5mm]
-% \includegraphics[scale=1]{analysis-unknown.png}
-% \end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Analysis: Output Annotation}
-% \vspace{30mm}
-% \begin{center}
-% \includegraphics[scale=1.5]{analysis-bleu.png}\\[20mm]
-% Color highlighting to indicate n-gram overlap with reference translation\\[5mm]
-% darker bleu = word is part of larger n-gram match
-% \end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Analysis: Input Annotation}
-% \vspace{10mm}
-% \begin{center}
-% \includegraphics[scale=1.5]{analysis-coverage.png}\\[20mm]
-% \end{center}
-% \begin{itemize}
-% \item For each word and phrase, color coding and stats on
-% \begin{itemize}
-% \item number of occurrences in training corpus
-% \item number of distinct translations in translation model
-% \item entropy of conditional translation probability distribution $\phi(e|f)$ (normalized)
-% \end{itemize}
-% \end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Analysis: Bilingual Concordancer}
-% \vspace{-5mm}
-% \begin{center}
-% \includegraphics[scale=0.75]{biconcor1.png}\\[5mm]
-% \includegraphics[scale=0.75]{biconcor2.png}\\
-% translation of input phrase in training data context
-% \end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Analysis: Alignment}
-% \vspace{30mm}
-% \begin{center}
-% \includegraphics[scale=1.5]{analysis-alignment.png}\\[10mm]
-% Phrase alignment of the decoding process\\[5mm]
-% (red border, interactive)
-% \end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Analysis: Tree Alignment}
-% \vspace{15mm}
-% \begin{center}
-% \includegraphics[scale=1.2]{analysis-tree-alignment.png}\\[10mm]
-% Uses nested boxes to indicate tree structure\\[3mm]
-% (red border, yellow shaded spans in focus, interactive)\\[3mm]
-% for syntax model, non-terminals are also shown
-% \end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \slide{Analysis: Comparison of 2 Runs}
-% \begin{center}
-% \includegraphics[scale=1]{analysis-comparison.png}\\[10mm]
-% Different words are highlighted\\[3mm]
-% sortable by most improvement, deterioration
-% \end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{}
-\vspace{50mm}
-\begin{center}
-\Huge \bf Hands-On Session
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\includepdf[pages={1-17}]{Basics.pdf}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
-\item \currenttopic{Faster Training}
+\item {Faster Training}
 \item {Faster Decoding}
 \item {Moses Server}
 \item {Domain adaptation}
@@ -1650,7 +133,7 @@ mteval-v13.pl ...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -1689,99 +172,45 @@ mteval-v13.pl ...
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
 
-
 \end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-%\item {How do I get started?}
-%\item {Experiment Management System}
-\item Faster Training
-  \begin{itemize}
-  \item \currenttopic{Tokenization}
-  \item Tuning
-  \item Alignment
-  \item Phrase-table creation
-  \item Language model creation
-  \end{itemize}
-\end{itemize}
-\ldots
-}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Faster Training}
-
-\begin{itemize} \itemsep 10mm
-
-\item Multi-threaded tokenization
-
-\item {Specify number of threads}\\[4mm]
-\begin{SaveVerbatim}{myverb} 
- .../tokenizer.perl -threads NUM
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\item EMS: \\[4mm]
-\begin{SaveVerbatim}{myverb} 
- input-tokenizer = "$moses-script-dir/tokenizer/tokenizer.perl 
-		    -threads NUM " 
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-  
-  
-\end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Advanced Features}
-\vspace{-5mm}
-\textcolor{darkgrey}{
-\begin{itemize} \itemsep -1mm
-%\item {How do I get started?}
-%\item {Experiment Management System}
-\item Faster Training
+3 steps
+\begin{itemize} \itemsep 0mm
+\small
+\item Extract
   \begin{itemize}
-  \item Tokenization
-  \item \currenttopic{Tuning}
-  \item Alignment
-  \item Phrase-table creation
-  \item Language model creation
+  \item Extract rules per aligned sentence
+  \item Easily parallelizable
+
+    \begin{SaveVerbatim}{myverb} 
+extract-parallel.perl extract.exe [arguments]
+    \end{SaveVerbatim}
+    \colorbox{gray}{\BUseVerbatim{myverb}}  
+  \item Multiple extract.exe - extract, extract-rules, extract-ghkm
   \end{itemize}
+\item Score
+  \begin{itemize}
+  \item Calculate maximum likelihood
+  \item Parallelizable
+
+      \begin{SaveVerbatim}{myverb} 
+score-parallel.perl score.exe [arguments]
+    \end{SaveVerbatim}
+    \colorbox{gray}{\BUseVerbatim{myverb}}  
+  \end{itemize}
+  \item Consolidate
+    \begin{itemize}
+    \item Merge p(e$|$f) and p(f$|$e) score into 1 phrase-table
+%    \item Not parallelizable
+   \end{itemize}
 \end{itemize}
-\ldots
-}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Faster Training}
-\vspace{10mm}
-\begin{itemize} \itemsep 10mm
-\item Multi-threaded tokenization
-
-\item {Specify number of threads}\\[4mm]
-\begin{SaveVerbatim}{myverb} 
-  .../mert -threads NUM
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\item EMS:\\[4mm]
-\begin{SaveVerbatim}{myverb} 
-  tuning-settings = "-threads NUM" 
-\end{SaveVerbatim}
-\colorbox{gray}{\BUseVerbatim{myverb}}
-
-\end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -1836,7 +265,14 @@ mteval-v13.pl ...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Faster Training}
+
+\begin{itemize} \itemsep -1mm
+
+       
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -1865,6 +301,7 @@ mteval-v13.pl ...
   \begin{itemize}
   \item Split training data into NUM equal parts
   \item Extract concurrently
+  \item Score concurrently
   \end{itemize}
   \begin{center}
     \littlecode{.../train-model.perl -cores NUM}
@@ -1931,7 +368,7 @@ mteval-v13.pl ...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -1971,7 +408,7 @@ lmplz -o [order] -S [memory] < text > text.lm
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -1987,7 +424,7 @@ lmplz -o [order] -S [memory] < text > text.lm
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2006,7 +443,7 @@ lmplz -o [order] -S [memory] < text > text.lm
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2040,7 +477,7 @@ lmplz -o [order] -S [memory] < text > text.lm
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2133,7 +570,7 @@ Change ini file: \\[-6mm]
 \begin{center}
 \begin{SaveVerbatim}{myverb} 
 [feature]
-PhraseDictionaryBinary name=TranslationModel0 \
+PhraseDictionaryOnDisk name=TranslationModel0 \
    table-limit=20 \ num-features=4 \
    path=/.../phrase-table
 \end{SaveVerbatim}
@@ -2176,7 +613,7 @@ processLexicalTableMin
 \end{SaveVerbatim}
 \colorbox{gray}{\BUseVerbatim{myverb}}
 \end{center}
-\item Specify with 
+\item Change moses.ini file to use
 \begin{center}
 \begin{SaveVerbatim}{myverb} 
 PhraseDictionaryCompact
@@ -2192,7 +629,7 @@ PhraseDictionaryCompact
 \begin{itemize}
 \item Developed by Kenneth Heafield (CMU / Edinburgh / Stanford / Bloomberg)
 \item Fastest and smallest language model implementation
-\item Compile from LM trained with SRILM\\[5mm]
+\item Create binary LM from text ARPA LM\\[5mm]
 \begin{SaveVerbatim}{myverb} 
 build_binary model.lm model.binlm
 \end{SaveVerbatim}
@@ -2207,7 +644,7 @@ KENLM name=LM0 factor=0 path=/.../model.binlm order=5
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2297,7 +734,7 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2346,7 +783,7 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2403,7 +840,7 @@ sentence length$^2$ $\times$  number of hypotheses added to each stack\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2469,7 +906,7 @@ Specification in EMS:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2643,7 +1080,7 @@ Specification in EMS:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2685,7 +1122,7 @@ Specification in EMS:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2724,7 +1161,7 @@ Specification in EMS:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%\slide{Advanced Features}
+%\slide{Optimization}
 %\vspace{-5mm}
 %\textcolor{darkgrey}{
 %\begin{itemize} \itemsep -1mm
@@ -2789,7 +1226,7 @@ Specification in EMS:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -2873,7 +1310,7 @@ Specification in EMS:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\slide{Advanced Features}
+\slide{Optimization}
 \vspace{-5mm}
 \textcolor{darkgrey}{
 \begin{itemize} \itemsep -1mm
@@ -3074,14 +1511,31 @@ Argument to command line\\[2mm]
 \end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\includepdf[pages={1-14}]{FeatureFunction.pdf}
 
-\slide{SMT: Basic Idea}
-\vfill
-\begin{center}
-  \hspace*{-6em}\includegraphics[scale=1.8]{FeatureFunction.pdf}
-\end{center}
-\vfill
- 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\slide{Contribute to Machine Translation}
+\vspace{5mm}
+\begin{itemize}
+\item  Code 
+  \begin{itemize}
+  \item Moses
+  \item GIZA++
+  \item MGIZA
+  \item KenLM
+  \item Joshua
+  \item cdec
+  \end{itemize}
+\item Data
+  \begin{itemize}
+  \item Parallel corpora
+  \item Monolingual corpora
+  \end{itemize}
+\item Answer questions on the mailing list
+\end{itemize}
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \slide{Acknowledgements}
