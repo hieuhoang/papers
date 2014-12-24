@@ -564,6 +564,7 @@ PhraseDictionaryCompact
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \slide{Suffix-Array Phrase-table}
 
+\small
 \begin{itemize}
   \item stores word-aligned parallel corpus
   \item smaller than phrase-table
@@ -574,6 +575,14 @@ PhraseDictionaryCompact
     \end{itemize}
   \item Phrase-base only (for the moment)
 \end{itemize}
+
+\item Change moses.ini file to use
+\begin{center}
+\begin{SaveVerbatim}{myverb} 
+PhraseDictionaryBitextSampling name=PT0 \
+        num-features=9 path=/some/path/${CORPUS} L1=${L1} L2=${L2}
+\end{SaveVerbatim}
+\colorbox{gray}{\BUseVerbatim{myverb}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
