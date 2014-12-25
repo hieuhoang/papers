@@ -27,8 +27,241 @@ I would like to help you to understand Moses better
      - to program, extend moses
      - run certain type of experiments, hierarchical, syntax, translitewration etc
 
+%%%%%%%%%%%%%%%%%%
+Moses implements most of the paradigms in machine translation nowadays
+
+We started off with only the phrase-based model
+  - but now have hierarchical, syntax, and even more syntax models now
+
+difference between the statistical approach
+  - as opposed to the rule-based systems
+      - where language experts write rules that tell the system how to translate
+
+Here we write algorithms
+  - tells computer how to learn those rules from the training data
+			- typically parallel data
+      - This parallel data was produced by human translators
+					- eg. translation of European parliament, the UN, the bible etc
+  - then how to translate arbitary source text 
 
 
+%%%%%%%%%%%%%%%%%%
+MT is a very old field in computer science
+  but statistical approach to MT
+  - about 20 yrs old
+
+Initially
+  - translate word for word
+  - we don't use this word-to-word translation anymore
+     - but still build on it
+        - to create more complex models
+     - the word alignments that we need during training
+        - rooted in the word-to-word translation paradigm
+
+Little over 10 yrs ago
+  - we started to translate multiple words at once
+  - which we called phrases
+         - nothing to do with linguistic phrase
+  - found this gave significant improvement
+       - in fact, still gives state-of-the-art performance in quality for many language pairs
+
+%%%%%%%%%%%%%%%%%%
+In the last 10 years
+  - more complicated approaches have begun to make headway
+
+The 1st of these is 
+  - hierachical models
+
+Instead of just translating continuous phrase of words
+	- we have discontinuous phrases
+  - phrases with gaps
+  - formulaised as a Context-Free-Grammar/CFG
+      - Synchronous CFG
+      - cos act over 2 languages
+					- 1 side of the grammar analyse the input
+               ie. parses the input
+          - other side generate the output
+
+Hierarchical model
+  - really a syntax model
+  - without any linguistic information
+
+Only a short step towards adding syntax
+  - use linguistic information
+     - typically from langauge parsers
+        - can be on source side, target, or both
+  - people now experimenting with regularly
+
+Syntax model
+  - can also use the Sync CFG approach
+  - use Sync TSG
+       - won't talk about
+       - also in Moses 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+1 slide introduction to how the phrase-based model work
+  - most like to know it already
+
+Have this German input sentence
+  - translate with certain number of rules
+      - single words or multiple words
+      - when translate it with these rules
+         - implies segmentation of the input sentence
+         - in this case ....
+  - can reorder
+			- also reorder the rules
+      - in this case
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Lets talk about what we need to do to translate
+  - 1st we need to build our models
+       - translation models
+       - language model
+       - reordering models, and so on.
+
+To build our models
+  - need data
+
+Need parallel data
+  - to build translation model
+Need monolingual text in the target language
+  - build language model
+
+Need a 1000-2000 parallel sentence to tune and test our models
+
+When we have the data
+  - have to prepare it
+  - clean it, ensure its consstently encoded, pref UTF8
+      - ensure it's reliable data
+      - in the right language
+
+Sentence align it
+  - this sentence, matches that sentence in the other language
+  - may be many million sentences
+      - do this automically
+      - not every sentence can be correct, but overall it should be reliable
+
+Preprocess training data
+  - tokenize, normalise, split compount words, figure out how to deal with upper/lower case
+  - and so on
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Once the data has been cleaned and preprocessed
+
+Where the training begin
+  - end result is the creation of the models
+
+The training step consist of
+  - word alignment
+     - which word in the source is equivalent to which word in the target
+  - from this, we build a phrase-table that says which phrase ...
+From the target side monolingual data, we build a ngram language model
+From the aligned parallel data, also build a reordering model
+  - what phrase are more likely to be reordered
+
+These models all give a score
+  - number of scores
+  - to each translation
+  - each score is given a weight
+  - according to how good it is at separating good translations from bad
+
+But how do we know how to set the weights?
+  - this is the job to the tuning step
+  - require 1000-2000 sentences and the reference translation
+  - sets the weights to try to make the decoder produce the reference
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+Now you've built models
+Found good weights
+
+Ready to translate!
+In technical terms, translating is search from many possible translations to find the best 1
+  - One with the best score
+
+'Cos we've created the models from good training data
+And tuned to system to make sure that good translations get good scores
+  - When we translate a new sentence
+  - it will find a good translation
+
+THere are many possible translations
+  - trying to find a good 1 can take a long time
+  - to optimize it
+  - we have to use some clever algorithms to make it fast
+  - also have to take a risk and throw away translations 
+      - that doesn't look like they will be good
+      - even before we've fully evaluated them
+      - PRUNING
+
+Once we've decoded the sentence
+  - not finished yet
+  - if we had preprocessed the sentence at the beginning
+     - we need to undo the preprocessing at the end
+
+If we have reference translation for the sentences we've just decoded
+  - can measure how good our translation are
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+lets go back to data collection
+
+We may want to crawl the data from the web
+
+crawling for monolingual data is easy
+  - parallel data much more difficult
+
+For instance
+  - found this webpage in english
+	- extract all the text from it
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+has a corresponding page in italian
+	- extract all the text from it
+
+From these 2 text
+  - english and italian 
+  - how do we turn that into parallel data 
+     - can be used to train an SMT system?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+1st we have to split the text into sentence
+
+The text will come in big paragraphs like this
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+Have to split them into sentences like this
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+Have to sentence split both the target and source language text
+
+Then we have to sentence align
+  - NOT word align
+
+This mean we have to match the sentence in the source language
+  - with equivalent in the target
+
+If text is parallel, then this is fairly easy
+  - several software packages that can do that
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+After tokenization, casing and so on
+
+Create a word alignment
+  - several software packages for this as well
+
+This matrix represent a word alignment
+  - for 1 parallel sentence
+  - source sentence on 1 side, target on the other
+  - black square are the alignment of this word to this word
+Sometime 1 word can the aligned to multiple words
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 matthias has described the theories and models used in machine translation.
 
