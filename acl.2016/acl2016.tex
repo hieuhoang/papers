@@ -17,21 +17,7 @@
 \newcommand\BibTeX{B{\sc ib}\TeX}
 
 
-\title{Instructions for ACL 2016 Proceedings\Thanks{This
-    document has been adapted from the instructions for earlier ACL
-    and NAACL proceedings, including those for
-    NAACL HLT16 by Margaret Mitchell, 
-    NAACL HLT15 by Matt Post and Adam Lopez,
-    NAACL HLT12 by Nizar Habash and William Schuler,
-    NAACL HLT10 by Claudia Leacock and Richard Wicentowski,
-    NAACL HLT09 by Joakim Nivre and Noah Smith, 
-    for ACL05 by Hwee Tou Ng and Kemal Oflazer,
-    for ACL02 by Eugene Charniak and Dekang Lin, and earlier ACL and
-    EACL formats.  Those versions were written by several people,
-    including John Chen, Henry S. Thompson and Donald Walker.
-    Additional elements were taken from the formatting instructions of
-    the {\em International Joint Conference on Artificial Intelligence}
-    and the {\em Conference on Computer Vision and Pattern Recognition}.}}
+\title{Fast, Scalable Phrase-Based SMT Decoding}
 
 % Author information can be set in various styles:
 % For several authors from the same institution:
@@ -51,11 +37,9 @@
 % If the title and author information does not fit in the area allocated,
 % place \setlength\titlebox{<new height>} right after
 % at the top, where <new height> can be something larger than 2.25in
-\author{Author 1\\
-	    XYZ Company\\
-	    111 Anywhere Street\\
-	    Mytown, NY 10000, USA\\
-	    {\tt author1@xyz.org}
+\author{Hieu Hoang\\
+	    Moses Machine Translation CIC\\
+	    {\tt hieu@moses-mt.org}
 	  \And
 	Author 2\\
   	ABC University\\
@@ -70,18 +54,27 @@
 \maketitle
 
 \begin{abstract}
- This document contains instructions for preparing ACL 2016 submissions and camera-ready
-  manuscripts.  The document itself conforms
-  to its own specifications, and is therefore an example of what
-  your manuscript should look like.  Papers are required to conform to
-  all the directions reported in this document.  
-By using the provided \LaTeX\ and \BibTeX\ styles ({\small\tt acl2016.sty}, {\small\tt acl2016.bst}), the required formatting will be enabled by default.
+The utilization of statistical machine translation (SMT) has grown enormously over the last decade, many using open-source software developed by the NLP community. As commercial utilization has increased, there has been a pressing need that is optimized for their requirements. Specifically, faster phrase-based decoding, and more efficient utilization of modern multicore servers.
 
-I hate latex - Hieu.
+We present in this paper a re-assessment of the major components of phrase-based decoding and decoder implementation with particular emphasis on speed and scalability to multicore machines. The result is a drop-in replacement for the Moses decoder which is up to fifteen times faster and scales almost linearly with the number of cores. Furthermore, the decoder makes less search errors than the current Moses decoder.
 
 \end{abstract}
 
 \section{Introduction}
+
+SMT has been one of the outstanding success story from the NLP community in the last decade. It has transition from a mostly research discipline to services such as Google Translate, Microsoft Translator Hub, as well as services and products built around offline products such as the open-source Moses toolkit. The latter has spawned a cottage industry  encompassing a range of organizations and services from small language service providers that use SMT to reduce translation cost to large inter-govermental organizations such as the EU and the UN that provides high volume translation.
+
+For high volume users, decoding is a largest and most critical part of the translation process which needs to be fast and efficient. However, it has been noticed that the Moses decoder, amongst others, is unable to efficiently use multiple CPU cores that are now common on modern servers (reviewed paper, github discussion). That is, the time taken to decode a test set does not substantial decrease when more cores are used, in fact, decoding time may increase when more cores are added. The issue will only become more noticeable as the commercial use of SMT grows and the number of cores in servers increases.
+
+There have be speculation on the causes of the inefficiency as well as remedies. This paper is the first we know of that seeks to tackle this problem head on. We present an phrase-based decoder that is not only significantly faster than the Moses baseline for single-threaded operation, but is able to scale run multiple threads on multicore machines with only a slightly loss in linear speed. Model scores and functionality are compatible with Moses to aid comparison and ease of transition for users. All source code will be made available under an open-source license.
+
+\subsection{Prior Work}
+
+There are a number of open-source SMT projects, most includes a decoder. The most well known is Moses, which supports phrase-based models, hierarchical phrase-based as well as various syntax-based models. Joshua also supports hiearchical and syntax models and has recently supported phrase-based models. Phrasal supports a number of variants of the phrase-based model. CDEC supports hierarchical and syntactic models.
+
+A number of the decoders support multithreading whilst others use alternative methods such as Hadoop or external scripts to parallelize decoding. As we shall see in the Results Section, there are severe limitations to parallelizing using a external scripts to exectute multiple decoding processes.
+
+(mtplz) is perhaps closest in intent to this work. It describes a novel 
 
 The following instructions are directed to authors of papers submitted to and accepted
 for publication in the ACL 2016 proceedings.  All authors are required
