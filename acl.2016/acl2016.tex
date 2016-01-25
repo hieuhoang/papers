@@ -80,11 +80,23 @@ Other prior work look to optimizing specific components of decoding. (Liang and 
 
 (mtplz) is perhaps closest in intent to this work. This takes a wholistic approach to decoding, describing a novel decoding algorithm which is fis focused on better decoding speed. It also describes a number of implementation details for faster decoding. However, the decoding algorithm is only able to incorporate one stateful feature function which precludes some of the useful decoding configurations which contains multiple stateful feature functions. It does not include a load-on-demand phrase table, therefore, cannot be used in a commercial environment where phrase-table has not be filtered with a know test set for any realistic size phrase-table. Neither did this paper analyze the scalability of their work to multicore servers.
 
-The rest of the paper will be broken up into the following sections. Next, we will describe the phrase-based model and the major implementation components, with particular emphasis on decoding time shortcomings. We will then describe modifications and present results. We conclude in the last section will discuss suggested improvements and future work.
+The rest of the paper will be broken up into the following sections. Next, we will describe the phrase-based model and the major implementation components, with particular emphasis on decoding time shortcomings. We will then describe modifications to improve decoding speed and present results. We conclude in the last section discuss suggested improvements and future work.
 
 \section{Phrase-Based Model}
 
-The aim of decoding 
+The objective of decoding is to find the target translation with the maximum probability, given a source sentence. That is, for a source sentence $s$, the objective is to find a target translation $\hat{t}$ which has the highest conditional probability $p(t | s)$. Mathematically, this is written as:
+\begin{equation}
+\hat{t} = \arg \max_t p( t | s )
+\label{eq:argmax-factored-trans}
+\end{equation}
+where the \emph{arg max} function is the search. The log-linear model generalizes the noisy channel model to include more component models and weighting each model according to the contribution of each model to the total probability. 
+\begin{equation}
+\label{eq:Log-Linear}
+p(t | s) 	=  \frac{1}{Z} \exp ( \sum_m \lambda_m h_m ( t, s)^{} )
+\end{equation}
+where $\lambda_m$ is the weight, and $h_m$ is the feature function, or `score', for model $m$. $Z$ is the partition function which can be ignored for optimization. The log-linear formulation in phrase-based SMT uses log probabilities as feature functions, in addition to features which do not have a probabilistic interpretation. Typical feature functions include the log transforms of the target language model probability $p(t)$, and translation model probabilities, $p_{TM}(t|s) $ and $p_{TM}(s|t)$, which we have suffixed with $_{TM} $ to avoid confusion with the overall model probability $ p(t|s) $ and $ p(s|t)$. 
+
+
 
 \section{BLAH BLAH}
 
