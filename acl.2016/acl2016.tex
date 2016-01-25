@@ -96,7 +96,13 @@ p(t | s) 	=  \frac{1}{Z} \exp ( \sum_m \lambda_m h_m ( t, s)^{} )
 \end{equation}
 where $\lambda_m$ is the weight, and $h_m$ is the feature function, or `score', for model $m$. $Z$ is the partition function which can be ignored for optimization. The log-linear formulation in phrase-based SMT uses log probabilities as feature functions, in addition to features which do not have a probabilistic interpretation. Typical feature functions include the log transforms of the target language model probability $p(t)$, and translation model probabilities, $p_{TM}(t|s) $ and $p_{TM}(s|t)$, which we have suffixed with $_{TM} $ to avoid confusion with the overall model probability $ p(t|s) $ and $ p(s|t)$. 
 
+\subsection{Beam Search}
 
+A translation of a source sentence is created by applying a series of translation rules which together translate each source word once, and only once. Each partial translation is called a \emph{hypothesis}, which is created by applying a rule to an existing hypothesis. This process is called \emph{hypothesis expansion} and starts with a hypothesis that has translated no source word and ends with a completed hypothesis that has translated all source words. The highest-scoring completed hypothesis, according to the model score, is returned as  most probable translation, $\hat{t} $. Incomplete hypotheses are referred to as partial hypotheses.
+
+Each rule translates a contiguous sequence of source words but successive translation options do not have to be adjacent on the source side, depending on the distortion limit. However, the target output is constructed strictly left-to-right from the target string of successive translation options. Therefore, successive translation options which are not adjacent and monotonic in the source causes translation reordering.
+
+A beam search algorithm is used to create the completed hypothesis set efficiently. Partial hypotheses are organized into stacks where each stack holds a number of comparable hypotheses. Hypotheses in the same stack have the same coverage cardinality $|C|$, where $C$ is  the coverage set, $C \subseteq \{1,2,... |s| \} $ of the number of  source words translated. Therefore, $|s| + 1$ number of stacks are created for the decoding of a sentence $s$. %There exist other stack layouts \citep{ortizmartinez-garciavarea-casacuberta:2006:WMT} but the use of coverage cardinality is the most common and the method we use.
 
 \section{BLAH BLAH}
 
