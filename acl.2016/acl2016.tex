@@ -89,12 +89,12 @@ The objective of decoding is to find the target translation with the maximum pro
 \hat{t} = \arg \max_t p( t | s )
 \label{eq:argmax-factored-trans}
 \end{equation}
-where the \emph{arg max} function is the search. The log-linear model generalizes the noisy channel model to include more component models and weighting each model according to the contribution of each model to the total probability. 
+where the \emph{arg max} function is the search. The log-linear model generalizes Equation~\ref{eq:argmax-factored-trans} to include more component models and weighting each model according to the contribution of each model to the total probability. 
 \begin{equation}
 \label{eq:Log-Linear}
 p(t | s) 	=  \frac{1}{Z} \exp ( \sum_m \lambda_m h_m ( t, s)^{} )
 \end{equation}
-where $\lambda_m$ is the weight, and $h_m$ is the feature function, or `score', for model $m$. $Z$ is the partition function which can be ignored for optimization. The log-linear formulation in phrase-based SMT uses log probabilities as feature functions, in addition to features which do not have a probabilistic interpretation. Typical feature functions include the log transforms of the target language model probability $p(t)$, and translation model probabilities, $p_{TM}(t|s) $ and $p_{TM}(s|t)$, which we have suffixed with $_{TM} $ to avoid confusion with the overall model probability $ p(t|s) $ and $ p(s|t)$. 
+where $\lambda_m$ is the weight, and $h_m$ is the feature function, or `score', for model $m$. $Z$ is the partition function which can be ignored for optimization. 
 
 \subsection{Beam Search}
 
@@ -103,6 +103,61 @@ A translation of a source sentence is created by applying a series of translatio
 Each rule translates a contiguous sequence of source words but successive translation options do not have to be adjacent on the source side, depending on the distortion limit. However, the target output is constructed strictly left-to-right from the target string of successive translation options. Therefore, successive translation options which are not adjacent and monotonic in the source causes translation reordering.
 
 A beam search algorithm is used to create the completed hypothesis set efficiently. Partial hypotheses are organized into stacks where each stack holds a number of comparable hypotheses. Hypotheses in the same stack have the same coverage cardinality $|C|$, where $C$ is  the coverage set, $C \subseteq \{1,2,... |s| \} $ of the number of  source words translated. Therefore, $|s| + 1$ number of stacks are created for the decoding of a sentence $s$. %There exist other stack layouts \citep{ortizmartinez-garciavarea-casacuberta:2006:WMT} but the use of coverage cardinality is the most common and the method we use.
+
+\subsection{Feature Functions}
+
+Features functions are the $h_m$ in Equation~\ref{eq:Log-Linear}, calculating a score for each hypothesis which is then weighted and summed to give an overall score.
+
+Standard feature functions in the phrase-based model include:
+\begin{enumerate} 
+  \item log transforms of the target language model probability $p(t)$, 
+  \item log transforms translation model probabilities, $p_{TM}(t|s) $ and $p_{TM}(s|t)$, and word-based translation probabilities $p_w(t|s)$ and $p_w(s|t)$,
+  \item log transforms of the lexicalized re-ordering probabilities,
+  \item a distortion penalty
+  \item a phrase-penalty,
+  \item a word penalty,
+  \item an unknown word penalty.
+\end{enumerate}
+%which we have suffixed with $_{TM} $ to avoid confusion with the overall model probability $ p(t|s) $ and $ p(s|t)$. 
+
+The first three feature functions frequently trained on data and require the feature to read the model from files. The other feature functions do not require model files.
+
+\section{Experimental Setup}
+
+We trained two phrase-based systems using the Moses toolkit, with standard settings. The first system was trained on most of the publicly available Arabic-English data from Opus (Jörg Tiedemann, 2012,) consisting of over 69 million parallel sentences, and tuned on a held out set. The second system was trained on the French-English Europarl corpus. The phrase-tables were then pruned, keeping only the top 100 entries per source phrase, according to $p(t|s)$. All models files were then binarized; thelanguage models were binaized using KenLM (???), the phrase table using Probing PT (???), lexicalized reordering model using the compact datastructure described in ???. These binary formats were choosen for their best-of-class multithreaded performance. Table~\ref{tab:model-files} gives details of the resultant sizes of the model files.
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|l|c|c|} \hline
+		& ar-en	& fr-en \\ \hline
+Phrase table  	& 17 	& 5.8 \\
+Language model 	& 3.1  	& 1.8 \\ 
+Lex-re model	& 2.3	& 637MB \\ \hline
+\end{tabular}
+\end{center}
+\caption{Model sizes in GB}
+\label{tab:model-files}
+\end{table}
+
+For testing decoding speed, we used a subset of the training data, Table~\ref{tab:test-sets}. The two test set have differing characterics that we are interested in analyzing, ar-en have short sentences while fr-en have overly long sentences.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|l|c|c|} \hline
+		& ar-en	& fr-en \\ \hline
+\# sentences  	& 800k 	& 200k \\
+\# words 	& 5.8m 	& 5.9m \\ 
+\Avg words/sent	& 7.3	& 29.7 \\ \hline
+\end{tabular}
+\end{center}
+\caption{Model sizes in GB}
+\label{tab:test-sets}
+\end{table}
+
+Where we need to compare the model score of the algorithms, we used a held out set; ??? for ar-en and ??? for fr-en.
+
+Standard Moses phrase-based configurations are used, except that we use the cube-pruning algorithm (???) with a pop-limit of 400, rather than the basic phrase-based algorithm. The cube-pruning algorithm is often employ by users who are sensitive to decoding speed as it gives them the ability to trade speed with translation quality with a simple pop-limit parameter.
+
+\section{Results}
 
 \section{BLAH BLAH}
 
