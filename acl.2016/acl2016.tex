@@ -221,13 +221,13 @@ Our work 	& ??? 		& ??? \\ \hline
 
 The most popular stack configuration for phrase-based model, as implemented in Pharaoh, Moses and Joshua, has been by coverage cardinality, ie. hypotheses that have translated the same number of source words are stored in the same stack. There have been research into other stack layouts \citep{ortizmartinez-garciavarea-casacuberta:2006:WMT}, and it has been noted that the decoder described in (???IBM) uses coverage stacks, as opposed to coverage cardinality. We re-visit this issue by testing the advantages of stack coverage and cardinality layout. 
 
-We also note that distortion limit which constrains hypothesis extension is dependent on the hypothesis' coverage vector \emph{and} the end position of most recent source word that has been translated. The distortion limit must be checked for every instance of a hypothesis and translation rule, Figure~\ref{algo:Hypothesis Expansion with Unsorted Stack}.
+We also note that distortion limit which constrains hypothesis extension is dependent on the hypothesis' coverage vector, $C$ \emph{and} the end position of most recent source word that has been translated, $e$. The distortion limit must be checked for every instance of a hypothesis and translation rule, Figure~\ref{algo:Hypothesis Expansion with Unsorted Stack}.
 \begin{figure} [h]
 \begin{algorithmic}
 %\REQUIRE source sentence $s$, translation options
-\FORALL{ hypo in $stack$} 
+\FORALL{ $hypo$ in $stack_{|C|}$} 
   \FORALL{ translation rules}
-      \IF {CanExpand(hypo coverage, hypo end position, translation rule range)}
+      \IF {can-expand($C(hypo)$, $e(hypo)$, translation rule range)}
 	\STATE expand hypo with translation rule $\rightarrow$ new hypo
 	\STATE add new hypo into next stack
       \ENDIF
@@ -237,25 +237,30 @@ We also note that distortion limit which constrains hypothesis extension is depe
 \caption{Hypothesis Expansion with Unsorted Stack}
 \label{algo:Hypothesis Expansion with Unsorted Stack}
 \end{figure}
-However, by separating hypotheses according to coverage and end position, the distortion limit check only needs to be done for each stack, potentially speeding up decoding, Figure~\ref{algo:Hypothesis Expansion with Sorted Stack}.
+However, by separating hypotheses into \emph{'ministack'} according to coverage and end position, the distortion limit only needs to be checked for each ministack, Figure~\ref{algo:Hypothesis Expansion with Sorted Stack}.
 \begin{figure} [h]
 \begin{algorithmic}
 %\REQUIRE source sentence $s$, translation options
-\FORALL{ coverage and end position in $stack$}
+\FORALL{ $ministack_{C, e}$ in $stack_{|C|}$} 
   \FORALL{ translation rules}
-      \IF {CanExpand(coverage, end position, translation rule range)}
-        \FORALL{hypo in [coverage and end position]}
-  	  \STATE expand hypo with translation rule $\rightarrow$ new hypo
-	  \STATE add new hypo into $next stack$
-	\ENDFOR
-      \ENDIF
+    \IF {can-expand($C$, $e$, translation rule range)}
+      \FORALL{ $hypo$ in $ministack_{C, e}$} 
+	\STATE expand hypo with translation rule $\rightarrow$ new hypo
+	\STATE add new hypo into next stack
+      \ENDFOR
+    \ENDIF
   \ENDFOR % { translation options}
 \ENDFOR % { hypothesis in $stack_i$} 
 \end{algorithmic}
 \caption{Hypothesis Expansion with Sorted Stack}
 \label{algo:Hypothesis Expansion with Sorted Stack}
 \end{figure}
-
+We therefore looked at the effects of three stack configurations.
+\begin{enumerate}
+  \item coverage cardinality,
+  \item coverage,
+  \item coverage and end position of most recent translated source word.
+\end{enumerate}
 
 
 
