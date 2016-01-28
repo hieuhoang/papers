@@ -110,9 +110,9 @@ Secondly, we shall investigate different stack configurations other than coverag
 
 \subsection{Feature Functions}
 
-Features functions are the $h_m$ in Equation~\ref{eq:Log-Linear}, calculating a score for each hypothesis which is then weighted and summed to give an overall score.
+Features functions are the $h_m$ in Equation~\ref{eq:Log-Linear}, calculating a score for each hypothesis.
 
-Standard feature functions in the phrase-based model include:
+The standard feature functions in the phrase-based model include:
 \begin{enumerate}
   \item log transforms translation model probabilities, $p_{TM}(t|s) $ and $p_{TM}(s|t)$, and word-based translation probabilities $p_w(t|s)$ and $p_w(s|t)$,
   \item log transforms of the lexicalized re-ordering probabilities,
@@ -131,11 +131,12 @@ The first three feature functions frequently trained on data and require the fea
 %
 \subsection{Translation Model}
 
-Load-on-demand 'binary' phrase-tables are often used for MT deployment due to the advantages of fast loading and fast querying speed, and because they can be used with large phrase-tables. We therefore focus on optimizing decoding speed with these phrase-tables, specifically the Probing PT.
+Load-on-demand \emph{'binary'} phrase-tables are often used for MT deployment due to their fast loading and fast querying speed, and because they can be used with large phrase-tables. We therefore focus on optimizing decoding speed with these phrase-tables, specifically the Probing PT.
 
 We shall look at the caching strategies to reduce the number of phrase-table lookups. We shall also investigate the datastructures used by the phrase-table and their impact on decoding speed.
 
 \subsection{Lexicalized Reordering Model}
+
 
 
 \section{Experimental Setup}
