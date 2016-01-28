@@ -104,15 +104,19 @@ Each rule translates a contiguous sequence of source words but successive transl
 
 A beam search algorithm is used to create the completed hypothesis set efficiently. Partial hypotheses are organized into stacks where each stack holds a number of comparable hypotheses. Hypotheses in the same stack have the same coverage cardinality $|C|$, where $C$ is  the coverage set, $C \subseteq \{1,2,... |s| \} $ of the number of  source words translated. Therefore, $|s| + 1$ number of stacks are created for the decoding of a sentence $s$. %There exist other stack layouts \citep{ortizmartinez-garciavarea-casacuberta:2006:WMT} but the use of coverage cardinality is the most common and the method we use.
 
+There are two main optimization to the search that we shall investigate. Firstly, the search creates and destroy a large number of hypothesis objects in memory which puts a heavy burden on the operating system. Also, the speed of memory access is dependent on whether the data is in the CPU cache. We shall optimize the search algorithm to use memory pools and object pools, replacing the operating system's general purpose memory management with our own application-aware management. We shall also seek to re-use recently accessed information to increase likelihood of the data being in the CPU cache.
+
+Secondly, we shall investigate different stack configurations other than coverage cardinality to see whether they can improve the speed / model score ratio.
+
 \subsection{Feature Functions}
 
 Features functions are the $h_m$ in Equation~\ref{eq:Log-Linear}, calculating a score for each hypothesis which is then weighted and summed to give an overall score.
 
 Standard feature functions in the phrase-based model include:
-\begin{enumerate} 
-  \item log transforms of the target language model probability $p(t)$, 
+\begin{enumerate}
   \item log transforms translation model probabilities, $p_{TM}(t|s) $ and $p_{TM}(s|t)$, and word-based translation probabilities $p_w(t|s)$ and $p_w(s|t)$,
   \item log transforms of the lexicalized re-ordering probabilities,
+  \item log transforms of the target language model probability $p(t)$, 
   \item a distortion penalty
   \item a phrase-penalty,
   \item a word penalty,
@@ -120,7 +124,19 @@ Standard feature functions in the phrase-based model include:
 \end{enumerate}
 %which we have suffixed with $_{TM} $ to avoid confusion with the overall model probability $ p(t|s) $ and $ p(s|t)$. 
 
-The first three feature functions frequently trained on data and require the feature to read the model from files. The other feature functions do not require model files.
+The first three feature functions frequently trained on data and require the feature to read the model from files. The other feature functions do not require model files. We shall investigate the first two feature functions for optimization.
+
+%\subsection{Language Model}
+% TODO
+%
+\subsection{Translation Model}
+
+Load-on-demand 'binary' phrase-tables are often used for MT deployment due to the advantages of fast loading and fast querying speed, and because they can be used with large phrase-tables. We therefore focus on optimizing decoding speed with these phrase-tables, specifically the Probing PT.
+
+We shall look at the caching strategies to reduce the number of phrase-table lookups. We shall also investigate the datastructures used by the phrase-table and their impact on decoding speed.
+
+\subsection{Lexicalized Reordering Model}
+
 
 \section{Experimental Setup}
 
@@ -146,7 +162,7 @@ For testing decoding speed, we used a subset of the training data, Table~\ref{ta
 		& ar-en	& fr-en \\ \hline
 \# sentences  	& 800k 	& 200k \\
 \# words 	& 5.8m 	& 5.9m \\ 
-\Avg words/sent	& 7.3	& 29.7 \\ \hline
+Avg words/sent	& 7.3	& 29.7 \\ \hline
 \end{tabular}
 \end{center}
 \caption{Model sizes in GB}
