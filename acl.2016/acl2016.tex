@@ -102,7 +102,7 @@ A translation of a source sentence is created by applying a series of translatio
 
 Each rule translates a contiguous sequence of source words but successive translation options do not have to be adjacent on the source side, depending on the distortion limit. However, the target output is constructed strictly left-to-right from the target string of successive translation options. Therefore, successive translation options which are not adjacent and monotonic in the source causes translation reordering.
 
-A beam search algorithm is used to create the completed hypothesis set efficiently. Partial hypotheses are organized into stacks where each stack holds a number of comparable hypotheses. Hypotheses in the same stack have the same coverage cardinality $|C|$, where $C$ is  the coverage set, $C \subseteq \{1,2,... |s| \} $ of the number of  source words translated. Therefore, $|s| + 1$ number of stacks are created for the decoding of a sentence $s$. %There exist other stack layouts \citep{ortizmartinez-garciavarea-casacuberta:2006:WMT} but the use of coverage cardinality is the most common and the method we use.
+A beam search algorithm is used to create the completed hypothesis set efficiently. Partial hypotheses are organized into stacks where each stack holds a number of comparable hypotheses. Hypotheses in the same stack have the same coverage cardinality $|C|$, where $C$ is  the coverage set, $C \subseteq \{1,2,... |s| \} $ of the number of  source words translated. Therefore, $|s| + 1$ number of stacks are created for the decoding of a sentence $s$. 
 
 There are three main optimization to the search that we shall investigate. Firstly, the search creates and destroy a large number of hypothesis objects in memory which puts a heavy burden on the operating system. We shall optimize the search algorithm to use memory pools and object pools, replacing the operating system's general purpose memory management with our own application-aware management. 
 
@@ -110,7 +110,7 @@ The speed of memory access is dependent on whether the data is in the CPU cache 
 
 In multiprocessor servers, the CPU cache is attached to each processor and each core. If a sentences is being decoded on one CPU is switched to another, the CPU cache on the new CPU must be repopulated, slowing down decoding. We will therefore investigate binding threads to specific cores.
 
-Lastly, we shall investigate different stack configurations other than coverage cardinality to see whether they can improve the speed / model score ratio.
+Lastly, we shall investigate different stack configurations other than coverage cardinality to see whether they can improve speed and translation quality.
 
 \subsection{Feature Functions}
 
@@ -141,7 +141,7 @@ We shall look at the caching strategies to reduce the number of phrase-table loo
 
 \subsection{Lexicalized Reordering Model}
 
-
+The lexicalized reordering model is trained on parallel data, usually requiring random lookups of the model file during decoding. However, the key to the lookup are the source and target phrase of each translation rule. We shall investigate the advantages of storing the mode data within the translation rule.
 
 \section{Experimental Setup}
 
@@ -178,7 +178,61 @@ Where we need to compare the model score of the algorithms, we used a held out s
 
 Standard Moses phrase-based configurations are used, except that we use the cube-pruning algorithm (???) with a pop-limit of 400, rather than the basic phrase-based algorithm. The cube-pruning algorithm is often employ by users who require fast decoding as it gives them the ability to trade speed with translation quality with a simple pop-limit parameter.
 
+As a baseline, we use the latest version of the Moses decoder taken from the github repository.
+
+For all experiments, we used a Dell PowerEdge R620 server with 16 cores, 32 hyper-threads, split over 2 physical processors (Intel Xeon E5-2650 @ 2.00GHz). The server has 380GB RAM. The operating system was Ubuntu 14.04, the code was compiled with gcc 4.8.4 and Boost library 1.59.
+
 \section{Results}
+
+\subsection{Optimizing Memory}
+
+We create a dynamic memory pool which can grow as more memory is requested. The memory is not released, instead the pool can be reset in order for the memory to be re-used. We instantiate two pools for each thread, one which is never reset and another which is reset after the decoding each sentence. Objects are created in either pool according to their life cycle.
+
+For critical objects with high churn such as the hypotheses, thread-specific LIFO queues are used to recycle objects which are no longer used. This not only reduces memory wastage but re-uses recent objects which are likely to be in the CPU cache.
+
+Over 30\% of the Moses decoder running time is spent on memory management and this increases when more threads are used, Table~\ref{tab:optimizing-memory}. By contrast, our decoder spends ???\% on memory management.
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|l|c|c|} \hline
+		& 1 thread	& 30 threads \\ \hline
+Moses  		& ???\% 	& ???\% \\
+Our work 	& ???\% 	& ???\% \\ \hline
+\end{tabular}
+\end{center}
+\caption{\%age decoding time managing memory}
+\label{tab:optimizing-memory}
+\end{table}
+
+A potential disadvantage of using memory pool is that the decoder will use more memory, however, Table~\ref{tab:memory-usage} shows that peak memory consumption are comparable.
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|l|c|c|} \hline
+		& 1 thread	& 30 threads \\ \hline
+Moses  		& ???	 	& ??? \\
+Our work 	& ??? 		& ??? \\ \hline
+\end{tabular}
+\end{center}
+\caption{Peak Memory Usage in GB}
+\label{tab:memory-usage}
+\end{table}
+
+\subsection{Stack Configuration}
+
+The most popular stack configuration for phrase-based model, as implemented in Pharaoh, Moses and Joshua, has been by coverage cardinality, ie. hypotheses that have translated the same number of source words are stored in the same stack. There have been research into other stack layouts \citep{ortizmartinez-garciavarea-casacuberta:2006:WMT}, and it has been noted that the decoder described in (???IBM) uses coverage stacks, as opposed to coverage cardinality. We re-visit this issue by testing the advantages of stack coverage and cardinality layout. 
+
+However, we also note that distortion limit which constrains hypothesis extension is dependent on the hypothesis' coverage vector \emph{and} the end position of most recent source word that has been translated. Therefore, if the hypotheses are separated by coverage vector \emph{and} end position, the distortion limit constraint can be moved to an outer loop, potentially speeding up decoding.
+
+
+
+
+
+
+
+
+
+
+
+
 
 \section{BLAH BLAH}
 
