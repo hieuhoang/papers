@@ -6,6 +6,7 @@
 \usepackage{acl2016}
 \usepackage{times}
 \usepackage{latexsym}
+\usepackage{algorithmic}
 
 %\aclfinalcopy % Uncomment this line for the final submission
 %\def\aclpaperid{***} %  Enter the acl Paper ID here
@@ -194,7 +195,7 @@ Over 30\% of the Moses decoder running time is spent on memory management and th
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{|l|c|c|} \hline
-		& 1 thread	& 30 threads \\ \hline
+		& 1 thread	& 32 threads \\ \hline
 Moses  		& ???\% 	& ???\% \\
 Our work 	& ???\% 	& ???\% \\ \hline
 \end{tabular}
@@ -207,7 +208,7 @@ A potential disadvantage of using memory pool is that the decoder will use more 
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{|l|c|c|} \hline
-		& 1 thread	& 30 threads \\ \hline
+		& 1 thread	& 32 threads \\ \hline
 Moses  		& ???	 	& ??? \\
 Our work 	& ??? 		& ??? \\ \hline
 \end{tabular}
@@ -220,7 +221,33 @@ Our work 	& ??? 		& ??? \\ \hline
 
 The most popular stack configuration for phrase-based model, as implemented in Pharaoh, Moses and Joshua, has been by coverage cardinality, ie. hypotheses that have translated the same number of source words are stored in the same stack. There have been research into other stack layouts \citep{ortizmartinez-garciavarea-casacuberta:2006:WMT}, and it has been noted that the decoder described in (???IBM) uses coverage stacks, as opposed to coverage cardinality. We re-visit this issue by testing the advantages of stack coverage and cardinality layout. 
 
-However, we also note that distortion limit which constrains hypothesis extension is dependent on the hypothesis' coverage vector \emph{and} the end position of most recent source word that has been translated. Therefore, if the hypotheses are separated by coverage vector \emph{and} end position, the distortion limit constraint can be moved to an outer loop, potentially speeding up decoding.
+However, we also note that distortion limit which constrains hypothesis extension is dependent on the hypothesis' coverage vector \emph{and} the end position of most recent source word that has been translated. Using a cardinality-based stack, the distortion limit must be checked for every instance, Figure~\ref{algo:Hypothesis Expansion with Unsorted Stack}.
+\begin{figure} [h]
+\begin{algorithmic}
+%\REQUIRE source sentence $s$, translation options
+\STATE insert empty hypothesis into $stack_0$
+\FOR{$i = 0$ to $|s|-1$} 
+  \STATE prune $stack_i$
+  \FORALL{ hypothesis in $stack_i$} 
+    \FORALL{ translation options}
+       \IF {hypothesis and translation option are compatible}
+         \STATE expand hypothesis with translation option $\rightarrow$ new hypothesis
+         \STATE coverage of  new hypothesis $\rightarrow C$
+         \STATE insert new hypothesis $\rightarrow stack_{|C|}$
+         \STATE recombine new hypothesis if possible
+         \STATE prune $stack_{|C|}$ if necessary
+       \ENDIF
+    \ENDFOR % { translation options}
+  \ENDFOR % { hypothesis in $stack_i$} 
+\ENDFOR% {$i = 0$ to $|s|-1$} 
+\RETURN highest scoring hypothesis in $stack_{|s|}$
+\end{algorithmic}
+\caption{Hypothesis Expansion with Unsorted Stack}
+\label{algo:Hypothesis Expansion with Unsorted Stack}
+\end{figure}
+
+
+Therefore, if the hypotheses are separated by coverage vector and end position, the distortion limit constraint can be moved to an outer loop, potentially speeding up decoding.
 
 
 
