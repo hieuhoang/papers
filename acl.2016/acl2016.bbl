@@ -12,6 +12,13 @@ Alfred~V. Aho and Jeffrey~D. Ullman.
 \newblock {\em Publications Manual}.
 \newblock American Psychological Association, Washington, DC.
 
+\bibitem[\protect\citename{Brown \bgroup et al.\egroup }1993]{Brown:1993}
+Peter~F. Brown, Stephen~A. Della-Pietra, Vincent~J. Della-Pietra, and Robert~L.
+  Mercer.
+\newblock 1993.
+\newblock The mathematics of statistical machine translation.
+\newblock {\em Computational Linguistics}, 19(2):263--313.
+
 \bibitem[\protect\citename{Chandra \bgroup et al.\egroup }1981]{Chandra:81}
 Ashok~K. Chandra, Dexter~C. Kozen, and Larry~J. Stockmeyer.
 \newblock 1981.

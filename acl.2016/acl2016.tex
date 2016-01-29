@@ -219,7 +219,7 @@ Our work 	& ??? 		& ??? \\ \hline
 
 \subsection{Stack Configuration}
 
-The most popular stack configuration for phrase-based model, as implemented in Pharaoh, Moses and Joshua, has been by coverage cardinality, ie. hypotheses that have translated the same number of source words are stored in the same stack. There have been research into other stack layouts ~\cite{ortizmartinez-garciavarea-casacuberta:2006:WMT}, and it has been noted that the decoder described in (???IBM) uses coverage stacks, as opposed to coverage cardinality. We re-visit this issue by testing the advantages of stack coverage and cardinality layout. 
+The most popular stack configuration for phrase-based model, as implemented in Pharaoh, Moses and Joshua, has been by coverage cardinality, ie. hypotheses that have translated the same number of source words are stored in the same stack. There have been research into other stack layouts such as~\cite{ortizmartinez-garciavarea-casacuberta:2006:WMT}, and it has been noted that the decoder in~\cite{Brown:1993} uses coverage stacks, as opposed to coverage cardinality. 
 
 We also note that distortion limit which constrains hypothesis extension is dependent on the hypothesis' coverage vector, $C$ \emph{and} the end position of most recent source word that has been translated, $e$. The distortion limit must be checked for every instance of a hypothesis and translation rule, Figure~\ref{algo:Hypothesis Expansion with Unsorted Stack}.
 \begin{figure} [h]
