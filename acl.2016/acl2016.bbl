@@ -25,4 +25,14 @@ Dan Gusfield.
 \newblock {\em Algorithms on Strings, Trees and Sequences}.
 \newblock Cambridge University Press, Cambridge, UK.
 
+\bibitem[\protect\citename{Ortiz-Mart\'{i}nez \bgroup et al.\egroup
+  }2006]{ortizmartinez-garciavarea-casacuberta:2006:WMT}
+Daniel Ortiz-Mart\'{i}nez, Ismael Garc\'{i}a-Varea, and Francisco Casacuberta.
+\newblock 2006.
+\newblock Generalized stack decoding algorithms for statistical machine
+  translation.
+\newblock In {\em Proceedings on the Workshop on Statistical Machine
+  Translation}, pages 64--71, New York City, June. Association for
+  Computational Linguistics.
+
 \end{thebibliography}
