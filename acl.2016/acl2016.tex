@@ -146,7 +146,7 @@ The lexicalized reordering model is trained on parallel data, usually requiring 
 
 \section{Experimental Setup}
 
-We trained two phrase-based systems using the Moses toolkit, with standard settings. The first system was trained on most of the publicly available Arabic-English data from Opus (Jörg Tiedemann, 2012,) consisting of over 69 million parallel sentences, and tuned on a held out set. The second system was trained on the French-English Europarl corpus. The phrase-tables were then pruned, keeping only the top 100 entries per source phrase, according to $p(t|s)$. All models files were then binarized; thelanguage models were binaized using KenLM (???), the phrase table using Probing PT (???), lexicalized reordering model using the compact datastructure described in ???. These binary formats were choosen for their best-of-class multithreaded performance. Table~\ref{tab:model-files} gives details of the resultant sizes of the model files.
+We trained a phrase-based system using the Moses toolkit with standard settings. The training data consisted of most of the publicly available Arabic-English data from Opus (Jörg Tiedemann, 2012,) containing over 69 million parallel sentences, and tuned on a held out set. The phrase-table was then pruned, keeping only the top 100 entries per source phrase, according to $p(t|s)$. All models files were then binarized; the language models were binaized using KenLM (???), the phrase table using Probing PT (???), lexicalized reordering model using the compact datastructure described in ???. These binary formats were choosen for their best-of-class multithreaded performance. Table~\ref{tab:model-files} gives details of the resultant sizes of the model files. For verification with a different dataset, we also used a second system trained on the French-English Europarl corpus. 
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{|l|c|c|} \hline
@@ -159,7 +159,6 @@ Lex-re model	& 2.3	& 637MB \\ \hline
 \caption{Model sizes in GB}
 \label{tab:model-files}
 \end{table}
-
 For testing decoding speed, we used a subset of the training data, Table~\ref{tab:test-sets}. The two test set have differing characterics that we are interested in analyzing, ar-en have short sentences while fr-en have overly long sentences.
 
 \begin{table}[h]
@@ -191,31 +190,36 @@ We create a dynamic memory pool which can grow as more memory is requested. The 
 
 For critical objects with high churn such as the hypotheses, thread-specific LIFO queues are used to recycle objects which are no longer used. This not only reduces memory wastage but re-uses recent objects which are likely to be in the CPU cache.
 
-Over 30\% of the Moses decoder running time is spent on memory management and this increases when more threads are used, Table~\ref{tab:optimizing-memory}. By contrast, our decoder spends ???\% on memory management.
+Over 24\% of the Moses decoder running time is spent on memory management and this increases when more threads are used, Table~\ref{tab:optimizing-memory}, braking the scaling of the decoder to many cores. By contrast, our decoder spends 11\% on memory management and does not significantly increase with more cores.
 \begin{table}[h]
 \begin{center}
-\begin{tabular}{|l|c|c|} \hline
-		& 1 thread	& 32 threads \\ \hline
-Moses  		& ???\% 	& ???\% \\
-Our work 	& ???\% 	& ???\% \\ \hline
+\begin{tabular}{|l|c|c|c|c|} \hline
+		& \multicolumn{2}{c|} {Moses}	& \multicolumn{2}{c|} {Our Work} \\ \hline
+\# threads	& 1 		& 32	& 1 		& 32  \\ \hline
+Memory  	& 24		& 39 	& 11		& 13 \\
+LM 		& 12	 	& 2 	& 47		& 38 \\ 
+Phrase-table	& 9	 	& 5 	& 2		& 4 \\ 
+Lex RO 		& 8	 	& 2 	& 2		& 2 \\ 
+Search 		& 2	 	& 0 	& 14		& 19 \\ 
+Misc/Unknown	& 45	 	& 39 	& 24		& 29 \\ \hline
 \end{tabular}
 \end{center}
-\caption{\%age decoding time managing memory}
+\caption{Profile of \%age decoding time}
 \label{tab:optimizing-memory}
 \end{table}
 
-A potential disadvantage of using memory pool is that the decoder will use more memory, however, Table~\ref{tab:memory-usage} shows that peak memory consumption are comparable.
-\begin{table}[h]
-\begin{center}
-\begin{tabular}{|l|c|c|} \hline
-		& 1 thread	& 32 threads \\ \hline
-Moses  		& ???	 	& ??? \\
-Our work 	& ??? 		& ??? \\ \hline
-\end{tabular}
-\end{center}
-\caption{Peak Memory Usage in GB}
-\label{tab:memory-usage}
-\end{table}
+% A potential disadvantage of using memory pool is that the decoder will use more memory, however, Table~\ref{tab:memory-usage} shows that peak memory consumption are comparable.
+% \begin{table}[h]
+% \begin{center}
+% \begin{tabular}{|l|c|c|} \hline
+% 		& 1 thread	& 32 threads \\ \hline
+% Moses  		& ???	 	& ??? \\
+% Our work 	& ??? 		& ??? \\ \hline
+% \end{tabular}
+% \end{center}
+% \caption{Peak Memory Usage in GB}
+% \label{tab:memory-usage}
+% \end{table}
 
 \subsection{Stack Configuration}
 
