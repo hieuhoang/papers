@@ -233,7 +233,7 @@ We also note that distortion limit which constrains hypothesis extension is depe
   \FORALL{ translation rules}
       \IF {can-expand($C(hypo)$, $e(hypo)$, translation rule range)}
 	\STATE expand hypo with translation rule $\rightarrow$ new hypo
-	\STATE add new hypo into next stack
+	\STATE add new hypo to next stack
       \ENDIF
   \ENDFOR % { translation options}
 \ENDFOR % { hypothesis in $stack_i$} 
@@ -250,7 +250,7 @@ However, by separating hypotheses into \emph{'ministacks'} according to coverage
     \IF {can-expand($C$, $e$, translation rule range)}
       \FORALL{ $hypo$ in $ministack_{C, e}$} 
 	\STATE expand hypo with translation rule $\rightarrow$ new hypo
-	\STATE add new hypo into next stack
+	\STATE add new hypo to next stack
       \ENDFOR
     \ENDIF
   \ENDFOR % { translation options}
