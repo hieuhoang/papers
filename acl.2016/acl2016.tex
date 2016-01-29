@@ -250,7 +250,7 @@ However, by separating hypotheses into \emph{'ministacks'} according to coverage
     \IF {can-expand($C$, $e$, translation rule range)}
       \FORALL{ $hypo$ in $ministack_{C, e}$} 
 	\STATE expand hypo with translation rule $\rightarrow$ new hypo
-	\STATE add new hypo to next stack
+	\STATE add new hypo to next ministack
       \ENDFOR
     \ENDIF
   \ENDFOR % { translation options}
@@ -265,7 +265,45 @@ We therefore looked at the effects of three stack configurations.
   \item coverage,
   \item coverage and end position of most recent translated source word.
 \end{enumerate}
+We therefore looked at the effects of three stack configurations.
+\begin{enumerate}
+  \item coverage cardinality,
+  \item coverage,
+  \item coverage and end position of most recent translated source word.
+\end{enumerate}
+Table~\ref{tab:stack-configuration} present the decoding time (with 32 threads) for each stack configuration, and the average model on the held out test set.
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|l|p{17mm}|p{17mm}|} \hline
+			& Decoding \newline Time(secs)	& Avg model \newline score \\ \hline
+Coverage cardinality  	& 186 	& -8.59922 \\
+Coverage 		& ??? 	& ??? \\ 
+Coverage \& end pos	& 196	& -8.59922 \\ \hline
+\end{tabular}
+\end{center}
+\caption{Decoding time and average model scores for different stack configurations}
+\label{tab:stack-configuration}
+\end{table}
 
+
+
+The algorithms in Figure~\ref{algo:Hypothesis Expansion with Unsorted Stack} and ~\ref{algo:Hypothesis Expansion with Sorted Stack} describes the standard phrase-based decoding algorithm, however, the stack configuration issues are the same in the cube-pruning algorithm. Furthermore, the cube-pruning algorithm also contain a priority queue which is attached to coverage cardinality in Moses, Figure~\ref{algo:Cube Pruning with Unsorted Stack}.
+\begin{figure} [h]
+\begin{algorithmic}
+%\REQUIRE source sentence $s$, translation options
+\STATE initialize $queue_{|C|}$
+\FOR{1 to pop-limit}
+  \STATE get best $item$ in $queue_{|C|}$
+  \STATE create new hypo from $item$
+  \STATE add new hypo to new $stack_{|C|}$
+  \STATE create next $items$
+  \STATE add new $items$ to $queue_{|C|}$
+\ENDFOR % { hypothesis in $stack_i$} 
+\end{algorithmic}
+\caption{Cube Pruning with Unsorted Stack}
+\label{algo:Cube Pruning with Unsorted Stack}
+\end{figure}
+We experiment with changing the queue, $queue_{|C|}$, by having separate queues for each (1) unique coverage $queue_{C}$, and each (2) unique coverage and end position $queue_{C, e}$. The stack configuration stayed constant.
 
 
 
