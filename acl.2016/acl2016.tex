@@ -146,7 +146,7 @@ The lexicalized reordering model is trained on parallel data, usually requiring 
 
 \section{Experimental Setup}
 
-We trained a phrase-based system using the Moses toolkit with standard settings. The training data consisted of most of the publicly available Arabic-English data from Opus (Jörg Tiedemann, 2012,) containing over 69 million parallel sentences, and tuned on a held out set. The phrase-table was then pruned, keeping only the top 100 entries per source phrase, according to $p(t|s)$. All models files were then binarized; the language models were binaized using KenLM (???), the phrase table using Probing PT (???), lexicalized reordering model using the compact datastructure described in ???. These binary formats were choosen for their best-of-class multithreaded performance. Table~\ref{tab:model-files} gives details of the resultant sizes of the model files. For verification with a different dataset, we also used a second system trained on the French-English Europarl corpus. 
+We trained a phrase-based system using the Moses toolkit with standard settings. The training data consisted of most of the publicly available Arabic-English data from Opus (Jörg Tiedemann, 2012,) containing over 69 million parallel sentences, and tuned on a held out set. The phrase-table was then pruned, keeping only the top 100 entries per source phrase, according to $p(t|s)$. All models files were then binarized; the language models were binaized using KenLM (???), the phrase table using Probing PT (???), lexicalized reordering model using the compact datastructure described in ???. These binary formats were choosen for their best-in-class multithreaded performance. Table~\ref{tab:model-files} gives details of the resultant sizes of the model files. For verification with a different dataset, we also occasionally used a second system trained on the French-English Europarl corpus (2m parallel sentences). 
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{|l|c|c|} \hline
@@ -159,7 +159,7 @@ Lex-re model	& 2.3	& 637MB \\ \hline
 \caption{Model sizes in GB}
 \label{tab:model-files}
 \end{table}
-For testing decoding speed, we used a subset of the training data, Table~\ref{tab:test-sets}. The two test set have differing characterics that we are interested in analyzing, ar-en have short sentences while fr-en have overly long sentences.
+For testing decoding speed, we used a subset of the training data, Table~\ref{tab:test-sets}. The two test scenarios have differing characterics that we are interested in analyzing, ar-en have short sentences with large models while fr-en have overly long sentences with smaller models.
 
 \begin{table}[h]
 \begin{center}
@@ -174,7 +174,7 @@ Avg words/sent	& 7.3	& 29.7 \\ \hline
 \label{tab:test-sets}
 \end{table}
 
-Where we need to compare the model score of the algorithms, we used a held out set; ??? for ar-en and ??? for fr-en.
+Where we need to compare model scores, we used held out test sets; a 2,000 sentence subset of OpenSubtitles for ar-en and the 3,003 sentence newstest2011 test set for fr-en.
 
 Standard Moses phrase-based configurations are used, except that we use the cube-pruning algorithm (???) with a pop-limit of 400, rather than the basic phrase-based algorithm. The cube-pruning algorithm is often employ by users who require fast decoding as it gives them the ability to trade speed with translation quality with a simple pop-limit parameter.
 
@@ -190,7 +190,7 @@ We create a dynamic memory pool which can grow as more memory is requested. The 
 
 For critical objects with high churn such as the hypotheses, thread-specific LIFO queues are used to recycle objects which are no longer used. This not only reduces memory wastage but re-uses recent objects which are likely to be in the CPU cache.
 
-Over 24\% of the Moses decoder running time is spent on memory management and this increases when more threads are used, Table~\ref{tab:optimizing-memory}, braking the scaling of the decoder to many cores. By contrast, our decoder spends 11\% on memory management and does not significantly increase with more cores.
+Over 24\% of the Moses decoder running time is spent on memory management and this increases when more threads are used, Table~\ref{tab:optimizing-memory}, dampening the scalability ofthe decoder. By contrast, our decoder spends 11\% on memory management and does not significantly increase with more cores.
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{|l|c|c|c|c|} \hline
@@ -271,21 +271,38 @@ We therefore looked at the effects of three stack configurations.
   \item coverage,
   \item coverage and end position of most recent translated source word.
 \end{enumerate}
-Table~\ref{tab:stack-configuration} present the decoding time (with 32 threads) for each stack configuration, and the average model on the held out test set.
+Table~\ref{tab:stack-configuration-model-score} present the average model on the held out test set, while Table~\ref{tab:stack-configuration-time} presents the decoding time.
 \begin{table}[h]
+\small
 \begin{center}
-\begin{tabular}{|l|p{17mm}|p{17mm}|} \hline
-			& Decoding \newline Time(secs)	& Avg model \newline score \\ \hline
-Coverage cardinality  	& 186 	& -8.59922 \\
-Coverage 		& ??? 	& ??? \\ 
-Coverage \& end pos	& 196	& -8.59922 \\ \hline
+\begin{tabular}{|r|p{12mm}|p{12mm}|p{13mm}|} \hline
+Pop-limit	& Coverage \newline cardinality	& Coverage	& Coverage \newline \& end pos \\ \hline
+100  		& -8.64513 			& ???	& -8.64513 \\
+500		& -8.59563			& ??? 	& -8.59612 \\
+1,000	 	& -8.5870			& ???	& -8.5870 \\ 
+5,000 		& -8.58165			& ???	& -8.58098 \\ 
+10,000 		& -8.58133			& ???	& -8.58015 \\ \hline
 \end{tabular}
 \end{center}
-\caption{Decoding time and average model scores for different stack configurations}
-\label{tab:stack-configuration}
+\caption{Average model scores for different stack configurations}
+\label{tab:stack-configuration-model-score}
 \end{table}
 
-
+\begin{table}[h]
+\small
+\begin{center}
+\begin{tabular}{|r|p{12mm}|p{12mm}|p{13mm}|} \hline
+Pop-limit	& Coverage \newline cardinality	& Coverage	& Coverage \newline \& end pos \\ \hline
+100  		& 73 			& ???	& 72 \\
+500		& 237			& ??? 	& 229 \\
+1,000	 	& 416			& ???	& 423 \\ 
+5,000 		& 1,930			& ???	& 2153 \\ 
+10,000 		& 			& ???	& 4576 \\ \hline
+\end{tabular}
+\end{center}
+\caption{Decoding time with 32-threads for different stack configurations (sec)}
+\label{tab:stack-configuration-time}
+\end{table}
 
 The algorithms in Figure~\ref{algo:Hypothesis Expansion with Unsorted Stack} and ~\ref{algo:Hypothesis Expansion with Sorted Stack} describes the standard phrase-based decoding algorithm, however, the stack configuration issues are the same in the cube-pruning algorithm. Furthermore, the cube-pruning algorithm also contain a priority queue which is attached to coverage cardinality in Moses, Figure~\ref{algo:Cube Pruning with Unsorted Stack}.
 \begin{figure} [h]
