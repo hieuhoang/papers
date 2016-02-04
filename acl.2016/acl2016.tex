@@ -164,9 +164,11 @@ For testing decoding speed, we used a subset of the training data, Table~\ref{ta
 
 \begin{table}[h]
 \begin{center}
+\small
 \begin{tabular}{|l|r|r|} \hline
 		& ar-en		& fr-en \\ \hline
 \multicolumn{3}{|l|}{For speed testing} \\ \hline
+Set name	& \multicolumn{2}{|c|}{Subset of training data} \\
 \# sentences  	& 800k 		& 200k \\
 \# words 	& 5.8m 		& 5.9m \\ 
 Avg words/sent	& 7.3		& 29.7 \\ \hline
@@ -198,6 +200,7 @@ For critical objects with high churn such as the hypotheses, thread-specific LIF
 Over 24\% of the Moses decoder running time is spent on memory management and this increases when more threads are used, Table~\ref{tab:optimizing-memory}, dampening the scalability ofthe decoder. By contrast, our decoder spends 11\% on memory management and does not significantly increase with more cores.
 \begin{table}[h]
 \begin{center}
+\small
 \begin{tabular}{|l|c|c|c|c|} \hline
 		& \multicolumn{2}{c|} {Moses}	& \multicolumn{2}{c|} {Our Work} \\ \hline
 \# threads	& 1 		& 32	& 1 		& 32  \\ \hline
@@ -285,7 +288,7 @@ Pop-limit	& \multicolumn{2}{c|}{Cardinality}	& \multicolumn{2}{c|}{Coverage}	& \
 		& Time		& Score			& Time		& Score		& Time		& Score	\\ \hline
 100  		& 73		& -8.64513 		& 75		& -8.64513	& 72	& -8.64513 \\
 500		& 237		& -8.59563		& 225		& -8.59563 	& 229	& -8.59612 \\
-1,000	 	& 416		& -8.58700		& 397		& -8.58700	& 423	& -8.5870 \\ 
+1,000	 	& 416		& -8.58700		& 397		& -8.58700	& 423	& -8.58700 \\ 
 5,000 		& 1930		& -8.58165		& 1931		& -8.58165	& 2153	& -8.58098 \\ 
 10,000 		& 3619		& -8.58133		& 3630		& -8.58133	& 4576	& -8.58015 \\ 
 15,000 		& 4830		& -8.58130		& 5001		& -8.58130	& 7156	& -8.57999 \\ 
