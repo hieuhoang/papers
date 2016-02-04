@@ -246,10 +246,10 @@ We also note that distortion limit which constrains hypothesis extension is depe
   \ENDFOR % { translation options}
 \ENDFOR % { hypothesis in $stack_i$} 
 \end{algorithmic}
-\caption{Hypothesis Expansion with Unsorted Stack}
+\caption{Hypothesis Expansion with Cardinality Stacks}
 \label{algo:Hypothesis Expansion with Unsorted Stack}
 \end{figure}
-However, by separating hypotheses into \emph{'ministacks'} according to coverage and end position, the distortion limit only needs to be checked for each ministack, Figure~\ref{algo:Hypothesis Expansion with Sorted Stack}.
+However, by separating hypotheses into set of hypotheses (\emph{'ministacks'}) according to coverage and end position, the distortion limit only needs to be checked for each ministack, Figure~\ref{algo:Hypothesis Expansion with Sorted Stack}. Furthermore, stack pruning is done on each of these hypotheses set therefore, changing how hypotheses are grouped can affect model scores. 
 \begin{figure} [h]
 \begin{algorithmic}
 %\REQUIRE source sentence $s$, translation options
@@ -264,7 +264,7 @@ However, by separating hypotheses into \emph{'ministacks'} according to coverage
   \ENDFOR % { translation options}
 \ENDFOR % { hypothesis in $stack_i$} 
 \end{algorithmic}
-\caption{Hypothesis Expansion with Sorted Stack}
+\caption{Hypothesis Expansion with Coverage \& End Position Stacks}
 \label{algo:Hypothesis Expansion with Sorted Stack}
 \end{figure}
 We therefore looked at the effects of three stack configurations.
@@ -279,7 +279,7 @@ We therefore looked at the effects of three stack configurations.
   \item coverage,
   \item coverage and end position of most recent translated source word.
 \end{enumerate}
-Table~\ref{tab:stack-configuration} and Figure~\ref{fig:stack-configuration} present the decoding time and average model on the held out test set.
+Table~\ref{tab:stack-configuration} and Figure~\ref{fig:stack-configuration} present the tradeoff between decoding time and average model at various pop-limits.
 \begin{table}[h]
 \tiny
 \begin{center}
@@ -307,8 +307,9 @@ Pop-limit	& \multicolumn{2}{c|}{Cardinality}	& \multicolumn{2}{c|}{Coverage}	& \
 \caption{Trade-off between decoding time average model scores for different stack configurations}
 \label{fig:stack-configuration}
 \end{figure} 
+As can be seen, the model scores for all stack configurations are identical for low pop-limits parameters but grouping hypotheses into coverage \& end position produces higher model scores for higher pop-limits. It is also slower but the time/quality tradeoff is better overall with this stack configuration. For lower pop-limits this configuration is slightly slower, but not by much, therefore, we shall stick with this Configuration for the remainder of the paper.
 
-The algorithms in Figure~\ref{algo:Hypothesis Expansion with Unsorted Stack} and ~\ref{algo:Hypothesis Expansion with Sorted Stack} describes the standard phrase-based decoding algorithm, however, the stack configuration issues are the same in the cube-pruning algorithm. Furthermore, the cube-pruning algorithm also contain a priority queue which is attached to coverage cardinality in Moses, Figure~\ref{algo:Cube Pruning with Unsorted Stack}.
+The cube-pruning algorithm contain a further priority queue which is attached to hypotheses sets which can be independent of how hypotheses are grouped. In the Moses implementation, the priority queue is also attached to the coverage cardinality, Figure~\ref{algo:Cube Pruning with Unsorted Stack}.
 \begin{figure} [h]
 \begin{algorithmic}
 %\REQUIRE source sentence $s$, translation options
@@ -324,16 +325,31 @@ The algorithms in Figure~\ref{algo:Hypothesis Expansion with Unsorted Stack} and
 \caption{Cube Pruning with Unsorted Stack}
 \label{algo:Cube Pruning with Unsorted Stack}
 \end{figure}
-We experiment with changing the queue, $queue_{|C|}$, by having separate queues for each (1) unique coverage $queue_{C}$, and each (2) unique coverage and end position $queue_{C, e}$. The stack configuration stayed constant.
+Again, we experiment with diffirent queue configurations, having separate queues for each cardinality, coverage, and coverage \& end position. The stack configuration remained constant (coverage \& end position with pop-limit of 400).
+\begin{table}[h]
+\small
+\begin{center}
+\begin{tabular}{|r|r|r|} \hline
+Queue configuration		& Time		& Score \\ \hline
+Cardinality			& 192		& -8.59922 \\
+Coverage			&		& -8.58635 \\
+Coverage \& end position	&		& -8.58263 \\ \hline
+\end{tabular}
+\end{center}
+\caption{Decoding time (in secs with 32 threads) and average model scores for different queue configurations}
+\label{tab:queue-configuration}
+\end{table}
+From the results in Table~\ref{tab:queue-configuration}, using finer grain queues results in better model scores, it is significantly slower to decode.
+
+
+\subsection{Translation Model}
 
 
 
 
 
 
-
-
-
+\subsection{Lexicalized Reordering Model}
 
 
 \section{BLAH BLAH}
