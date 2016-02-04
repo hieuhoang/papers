@@ -267,21 +267,15 @@ However, by separating hypotheses into set of hypotheses (\emph{'ministacks'}) a
 \caption{Hypothesis Expansion with Coverage \& End Position Stacks}
 \label{algo:Hypothesis Expansion with Sorted Stack}
 \end{figure}
-We therefore looked at the effects of three stack configurations.
-\begin{enumerate}
-  \item coverage cardinality,
-  \item coverage,
-  \item coverage and end position of most recent translated source word.
-\end{enumerate}
-We therefore looked at the effects of three stack configurations.
+We therefore looked at the effects of three stack configurations:
 \begin{enumerate}
   \item coverage cardinality,
   \item coverage,
   \item coverage and end position of most recent translated source word.
 \end{enumerate}
 Table~\ref{tab:stack-configuration} and Figure~\ref{fig:stack-configuration} present the tradeoff between decoding time and average model at various pop-limits.
-\begin{table}[h]
-\tiny
+\begin{table*}[t]
+\small
 \begin{center}
 \begin{tabular}{|r|r|r|r|r|r|r|} \hline
 Pop-limit	& \multicolumn{2}{c|}{Cardinality}	& \multicolumn{2}{c|}{Coverage}	& \multicolumn{2}{c|}{Coverage \& end pos} \\ \hline
@@ -297,7 +291,7 @@ Pop-limit	& \multicolumn{2}{c|}{Cardinality}	& \multicolumn{2}{c|}{Coverage}	& \
 \end{center}
 \caption{Decoding time (in secs with 32 threads) and average model scores for different stack configurations}
 \label{tab:stack-configuration}
-\end{table}
+\end{table*}
 
 \begin{figure}[h]
 \centering
@@ -322,7 +316,7 @@ The cube-pruning algorithm contain a further priority queue which is attached to
   \STATE add new $items$ to $queue_{|C|}$
 \ENDFOR % { hypothesis in $stack_i$} 
 \end{algorithmic}
-\caption{Cube Pruning with Unsorted Stack}
+\caption{Cube Pruning with Cardinality Stacks}
 \label{algo:Cube Pruning with Unsorted Stack}
 \end{figure}
 Again, we experiment with diffirent queue configurations, having separate queues for each cardinality, coverage, and coverage \& end position. The stack configuration remained constant (coverage \& end position with pop-limit of 400).
