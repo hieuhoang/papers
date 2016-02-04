@@ -197,7 +197,7 @@ We create a dynamic memory pool which can grow as more memory is requested. The 
 
 For critical objects with high churn such as the hypotheses, thread-specific LIFO queues are used to recycle objects which are no longer used. This not only reduces memory wastage but re-uses recent objects which are likely to be in the CPU cache.
 
-Over 24\% of the Moses decoder running time is spent on memory management and this increases when more threads are used, Table~\ref{tab:optimizing-memory}, dampening the scalability ofthe decoder. By contrast, our decoder spends 11\% on memory management and does not significantly increase with more cores.
+Over 24\% of the Moses decoder running time is spent on memory management and this increases when more threads are used, Table~\ref{tab:optimizing-memory}, dampening the scalability of the decoder. By contrast, our decoder spends 11\% on memory management and does not significantly increase with more cores.
 \begin{table}[h]
 \begin{center}
 \small
@@ -332,14 +332,14 @@ Again, we experiment with diffirent queue configurations, having separate queues
 \begin{tabular}{|r|r|r|} \hline
 Queue configuration		& Time		& Score \\ \hline
 Cardinality			& 192		& -8.59922 \\
-Coverage			&		& -8.58635 \\
-Coverage \& end position	&		& -8.58263 \\ \hline
+Coverage			& 2413		& -8.58635 \\
+Coverage \& end position	& 7472		& -8.58263 \\ \hline
 \end{tabular}
 \end{center}
 \caption{Decoding time (in secs with 32 threads) and average model scores for different queue configurations}
 \label{tab:queue-configuration}
 \end{table}
-From the results in Table~\ref{tab:queue-configuration}, using finer grain queues results in better model scores, it is significantly slower to decode.
+From the results in Table~\ref{tab:queue-configuration}, using finer grain queues results in better model scores but it is significantly slower to decode.
 
 
 \subsection{Translation Model}
