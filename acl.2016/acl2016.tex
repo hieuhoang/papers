@@ -310,8 +310,8 @@ The cube-pruning algorithm contain a further priority queue which is attached to
 \STATE initialize $queue_{|C|}$
 \FOR{1 to pop-limit}
   \STATE get best $item$ in $queue_{|C|}$
-  \STATE create new hypo from $item$
-  \STATE add new hypo to new $stack_{|C|}$
+  \STATE create hypo from $item$, coverage $C_{new}$
+  \STATE add hypo to $stack_{|C_{new}|}$
   \STATE create next $items$
   \STATE add new $items$ to $queue_{|C|}$
 \ENDFOR % { hypothesis in $stack_i$} 
