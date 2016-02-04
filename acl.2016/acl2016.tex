@@ -160,22 +160,26 @@ Lex-re model	& 2.3	& 637MB \\ \hline
 \caption{Model sizes in GB}
 \label{tab:model-files}
 \end{table}
-For testing decoding speed, we used a subset of the training data, Table~\ref{tab:test-sets}. The two test scenarios have differing characterics that we are interested in analyzing, ar-en have short sentences with large models while fr-en have overly long sentences with smaller models.
+For testing decoding speed, we used a subset of the training data, Table~\ref{tab:test-sets}. The two test scenarios have differing characterics that we are interested in analyzing, ar-en have short sentences with large models while fr-en have overly long sentences with smaller models. Where we need to compare model scores, we used held out test sets.
 
 \begin{table}[h]
 \begin{center}
-\begin{tabular}{|l|c|c|} \hline
-		& ar-en	& fr-en \\ \hline
-\# sentences  	& 800k 	& 200k \\
-\# words 	& 5.8m 	& 5.9m \\ 
-Avg words/sent	& 7.3	& 29.7 \\ \hline
+\begin{tabular}{|l|r|r|} \hline
+		& ar-en		& fr-en \\ \hline
+\multicolumn{3}{|l|}{For speed testing} \\ \hline
+\# sentences  	& 800k 		& 200k \\
+\# words 	& 5.8m 		& 5.9m \\ 
+Avg words/sent	& 7.3		& 29.7 \\ \hline
+\multicolumn{3}{|l|}{For model score testing} \\ \hline
+Set name	& OpenSubtitles	& newstest2011 \\
+\# sentences  	& 2000 		& 3003 \\
+\# words 	& 14,620 	& 86,162 \\ 
+Avg words/sent	& 7.3		& 28.7 \\ \hline
 \end{tabular}
 \end{center}
 \caption{Test sets}
 \label{tab:test-sets}
 \end{table}
-
-Where we need to compare model scores, we used held out test sets; a 2,000 sentence subset of OpenSubtitles for ar-en and the 3,003 sentence newstest2011 test set for fr-en.
 
 Standard Moses phrase-based configurations are used, except that we use the cube-pruning algorithm (???) with a pop-limit of 400, rather than the basic phrase-based algorithm. The cube-pruning algorithm is often employ by users who require fast decoding as it gives them the ability to trade speed with translation quality with a simple pop-limit parameter.
 
