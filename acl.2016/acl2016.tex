@@ -326,8 +326,8 @@ Again, we experiment with diffirent queue configurations, having separate queues
 \begin{tabular}{|r|r|r|} \hline
 Queue configuration		& Time		& Score \\ \hline
 Cardinality			& 192		& -8.59922 \\
-Coverage			& 2413		& -8.58635 \\
-Coverage \& end position	& 7472		& -8.58263 \\ \hline
+Coverage			& 2,413		& -8.58635 \\
+Coverage \& end position	& 7,472		& -8.58263 \\ \hline
 \end{tabular}
 \end{center}
 \caption{Decoding time (in secs with 32 threads) and average model scores for different queue configurations}
@@ -338,8 +338,18 @@ From the results in Table~\ref{tab:queue-configuration}, using finer grain queue
 
 \subsection{Translation Model}
 
+For any realistic sized phrase-based model to be used in an online situation, memory and loading time constraints requires us to use load-on-demand phrase-table implementations. Moses contains a number of such implementations with different performance characterics, Figure~\ref{fig:moses-phrase-tables-time}.
+\begin{figure}[h]
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.4]{moses-phrase-table.png}} 
+\end{tabular}
+\caption{Moses decoding time with different phrase-tables implementations}
+\label{fig:moses-phrase-tables-time}
+\end{figure} 
+We will use the Probing phrase-table (???) exclusively in our work as this appears to have the fastest translation rule lookup, especially with large number of cores.
 
-
+There are two main areas
 
 
 
