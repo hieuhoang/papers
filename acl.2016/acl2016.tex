@@ -347,10 +347,11 @@ For any realistic sized phrase-based model to be used in an online situation, me
 \caption{Moses decoding time with different phrase-tables implementations}
 \label{fig:moses-phrase-tables-time}
 \end{figure} 
-We will use the Probing phrase-table (???) exclusively in our work as this appears to have the fastest translation rule lookup, especially with large number of cores.
+We will use the Probing phrase-table (???) exclusively in our work as this appears to have the fastest translation rule lookup, especially with large number of cores. We will look at two main areas for phrase-table optimization specifically in relation to the Probing implementation. 
 
-There are two main areas
+Firstly, we will look at the \textbf{caching} of often used translation rules.
 
+Secondly, the Probing phrase-table use a simple \textbf{compression} algorithm to compress the target side of the translation rule. We will look at the affect this has on decoding speed.
 
 
 \subsection{Lexicalized Reordering Model}
