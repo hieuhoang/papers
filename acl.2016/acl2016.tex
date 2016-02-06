@@ -108,7 +108,7 @@ A beam search algorithm is used to create the completed hypothesis set efficient
 
 There are three main optimization to the search that we shall investigate. Firstly, the search creates and destroy a large number of hypothesis objects in memory which puts a heavy burden on the operating system. We shall optimize the search algorithm to use memory pools and object pools, replacing the operating system's general purpose memory management with our own application-aware management. 
 
-The speed of memory access is dependent on whether the data is in the CPU cache which is a constrained resource compared to memory size, typically 20MB in the latest processors. We shall seek to re-use recently accessed information to increase likelihood of the data being in the CPU cache. 
+%The speed of memory access is dependent on whether the data is in the CPU cache which is a constrained resource compared to memory size, typically 20MB in the latest processors. We shall seek to re-use recently accessed information to increase likelihood of the data being in the CPU cache. 
 
 In multiprocessor servers, the CPU cache is attached to each processor and each core. If a sentences is being decoded on one CPU is switched to another, the CPU cache on the new CPU must be repopulated, slowing down decoding. We will therefore investigate binding threads to specific cores.
 
@@ -137,9 +137,20 @@ The first three feature functions frequently trained on data and require the fea
 %
 \subsection{Translation Model}
 
-Load-on-demand \emph{'binary'} phrase-tables are often used for MT deployment due to their fast loading and querying speed, and because they can be used with large phrase-tables. We therefore focus on optimizing decoding speed with these phrase-tables, specifically the Probing PT.
+For any realistic sized phrase-based model to be used in an online situation, memory and loading time constraints requires us to use load-on-demand phrase-table implementations. Moses contains a number of such implementations with different performance characterics, we show the time take to decode 800,000 sentences for the fastest two in Figure~\ref{fig:moses-phrase-tables-time}.
+\begin{figure}[h]
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.4]{moses-phrase-table.png}} 
+\end{tabular}
+\caption{Moses decoding time (in sec) with two different phrase-table implementations}
+\label{fig:moses-phrase-tables-time}
+\end{figure} 
+From this, it appears that the Probing phrase-table (???) has the fastest translation rule lookup, especially with large number of cores, therefore, we will concentrate exclusively on this implementation in our work as this . We will look at two main areas for phrase-table optimization specifically in relation to the Probing implementation.
 
-We shall look at the caching strategies to reduce the number of phrase-table lookups. We shall also investigate the datastructures used by the phrase-table and their impact on decoding speed.
+We will focus on two main optimizations that differs from the current Probing phrase-table implementation and that have application to other implementations. Firstly, we will look at the \textbf{caching} of often used translation rules. The default caching framework save the most recently looked up rules. However, this caching mechanism is actually slower than re-querying the phrase-table, Table~\ref{???}. We shall explore a simpler caching mechanism that creates the cache at the start of decoding and remain static thereafter.
+
+Secondly, the Probing phrase-table use a simple \textbf{compression} algorithm to compress the target side of the translation rule. Compression was championed being the main factor for the speed of the Compact phrase-table but as we saw in Figure~\ref{fig:moses-phrase-tables-time}, it may come at a cost when used with higher number of cores. We shall therefore take the opposite approach to (???) and explore the decoding speed gain by disabling compression.
 
 \subsection{Lexicalized Reordering Model}
 
@@ -338,21 +349,44 @@ From the results in Table~\ref{tab:queue-configuration}, using finer grain queue
 
 \subsection{Translation Model}
 
-For any realistic sized phrase-based model to be used in an online situation, memory and loading time constraints requires us to use load-on-demand phrase-table implementations. Moses contains a number of such implementations with different performance characterics, Figure~\ref{fig:moses-phrase-tables-time}.
-\begin{figure}[h]
-\centering
-\begin{tabular}{cc}
-{\includegraphics[scale=0.4]{moses-phrase-table.png}} 
+The Moses translation model caches the most recently queried translation rules for later re-use. This has been shown to perform badly for fast phrase-tables such as the Probing phrase-table. We explore a simple caching mechanism that populates the cache during loading with rules that translates the most common source phrases. 
+\begin{table}[h]
+\small
+\begin{center}
+\begin{tabular}{|r|r|r|} \hline
+Cache size	& Decoding Time & Cache Hit \%age	\\ \hline
+Before caching	& 229	& N/A	 \\
+0		& 239 (+4.4\%)	& 0\% \\
+1,000		& 213 (-7.0\%)	& 11\% \\
+2,000		& 204 (-10.9\%)	& 13\% \\
+4,000		& 205 (-10.5\%)	& 14\% \\
+10,000		& 207 (-9.7\%)	& 17\% \\ \hline
 \end{tabular}
-\caption{Moses decoding time with different phrase-tables implementations}
-\label{fig:moses-phrase-tables-time}
-\end{figure} 
-We will use the Probing phrase-table (???) exclusively in our work as this appears to have the fastest translation rule lookup, especially with large number of cores. We will look at two main areas for phrase-table optimization specifically in relation to the Probing implementation. 
+\end{center}
+\caption{Decoding time (in secs with 32 threads) for varying cache sizes}
+\label{tab:cache}
+\end{table}
+The static cache does not require the overhead of managing the most recently queried lookups but there is still some overhead in using a cache. Overall however, there was over a 10\% decrease in decoding time using the optimum cache size, Table~\ref{tab:cache}.
 
-Firstly, we will look at the \textbf{caching} of often used translation rules.
-
-Secondly, the Probing phrase-table use a simple \textbf{compression} algorithm to compress the target side of the translation rule. We will look at the affect this has on decoding speed.
-
+In the second optimatization, we disable the compression. This increase the size of the binary files from 17GB to 23GB but the time saved not needing to decompress the data resulted in a 1.5\% decrease in decoding time with 1 thread and nearly 7\% when the CPU is saturated, Table~\ref{tab:compression}.
+\begin{table}[h]
+\small
+\begin{center}
+\begin{tabular}{|r|r|r|} \hline
+\# threads	& Compressed pt & Non-compressed pt \\ \hline
+1		& 3052	& 3006 (-1.5\%) \\
+5		& 756	& 644 (-14.8\%) \\
+10		& 372	& 362 (-2.7\%) \\
+15		& 284	& 250 (-12.0\%) \\
+20		& 244	& 227 (-7.0\%) \\
+25		& 218	& 209 (-4.1\%) \\
+30		& 206	& 192 (-6.8\%) \\
+35		& 203	& 189 (-6.9\%) \\ \hline
+\end{tabular}
+\end{center}
+\caption{Decoding time (in secs with 32 threads) for compressed and non-compressed phrase-tables}
+\label{tab:compression}
+\end{table}
 
 \subsection{Lexicalized Reordering Model}
 
