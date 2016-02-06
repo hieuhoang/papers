@@ -146,11 +146,11 @@ For any realistic sized phrase-based model to be used in an online situation, me
 \caption{Moses decoding time (in sec) with two different phrase-table implementations}
 \label{fig:moses-phrase-tables-time}
 \end{figure} 
-From this, it appears that the Probing phrase-table (???) has the fastest translation rule lookup, especially with large number of cores, therefore, we will concentrate exclusively on this implementation in our work as this . We will look at two main areas for phrase-table optimization specifically in relation to the Probing implementation.
+From this, it appears that the Probing phrase-table~\cite{Bogochev:Thesis:2013} has the fastest translation rule lookup, especially with large number of cores, therefore, we will concentrate exclusively on this implementation in our work as this . We will look at two main areas for phrase-table optimization specifically in relation to the Probing implementation.
 
 We will focus on two main optimizations that differs from the current Probing phrase-table implementation and that have application to other implementations. Firstly, we will look at the \textbf{caching} of often used translation rules. The default caching framework save the most recently looked up rules. However, this caching mechanism is actually slower than re-querying the phrase-table, Table~\ref{???}. We shall explore a simpler caching mechanism that creates the cache at the start of decoding and remain static thereafter.
 
-Secondly, the Probing phrase-table use a simple \textbf{compression} algorithm to compress the target side of the translation rule. Compression was championed being the main factor for the speed of the Compact phrase-table but as we saw in Figure~\ref{fig:moses-phrase-tables-time}, it may come at a cost when used with higher number of cores. We shall therefore take the opposite approach to (???) and explore the decoding speed gain by disabling compression.
+Secondly, the Probing phrase-table use a simple \textbf{compression} algorithm to compress the target side of the translation rule. Compression was championed being the main factor for the speed of the Compact phrase-table but as we saw in Figure~\ref{fig:moses-phrase-tables-time}, it may come at a cost when used with higher number of cores. We shall therefore take the opposite approach to~\newcite{junczys_tsd_2012b} and explore the decoding speed gain by disabling compression.
 
 \subsection{Lexicalized Reordering Model}
 
@@ -159,7 +159,7 @@ The lexicalized reordering model is trained on parallel data, usually requiring 
 
 \section{Experimental Setup}
 
-We trained a phrase-based system using the Moses toolkit with standard settings. The training data consisted of most of the publicly available Arabic-English data from Opus (Jörg Tiedemann, 2012,) containing over 69 million parallel sentences, and tuned on a held out set. The phrase-table was then pruned, keeping only the top 100 entries per source phrase, according to $p(t|s)$. All models files were then binarized; the language models were binaized using KenLM (???), the phrase table using Probing PT (???), lexicalized reordering model using the compact datastructure described in ???. These binary formats were choosen for their best-in-class multithreaded performance. Table~\ref{tab:model-files} gives details of the resultant sizes of the model files. For verification with a different dataset, we also occasionally used a second system trained on the French-English Europarl corpus (2m parallel sentences). 
+We trained a phrase-based system using the Moses toolkit with standard settings. The training data consisted of most of the publicly available Arabic-English data from Opus (Jörg Tiedemann, 2012,) containing over 69 million parallel sentences, and tuned on a held out set. The phrase-table was then pruned, keeping only the top 100 entries per source phrase, according to $p(t|s)$. All models files were then binarized; the language models were binaized using KenLM~\cite{Heafield-kenlm}, the phrase table using the Probing phrase-table, lexicalized reordering model using the compact datastructure. These binary formats were choosen for their best-in-class multithreaded performance. Table~\ref{tab:model-files} gives details of the resultant sizes of the model files. For verification with a different dataset, we also occasionally used a second system trained on the French-English Europarl corpus (2m parallel sentences). 
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{|l|c|c|} \hline
@@ -195,7 +195,7 @@ Avg words/sent	& 7.3		& 28.7 \\ \hline
 \label{tab:test-sets}
 \end{table}
 
-Standard Moses phrase-based configurations are used, except that we use the cube-pruning algorithm (???) with a pop-limit of 400, rather than the basic phrase-based algorithm. The cube-pruning algorithm is often employ by users who require fast decoding as it gives them the ability to trade speed with translation quality with a simple pop-limit parameter.
+Standard Moses phrase-based configurations are used, except that we use the cube-pruning algorithm~\cite{Chiang:2007:cl} with a pop-limit of 400, rather than the basic phrase-based algorithm. The cube-pruning algorithm is often employ by users who require fast decoding as it gives them the ability to trade speed with translation quality with a simple pop-limit parameter.
 
 As a baseline, we use the latest version of the Moses decoder taken from the github repository.
 
@@ -391,12 +391,16 @@ In the second optimatization, we disable the compression. This increase the size
 
 \subsection{Lexicalized Reordering Model}
 
+The lexicalized reordering model assign a probability to a translation rule, given the relative ordering of the rule in the hypothesis. Using the model can significantly increase translation quality at the cost of significantly longer decoding time. Efforts such as~\newcite{junczys_tsd_2012b} have been made to increase the speed of the model, with some success, Figure~\ref{???}.
+
+We take a different approach by integrating the lexicalized model file into the translation model, reducing the need to query another model file. This resulted in a large decrease in decoding time, Figure~\ref{fig:lex-ro}.
+
 \begin{figure}[h]
 \centering
 \begin{tabular}{cc}
 {\includegraphics[scale=0.4]{lex-ro.png}} 
 \end{tabular}
-\caption{Moses decoding time (in sec) with Compact Lexicalized Reordering, and integrated into a model the phrase-table}
+\caption{Decoding time (in sec) with Compact Lexicalized Reordering, and integrated into a model the phrase-table}
 \label{fig:lex-ro}
 \end{figure} 
 

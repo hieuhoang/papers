@@ -12,6 +12,12 @@ Alfred~V. Aho and Jeffrey~D. Ullman.
 \newblock {\em Publications Manual}.
 \newblock American Psychological Association, Washington, DC.
 
+\bibitem[\protect\citename{Bogochev}2013]{Bogochev:Thesis:2013}
+Nikolay Bogochev.
+\newblock 2013.
+\newblock {The Paradox of Overfitting}.
+\newblock Master's thesis, University of Edinburgh, UK.
+
 \bibitem[\protect\citename{Brown \bgroup et al.\egroup }1993]{Brown:1993}
 Peter~F. Brown, Stephen~A. Della-Pietra, Vincent~J. Della-Pietra, and Robert~L.
   Mercer.
@@ -26,11 +32,35 @@ Ashok~K. Chandra, Dexter~C. Kozen, and Larry~J. Stockmeyer.
 \newblock {\em Journal of the Association for Computing Machinery},
   28(1):114--133.
 
+\bibitem[\protect\citename{Chiang}2007]{Chiang:2007:cl}
+David Chiang.
+\newblock 2007.
+\newblock Hierarchical phrase-based translation.
+\newblock {\em Computational Linguistics}, 33(2):201--228.
+
 \bibitem[\protect\citename{Gusfield}1997]{Gusfield:97}
 Dan Gusfield.
 \newblock 1997.
 \newblock {\em Algorithms on Strings, Trees and Sequences}.
 \newblock Cambridge University Press, Cambridge, UK.
+
+\bibitem[\protect\citename{Heafield}2011]{Heafield-kenlm}
+Kenneth Heafield.
+\newblock 2011.
+\newblock {KenLM:} faster and smaller language model queries.
+\newblock In {\em Proceedings of the {EMNLP} 2011 Sixth Workshop on Statistical
+  Machine Translation}, pages 187--197, Edinburgh, Scotland, United Kingdom,
+  July.
+
+\bibitem[\protect\citename{Junczys-Dowmunt}2012]{junczys_tsd_2012b}
+Marcin Junczys-Dowmunt.
+\newblock 2012.
+\newblock A space-efficient phrase table implementation using minimal perfect
+  hash functions.
+\newblock In Petr Sojka, Ales Horák, Ivan Kopecek, and Karel Pala, editors,
+  {\em 15th International Conference on Text, Speech and Dialogue (TSD)},
+  volume 7499 of {\em Lecture Notes in Computer Science}, pages 320--327.
+  Springer.
 
 \bibitem[\protect\citename{Ortiz-Mart\'{i}nez \bgroup et al.\egroup
   }2006]{ortizmartinez-garciavarea-casacuberta:2006:WMT}
