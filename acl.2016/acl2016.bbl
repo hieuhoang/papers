@@ -52,6 +52,14 @@ Dan Gusfield.
 \newblock {\em Algorithms on Strings, Trees and Sequences}.
 \newblock Cambridge University Press, Cambridge, UK.
 
+\bibitem[\protect\citename{Heafield \bgroup et al.\egroup
+  }2014]{Heafield-mtplz}
+Kenneth Heafield, Michael Kayser, and Christopher~D. Manning.
+\newblock 2014.
+\newblock Faster {Phrase-Based} decoding by refining feature state.
+\newblock In {\em Proceedings of the Association for Computational
+  Linguistics}, Baltimore, MD, USA, June.
+
 \bibitem[\protect\citename{Heafield}2011]{Heafield-kenlm}
 Kenneth Heafield.
 \newblock 2011.
@@ -79,5 +87,24 @@ Daniel Ortiz-Mart\'{i}nez, Ismael Garc\'{i}a-Varea, and Francisco Casacuberta.
 \newblock In {\em Proceedings on the Workshop on Statistical Machine
   Translation}, pages 64--71, New York City, June. Association for
   Computational Linguistics.
+
+\bibitem[\protect\citename{Tanaka and Yamamoto}2013]{tanaka2013efficient}
+Makoto Yasuhara~Toru Tanaka and Jun-ya Norimatsu~Mikio Yamamoto.
+\newblock 2013.
+\newblock An efficient language model using double-array structures.
+\newblock {\em Cited by}, 2.
+
+\bibitem[\protect\citename{Tiedemann}2012]{tiedemann2012parallel}
+J{\"o}rg Tiedemann.
+\newblock 2012.
+\newblock Parallel data, tools and interfaces in opus.
+\newblock In {\em LREC}, pages 2214--2218.
+
+\bibitem[\protect\citename{Zens and Ney}2007]{zens2007efficient}
+Richard Zens and Hermann Ney.
+\newblock 2007.
+\newblock Efficient phrase-table representation for machine translation with
+  applications to online mt and speech translation.
+\newblock In {\em HLT-NAACL}, pages 492--499.
 
 \end{thebibliography}
