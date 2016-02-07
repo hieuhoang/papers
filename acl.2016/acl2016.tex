@@ -228,6 +228,16 @@ Misc/Unknown	& 45\%	 	& 39\% 	& 24\%		& 29\% \\ \hline
 \label{tab:optimizing-memory}
 \end{table}
 
+Figure~\ref{fig:mempool} compares the decoding time for Moses and our decoder, using the same models, parameters and test set. Our decoder is over 3 times faster with one thread, and 4.7\% faster using all cores. Like Moses, performance actually worsens after approximately 15 cores, however, the problem is not as pronounced. This gives us a better foundation on which to build further innovations for fast, multi-core decoding.
+\begin{figure}[h]
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.4]{mempool.png}} 
+\end{tabular}
+\caption{Decoding time of Moses and our decoder, using the same models}
+\label{fig:mempool}
+\end{figure} 
+
 % A potential disadvantage of using memory pool is that the decoder will use more memory, however, Table~\ref{tab:memory-usage} shows that peak memory consumption are comparable.
 % \begin{table}[h]
 % \begin{center}
@@ -393,8 +403,7 @@ In the second optimatization, we disable the compression. This increase the size
 
 The lexicalized reordering model assign a probability to a translation rule, given the relative ordering of the rule in the hypothesis. Using the model can significantly increase translation quality at the cost of significantly longer decoding time. Efforts such as~\newcite{junczys_tsd_2012b} have been made to increase the speed of the model, with some success, Figure~\ref{???}.
 
-We take a different approach by integrating the lexicalized model file into the translation model, reducing the need to query another model file. This resulted in a large decrease in decoding time, especially with high number of cores, Figure~\ref{fig:lex-ro}. Integrating the lexicalized reordering model into the translation model decreases decoding time by 29\% with a single core but it is over 5 times faster using all cores. In fact, it enables the decoder to continue to scale, making efficient use of all hyperthreads, while using a separate lexicalized reordering model performance flatten out and actually worsens atfer approximately 10 threads.
-
+We take a different approach by integrating the lexicalized model file into the translation model, reducing the need to query another model file. This resulted in a large decrease in decoding time, especially with high number of cores, Figure~\ref{fig:lex-ro}. 
 \begin{figure}[h]
 \centering
 \begin{tabular}{cc}
@@ -403,7 +412,7 @@ We take a different approach by integrating the lexicalized model file into the 
 \caption{Decoding time (in sec) with Compact Lexicalized Reordering, and integrated into a model the phrase-table}
 \label{fig:lex-ro}
 \end{figure} 
-
+Integrating the lexicalized reordering model into the translation model decreases decoding time by 29\% with a single core but it is over 5 times faster using all cores. In fact, the decoding time with the integrated model is similar to that \emph{without} a lexilized reordering model. Critically for systems with large number of cores, it enables the decoder to continue to scale, making efficient use of all available cores, while using a separate lexicalized reordering model decoding time flatten out and actually worsens after approximately 10 threads.
 
 \section{BLAH BLAH}
 
