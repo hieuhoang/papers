@@ -4,45 +4,48 @@ The top-level auxiliary file: acl2016.aux
 The style file: acl2016.bst
 Database file #1: acl2016.bib
 Database file #2: mt.bib
+Warning--I'm ignoring mfernandez2016boosting's extra "publisher" field
+--line 8332 of file mt.bib
 Database file #3: more.bib
-You've used 10 entries,
+You've used 11 entries,
             2490 wiz_defined-function locations,
-            630 strings with 6297 characters,
-and the built_in function-call counts, 4029 in all, are:
-= -- 429
-> -- 128
+            638 strings with 6543 characters,
+and the built_in function-call counts, 4459 in all, are:
+= -- 473
+> -- 151
 < -- 5
-+ -- 43
-- -- 40
-* -- 291
-:= -- 645
-add.period$ -- 42
-call.type$ -- 10
-change.case$ -- 55
-chr.to.int$ -- 10
-cite$ -- 10
-duplicate$ -- 185
-empty$ -- 320
-format.name$ -- 51
-if$ -- 856
++ -- 51
+- -- 48
+* -- 327
+:= -- 718
+add.period$ -- 46
+call.type$ -- 11
+change.case$ -- 63
+chr.to.int$ -- 11
+cite$ -- 11
+duplicate$ -- 200
+empty$ -- 348
+format.name$ -- 60
+if$ -- 943
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 12
-newline$ -- 63
-num.names$ -- 32
-pop$ -- 62
+missing$ -- 13
+newline$ -- 69
+num.names$ -- 35
+pop$ -- 68
 preamble$ -- 1
-purify$ -- 68
+purify$ -- 77
 quote$ -- 0
-skip$ -- 140
+skip$ -- 151
 stack$ -- 0
-substring$ -- 212
-swap$ -- 48
+substring$ -- 232
+swap$ -- 50
 text.length$ -- 5
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 68
+type$ -- 76
 warning$ -- 0
-while$ -- 35
-width$ -- 11
-write$ -- 151
+while$ -- 38
+width$ -- 12
+write$ -- 165
+(There was 1 warning)

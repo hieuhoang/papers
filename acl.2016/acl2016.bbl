@@ -38,6 +38,14 @@ David Chiang.
 \newblock Hierarchical phrase-based translation.
 \newblock {\em Computational Linguistics}, 33(2):201--228.
 
+\bibitem[\protect\citename{Fern\'{a}ndez \bgroup et al.\egroup
+  }2016]{mfernandez2016boosting}
+M.~Fern\'{a}ndez, Juan~C. Pichel, Jos\'{e}~C. Cabaleiro, and Tom\'{a}s~F. Pena.
+\newblock 2016.
+\newblock Boosting performance of a statistical machine translation system
+  using dynamic parallelism.
+\newblock {\em Journal of Computational Science}, 13:37--48.
+
 \bibitem[\protect\citename{Gusfield}1997]{Gusfield:97}
 Dan Gusfield.
 \newblock 1997.
