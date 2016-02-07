@@ -414,6 +414,11 @@ We take a different approach by integrating the lexicalized model file into the 
 \end{figure} 
 Integrating the lexicalized reordering model into the translation model decreases decoding time by 29\% with a single core but it is over 5 times faster using all cores. In fact, the decoding time with the integrated model is similar to that \emph{without} a lexilized reordering model. Critically for systems with large number of cores, it enables the decoder to continue to scale, making efficient use of all available cores, while using a separate lexicalized reordering model decoding time flatten out and actually worsens after approximately 10 threads.
 
+\subsection{Core Affinity}
+
+The phrase-based decoding algorithm requires fast access to memory in order to 
+Core affinity enables the binding of specific threads to specific CPU cores.
+
 \section{BLAH BLAH}
 
 The following instructions are directed to authors of papers submitted to and accepted
