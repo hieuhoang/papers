@@ -154,7 +154,17 @@ Secondly, the Probing phrase-table use a simple \textbf{compression} algorithm t
 
 \subsection{Lexicalized Reordering Model}
 
-The lexicalized reordering model is trained on parallel data, usually requiring random lookups of the model file during decoding. However, the key to the lookup are the source and target phrase of each translation rule. We shall investigate the advantages of storing the mode data within the translation rule.
+The lexicalized reordering model is trained on parallel data, usually requiring random lookups of the model file during decoding. Using the model can increase translation quality at the cost of longer decoding time. Efforts such as~\newcite{junczys_tsd_2012b} have been made to increase the speed of the model, with some success at low core counts, Figure~\ref{fig:moses-lex-ro}.
+\begin{figure}[h]
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.4]{moses-lex-ro.png}} 
+\end{tabular}
+\caption{Comparing Moses decoding time with different Lexicalized Reordering implementations}
+\label{fig:moses-lex-ro}
+\end{figure} 
+
+However, the querying key to the lookup are the source and target phrase of each translation rule. Rather than storing the model separately, we shall investigate integrating the lexicalized reordering model into the translation model.
 
 
 \section{Experimental Setup}
@@ -401,15 +411,7 @@ In the second optimatization, we disable the compression. This increase the size
 
 \subsection{Lexicalized Reordering Model}
 
-The lexicalized reordering model assign a probability to a translation rule, given the relative ordering of the rule in the hypothesis. Using the model can increase translation quality at the cost of longer decoding time. Efforts such as~\newcite{junczys_tsd_2012b} have been made to increase the speed of the model, with some success at low core counts, Figure~\ref{fig:moses-lex-ro}.
-\begin{figure}[h]
-\centering
-\begin{tabular}{cc}
-{\includegraphics[scale=0.4]{moses-lex-ro.png}} 
-\end{tabular}
-\caption{Comparing Moses decoding time with different Lexicalized Reordering implementations}
-\label{fig:moses-lex-ro}
-\end{figure} 
+The lexicalized reordering model assign a probability to a translation rule, given the relative ordering of the rule in the hypothesis. 
 
 We take a different approach by integrating the lexicalized model file into the translation model, reducing the need to query another model file. This resulted in a significant decrease in decoding time, especially with high number of cores, Figure~\ref{fig:lex-ro}. 
 \begin{figure}[h]
