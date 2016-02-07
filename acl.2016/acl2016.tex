@@ -143,7 +143,7 @@ For any realistic sized phrase-based model to be used in an online situation, me
 \begin{tabular}{cc}
 {\includegraphics[scale=0.4]{moses-phrase-table.png}} 
 \end{tabular}
-\caption{Moses decoding time (in sec) with two different phrase-table implementations}
+\caption{Moses decoding time with two different phrase-table implementations}
 \label{fig:moses-phrase-tables-time}
 \end{figure} 
 From this, it appears that the Probing phrase-table~\cite{Bogochev:Thesis:2013} has the fastest translation rule lookup, especially with large number of cores, therefore, we will concentrate exclusively on this implementation in our work as this . We will look at two main areas for phrase-table optimization specifically in relation to the Probing implementation.
@@ -401,23 +401,36 @@ In the second optimatization, we disable the compression. This increase the size
 
 \subsection{Lexicalized Reordering Model}
 
-The lexicalized reordering model assign a probability to a translation rule, given the relative ordering of the rule in the hypothesis. Using the model can significantly increase translation quality at the cost of significantly longer decoding time. Efforts such as~\newcite{junczys_tsd_2012b} have been made to increase the speed of the model, with some success, Figure~\ref{???}.
+The lexicalized reordering model assign a probability to a translation rule, given the relative ordering of the rule in the hypothesis. Using the model can increase translation quality at the cost of longer decoding time. Efforts such as~\newcite{junczys_tsd_2012b} have been made to increase the speed of the model, with some success at low core counts, Figure~\ref{fig:moses-lex-ro}.
+\begin{figure}[h]
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.4]{moses-lex-ro.png}} 
+\end{tabular}
+\caption{Comparing Moses decoding time with different Lexicalized Reordering implementations}
+\label{fig:moses-lex-ro}
+\end{figure} 
 
-We take a different approach by integrating the lexicalized model file into the translation model, reducing the need to query another model file. This resulted in a large decrease in decoding time, especially with high number of cores, Figure~\ref{fig:lex-ro}. 
+We take a different approach by integrating the lexicalized model file into the translation model, reducing the need to query another model file. This resulted in a significant decrease in decoding time, especially with high number of cores, Figure~\ref{fig:lex-ro}. 
 \begin{figure}[h]
 \centering
 \begin{tabular}{cc}
 {\includegraphics[scale=0.4]{lex-ro.png}} 
 \end{tabular}
-\caption{Decoding time (in sec) with Compact Lexicalized Reordering, and integrated into a model the phrase-table}
+\caption{Decoding time with Compact Lexicalized Reordering, and integrated into a model the phrase-table}
 \label{fig:lex-ro}
 \end{figure} 
-Integrating the lexicalized reordering model into the translation model decreases decoding time by 29\% with a single core but it is over 5 times faster using all cores. In fact, the decoding time with the integrated model is similar to that \emph{without} a lexilized reordering model. Critically for systems with large number of cores, it enables the decoder to continue to scale, making efficient use of all available cores, while using a separate lexicalized reordering model decoding time flatten out and actually worsens after approximately 10 threads.
+Integrating the lexicalized reordering model into the translation model decreases decoding time by 29\% with a single core but it is over 5 times faster using all cores. In fact, the decoding time with the integrated model is similar to that \emph{without} a lexilized reordering model. Critically for systems with large number of cores, it enables the decoder to continue to scale, making efficient use of all available cores. This is in contrast to using a separate lexicalized reordering model where decoding time flatten out and actually worsens after approximately 10 threads.
 
 \subsection{Core Affinity}
 
 The phrase-based decoding algorithm requires fast access to memory in order to 
 Core affinity enables the binding of specific threads to specific CPU cores.
+
+\section{Other Models and Even More Cores}
+
+more cores
+fr-en results
 
 \section{BLAH BLAH}
 
