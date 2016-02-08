@@ -424,10 +424,33 @@ We take a different approach by integrating the lexicalized model file into the 
 \end{figure} 
 Integrating the lexicalized reordering model into the translation model decreases decoding time by 29\% with a single core but it is over 5 times faster using all cores. In fact, the decoding time with the integrated model is similar to that \emph{without} a lexilized reordering model. Critically for systems with large number of cores, it enables the decoder to continue to scale, making efficient use of all available cores. This is in contrast to using a separate lexicalized reordering model where decoding time flatten out and actually worsens after approximately 10 threads.
 
-\subsection{Core Affinity}
+\subsection{Scalability}
 
-The phrase-based decoding algorithm requires fast access to memory in order to 
-Core affinity enables the binding of specific threads to specific CPU cores.
+\begin{figure}[h]
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.4]{scalability.png}} 
+\end{tabular}
+\caption{Decoding speed}
+\label{fig:speed}
+\end{figure} 
+
+Figure~\ref{fig:speed} shows decoding speed against the number of threads, measured in words translated per second. Speed increases linearly with 2 threads as each thread is run on separate physical processors. The translation rate only decrease slightly with every additional threads until 16 threads are used which produces a 12.5 times faster than single-threaded decoding. The need to share resources such as CPU cache and internal bus bandwidth is probably responsible for the non-linear increase in speed.
+
+Since the test server only has 16 real cores, additional threads must be run on the same physical cores as existing threads. This further constrains the resources that each thread has, therefore we see a markedly lower speed increase with each additional thread once there are more than 16 concurrent threads.
+
+Overall though, the scalability is remarkably good, the decoder is able to make full use of all real and virtual cores. When all cores are saturated, the decoder is 16 times faster than single-threaded decoding, on this 16 real core server.
+
+This contrast with Moses which scales to approximately 16 threads but then actually become slower if more are used, Figure~\ref{fig:moses-speed}.
+\begin{figure}[h]
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.4]{moses-scalability.png}} 
+\end{tabular}
+\caption{Moses decoding speed}
+\label{fig:moses-speed}
+\end{figure} 
+
 
 \section{Other Models and Even More Cores}
 
