@@ -1,17 +1,5 @@
 \begin{thebibliography}{}
 
-\bibitem[\protect\citename{Aho and Ullman}1972]{Aho:72}
-Alfred~V. Aho and Jeffrey~D. Ullman.
-\newblock 1972.
-\newblock {\em The Theory of Parsing, Translation and Compiling}, volume~1.
-\newblock Prentice-Hall, Englewood Cliffs, NJ.
-
-\bibitem[\protect\citename{{American Psychological Association}}1983]{APA:83}
-{American Psychological Association}.
-\newblock 1983.
-\newblock {\em Publications Manual}.
-\newblock American Psychological Association, Washington, DC.
-
 \bibitem[\protect\citename{Bogochev}2013]{Bogochev:Thesis:2013}
 Nikolay Bogochev.
 \newblock 2013.
@@ -24,13 +12,6 @@ Peter~F. Brown, Stephen~A. Della-Pietra, Vincent~J. Della-Pietra, and Robert~L.
 \newblock 1993.
 \newblock The mathematics of statistical machine translation.
 \newblock {\em Computational Linguistics}, 19(2):263--313.
-
-\bibitem[\protect\citename{Chandra \bgroup et al.\egroup }1981]{Chandra:81}
-Ashok~K. Chandra, Dexter~C. Kozen, and Larry~J. Stockmeyer.
-\newblock 1981.
-\newblock Alternation.
-\newblock {\em Journal of the Association for Computing Machinery},
-  28(1):114--133.
 
 \bibitem[\protect\citename{Chiang}2007]{Chiang:2007:cl}
 David Chiang.
@@ -45,12 +26,6 @@ M.~Fern\'{a}ndez, Juan~C. Pichel, Jos\'{e}~C. Cabaleiro, and Tom\'{a}s~F. Pena.
 \newblock Boosting performance of a statistical machine translation system
   using dynamic parallelism.
 \newblock {\em Journal of Computational Science}, 13:37--48.
-
-\bibitem[\protect\citename{Gusfield}1997]{Gusfield:97}
-Dan Gusfield.
-\newblock 1997.
-\newblock {\em Algorithms on Strings, Trees and Sequences}.
-\newblock Cambridge University Press, Cambridge, UK.
 
 \bibitem[\protect\citename{Heafield \bgroup et al.\egroup
   }2014]{Heafield-mtplz}
