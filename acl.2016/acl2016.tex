@@ -73,7 +73,7 @@
 \begin{abstract}
 The utilization of statistical machine translation (SMT) has grown enormously over the last decade, many using open-source software developed by the NLP community. As commercial utilization has increased, there has been a pressing need that is optimized for their requirements. Specifically, faster phrase-based decoding, and more efficient utilization of modern multicore servers.
 
-We present in this paper a re-assessment of the major components of phrase-based decoding and decoder implementation with particular emphasis on speed and scalability to multicore machines. The result is a drop-in replacement for the Moses decoder which is up to fifteen times faster and scales almost linearly with the number of cores. Furthermore, the decoder makes less search errors than the current Moses decoder.
+We present in this paper a re-assessment of the major components of phrase-based decoding and decoder implementation with particular emphasis on speed and scalability to multicore machines. The result is a drop-in replacement for the Moses decoder which is up to fifteen times faster and scales almost linearly with the number of cores. 
 
 \end{abstract}
 
@@ -95,9 +95,9 @@ A number of the decoders support multithreading whilst others use alternative me
 
 Other prior work look to optimizing specific components of decoding. ~\newcite{Chiang:2007:cl} describes the cube-pruning and cube-growing algorithm for decoding which allows the tradeoff between speed and translation quality to the adjusted with a simgle parameter. ~\newcite{Heafield-kenlm} and ~\newcite{tanaka2013efficient} describes fast, efficient datastructures for language models. ~\newcite{zens2007efficient} describes an implementation of a phrase-table for an SMT decoder that is loaded on demand, reducing the initial loading time and memory requirements. ~\newcite{junczys_tsd_2012b} extends this by compressing the on-disk phrase table and lexicalized re-ordering model resulting in impressive speed gains over previous work.
 
-~\newcite{Heafield-mtplz} is perhaps closest in intent to this work. This takes a wholistic approach to decoding, describing a novel decoding algorithm which is fis focused on better decoding speed. It also describes a number of implementation details for faster decoding. However, the decoding algorithm is only able to incorporate one stateful feature function which precludes some of the useful decoding configurations which contains multiple stateful feature functions. It does not include a load-on-demand phrase table, therefore, cannot be used in a commercial environment where phrase-table has not be filtered with a know test set for any realistic size phrase-table. Neither did this paper analyze the scalability of their work to multicore servers.
+~\newcite{Heafield-mtplz} is perhaps closest in intent to this work. This takes a holistic approach to decoding, describing a novel decoding algorithm which is fis focused on better decoding speed. It also describes a number of implementation details for faster decoding. However, the decoding algorithm is only able to incorporate one stateful feature function which precludes some of the useful decoding configurations which contains multiple stateful feature functions. It does not include a load-on-demand phrase table, therefore, cannot be used in a commercial environment where phrase-table has not be filtered with a know test set for any realistic size phrase-table. Neither did this paper analyze the scalability of their work to multicore servers.
 
-The rest of the paper will be broken up into the following sections. Next, we will describe the phrase-based model and the major implementation components, with particular emphasis on decoding time shortcomings. We will then describe modifications to improve decoding speed and present results. We conclude in the last section discuss suggested improvements and future work.
+The rest of the paper will be broken up into the following sections. Next, we will describe the phrase-based model and the major implementation components, with particular emphasis on decoding speed. We will then describe modifications to improve decoding speed and present results. We conclude in the last section and discuss future work.
 
 \section{Phrase-Based Model}
 
@@ -145,7 +145,7 @@ The standard feature functions in the phrase-based model include:
 \end{enumerate}
 %which we have suffixed with $_{TM} $ to avoid confusion with the overall model probability $ p(t|s) $ and $ p(s|t)$. 
 
-The first three feature functions frequently trained on data and require the feature to read the model from files. The other feature functions do not require model files. We shall investigate the first two feature functions for optimization.
+The first three feature functions frequently trained on data and require the feature to read the model from files. The other feature functions are simple and do not leave much room for optimization. The language model consumes a large part of decoding time, and it is for this reason that it has already been heavily optmized. We shall therefore investigate the first two feature functions for optimization.
 
 %\subsection{Language Model}
 % TODO
@@ -454,7 +454,7 @@ Figure~\ref{fig:speed} shows decoding speed against the number of threads, measu
 
 Since the test server only has 16 real cores, additional threads must be run on the same physical cores as existing threads. This further constrains the resources that each thread has, therefore we see a markedly lower speed increase with each additional thread once there are more than 16 concurrent threads.
 
-Overall though, the scalability is remarkably good, the decoder is able to make full use of all real and virtual cores. When all cores are saturated, the decoder is 16 times faster than single-threaded decoding, on this 16 real core server. It is also 4.5 times faster than Moses with a single-thread and 14.5 faster when all cores are used.
+Overall though, the scalability is remarkably good, the decoder is able to make full use of all real and virtual cores. When all cores are saturated, the decoder is 16 times faster than single-threaded decoding, on this 16 real core server. It is also 4.5 times faster than Moses with a single-thread and 9.6 faster when all cores are used.
 
 This contrast with Moses where speed increases to approximately 16 threads but then actually become slower if more threads are used, Figure~\ref{fig:moses-speed}.
 \begin{figure}[h]
@@ -485,7 +485,7 @@ We verify the results on a smaller French-English phrase-based model and test se
 
 We have presented a new decoder that is compatible with Moses. By studying the shortcomings of the current implementations, we are able to optimize for speed, especially for multicore operation. This has resulted in double digit gains compared to Moses on the same hardware. Our implementation is also unaffected by scalability issues that has afflicted Moses after 10-15 threads and continue to scale well for all possible cores we have tested it on.
 
-In future, we shall work on exploring the underlying reasons for the scalability issues in Moses to get a better understanding where potential performance issues can arise. We shall also investigate other major components of the decoding algorithm, particulaly the language model which has not been touched in this paper.
+In future, we shall investigate other major components of the decoding algorithm, particulaly the language model which has not been touched in this paper. We shall also explore the underlying reasons for the scalability issues in Moses to get a better understanding where potential performance issues can arise. This has application to other algorithms beside MT decoding. 
 
 % \section*{Acknowledgments}
 % 
