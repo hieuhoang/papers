@@ -441,7 +441,7 @@ Since the test server only has 16 real cores, additional threads must be run on 
 
 Overall though, the scalability is remarkably good, the decoder is able to make full use of all real and virtual cores. When all cores are saturated, the decoder is 16 times faster than single-threaded decoding, on this 16 real core server.
 
-This contrast with Moses which scales to approximately 16 threads but then actually become slower if more threads are used, Figure~\ref{fig:moses-speed}.
+This contrast with Moses where speed increases to approximately 16 threads but then actually become slower if more threads are used, Figure~\ref{fig:moses-speed}.
 \begin{figure}[h]
 \centering
 \begin{tabular}{cc}
@@ -454,7 +454,9 @@ This contrast with Moses which scales to approximately 16 threads but then actua
 
 \section{Other Models and Even More Cores}
 
-We verify the results we the smaller French-English phrase-based model and test set container longer sentences. The speed gain is even greater than our main testing scenario, Figure~\ref{fig:fr-en-speed}.
+more cores
+
+We verify the results on a smaller French-English phrase-based model and test set container longer sentences. The speed gain is even greater than our main testing scenario, Figure~\ref{fig:fr-en-speed}.
 \begin{figure}[h]
 \centering
 \begin{tabular}{cc}
@@ -464,8 +466,8 @@ We verify the results we the smaller French-English phrase-based model and test 
 \label{fig:fr-en-speed}
 \end{figure} 
 
-more cores
-fr-en results
+\section{Conclusion}
+
 
 
 % \section*{Acknowledgments}
