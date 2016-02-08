@@ -43,12 +43,27 @@
 	    Moses Machine Translation CIC\\
 	    {\tt hieu@moses-mt.org}
 	  \And
-	Author 2\\
-  	ABC University\\
-  	900 Main Street\\
-  	Ourcity, PQ, Canada A1A 1T2\\
-  {\tt author2@abc.ca}}
-
+	Nicolay Bogoychev\\
+  	University of Edinburgh\\
+  	10 Crichton Street\\
+  	Edinburgh, Scotland, EH10 9AB\\
+  {\tt s1031254@sms.ed.ac.uk}
+	  \And
+	Lane Schwartz\\
+  	University of Illinois\\
+  {\tt lanes@illinois.edu}
+	  \AND
+	Kenneth Heafield\\
+  	University of Edinburgh\\
+  {\tt kheafiel@inf.ed.ac.uk}
+	  \And
+	Marcin Junczys-Dowmunt\\
+	Faculty of Mathematics and Computer Science \\
+	Adam Mickiewicz University\\
+  {\tt junczys@amu.edu.pl}
+	}
+	
+  
 \date{}
 
 \begin{document}
@@ -439,7 +454,7 @@ Figure~\ref{fig:speed} shows decoding speed against the number of threads, measu
 
 Since the test server only has 16 real cores, additional threads must be run on the same physical cores as existing threads. This further constrains the resources that each thread has, therefore we see a markedly lower speed increase with each additional thread once there are more than 16 concurrent threads.
 
-Overall though, the scalability is remarkably good, the decoder is able to make full use of all real and virtual cores. When all cores are saturated, the decoder is 16 times faster than single-threaded decoding, on this 16 real core server.
+Overall though, the scalability is remarkably good, the decoder is able to make full use of all real and virtual cores. When all cores are saturated, the decoder is 16 times faster than single-threaded decoding, on this 16 real core server. It is also 4.5 times faster than Moses with a single-thread and 14.5 faster when all cores are used.
 
 This contrast with Moses where speed increases to approximately 16 threads but then actually become slower if more threads are used, Figure~\ref{fig:moses-speed}.
 \begin{figure}[h]
@@ -454,9 +469,9 @@ This contrast with Moses where speed increases to approximately 16 threads but t
 
 \section{Other Models and Even More Cores}
 
-more cores
+??? more cores
 
-We verify the results on a smaller French-English phrase-based model and test set container longer sentences. The speed gain is even greater than our main testing scenario, Figure~\ref{fig:fr-en-speed}.
+We verify the results on a smaller French-English phrase-based model and test set container longer sentences. The speed gain is even greater than our main testing scenario, Figure~\ref{fig:fr-en-speed}. Our decoder is 5.4 times faster than Moses with a single-thread and 14.5 faster when all cores are saturated.
 \begin{figure}[h]
 \centering
 \begin{tabular}{cc}
@@ -468,7 +483,9 @@ We verify the results on a smaller French-English phrase-based model and test se
 
 \section{Conclusion}
 
+We have presented a new decoder that is compatible with Moses. By studying the shortcomings of the current implementations, we are able to optimize for speed, especially for multicore operation. This has resulted in double digit gains compared to Moses on the same hardware. Our implementation is also unaffected by scalability issues that has afflicted Moses after 10-15 threads and continue to scale well for all possible cores we have tested it on.
 
+In future, we shall work on exploring the underlying reasons for the scalability issues in Moses to get a better understanding where potential performance issues can arise. We shall also investigate other major components of the decoding algorithm, particulaly the language model which has not been touched in this paper.
 
 % \section*{Acknowledgments}
 % 
