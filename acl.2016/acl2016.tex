@@ -203,7 +203,7 @@ We trained a phrase-based system using the Moses toolkit with standard settings.
 		& ar-en	& fr-en \\ \hline
 Phrase table  	& 17 	& 5.8 \\
 Language model 	& 3.1  	& 1.8 \\ 
-Lex-re model	& 2.3	& 637MB \\ \hline
+Lex re. model	& 2.3	& 637MB \\ \hline
 \end{tabular}
 \end{center}
 \caption{Model sizes in GB}
@@ -242,9 +242,9 @@ For all experiments, we used a Dell PowerEdge R620 server with 16 cores, 32 hype
 
 \subsection{Optimizing Memory}
 
-We create a dynamic memory pool which can grow as more memory is requested. The memory is not released, instead the pool can be reset in order for the memory to be re-used. We instantiate two pools for each thread, one which is never reset and another which is reset after the decoding each sentence. Objects are created in either pool according to their life cycle.
+We create a dynamic memory pool which can grow as more memory is requested. The memory is not released, instead the pool can be reset in order for the memory to be re-used. We instantiate two pools for each thread, one which is never reset and another which is reset after the decoding each sentence. Datastructures are created in either pool according to their life cycle.
 
-For critical objects with high churn such as hypotheses, thread-specific LIFO queues are used to recycle objects which are no longer used. This not only reduces memory wastage but re-uses recent objects which are likely to be in the CPU cache memory.
+For critical datastructures with high churn such as hypotheses, thread-specific LIFO queues are used to recycle objects which are no longer used. This not only reduces memory wastage but re-uses recent objects which are likely to be in the CPU cache memory.
 
 Over 24\% of the Moses decoder running time is spent on memory management and this increases when more threads are used, Table~\ref{tab:optimizing-memory}, dampening the scalability of the decoder. By contrast, our decoder spends 11\% on memory management and does not significantly increase with more cores.
 \begin{table}[h]
@@ -458,7 +458,7 @@ Integrating the lexicalized reordering model into the translation model decrease
 \begin{tabular}{cc}
 {\includegraphics[scale=0.4]{scalability.png}} 
 \end{tabular}
-\caption{Decoding speed}
+\caption{Our decoder's decoding speed}
 \label{fig:speed}
 \end{figure} 
 
@@ -474,7 +474,7 @@ This contrast with Moses where speed increases to approximately 16 threads but t
 \begin{tabular}{cc}
 {\includegraphics[scale=0.4]{moses-scalability.png}} 
 \end{tabular}
-\caption{Moses decoding speed}
+\caption{Moses' decoding speed}
 \label{fig:moses-speed}
 \end{figure} 
 
