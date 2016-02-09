@@ -169,7 +169,7 @@ We will focus on two main optimizations that differs from the current Probing ph
 \begin{center}
 \begin{tabular}{|l|c|c|} \hline
 		& No cache	& Caching \\ \hline
-Decoding time  	& 2032 		& 2302 \\ \hline
+Decoding time  	& 2032 		& 2302 (+13\%) \\ \hline
 \end{tabular}
 \end{center}
 \caption{Decoding time (in sec with 32 threads) when using phrase-table cache}
@@ -177,7 +177,7 @@ Decoding time  	& 2032 		& 2302 \\ \hline
 \end{table}
 We shall explore a simpler caching mechanism that creates the cache at the start of decoding and remain static thereafter.
 
-Secondly, the Probing phrase-table use a simple \textbf{compression} algorithm to compress the target side of the translation rule. Compression was championed being the main factor for the speed of the Compact phrase-table but as we saw in Figure~\ref{fig:moses-phrase-tables-time}, it may come at a cost when used with higher number of cores. We shall therefore take the opposite approach to~\newcite{junczys_tsd_2012b} and explore the decoding speed gain by disabling compression.
+Secondly, the Probing phrase-table use a simple \textbf{compression} algorithm to compress the target side of the translation rule. Compression was championed as the main reason behind the speed of the Compact phrase-table but as we saw in Figure~\ref{fig:moses-phrase-tables-time}, this comes at the cost of scalability to large number of threads. We shall therefore take the opposite approach to~\newcite{junczys_tsd_2012b} and explore optimizing decoding speed by disabling compression.
 
 \subsection{Lexicalized Reordering Model}
 
@@ -483,7 +483,7 @@ This contrast with Moses where speed increases to approximately 16 threads but t
 
 ??? more cores
 
-We verify the results on a smaller French-English phrase-based model and test set container longer sentences. The speed gain is even greater than our main testing scenario, Figure~\ref{fig:fr-en-speed}. Our decoder is 5.4 times faster than Moses with a single-thread and 14.5 faster when all cores are saturated.
+We verify the results on a smaller French-English phrase-based model and test set containng longer sentences. The speed gain is even greater than our main testing scenario, Figure~\ref{fig:fr-en-speed}. Our decoder is 5.4 times faster than Moses with a single-thread and 14.5 faster when all cores are saturated.
 \begin{figure}[h]
 \centering
 \begin{tabular}{cc}
