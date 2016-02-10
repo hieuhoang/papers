@@ -481,7 +481,15 @@ This contrast with Moses where speed increases to approximately 16 threads but t
 
 \section{Other Models and Even More Cores}
 
-??? more cores
+We tested with the same model and tested set on bigger servers, our decoder shows no sign of scalability problems, Figure~\ref{fig:more-cores}.
+\begin{figure}[h]
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.4]{more-cores.png}} 
+\end{tabular}
+\caption{Decoding speed for with bigger servers}
+\label{fig:more-cores}
+\end{figure} 
 
 We verify the results on a smaller French-English phrase-based model and test set containng longer sentences. The speed gain is even greater than our main testing scenario, Figure~\ref{fig:fr-en-speed}. Our decoder is 5.4 times faster than Moses with a single-thread and 14.5 faster when all cores are saturated.
 \begin{figure}[h]
