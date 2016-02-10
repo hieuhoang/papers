@@ -7,45 +7,45 @@ Database file #2: mt.bib
 Warning--I'm ignoring mfernandez2016boosting's extra "publisher" field
 --line 8342 of file mt.bib
 Database file #3: more.bib
-You've used 11 entries,
+You've used 14 entries,
             2490 wiz_defined-function locations,
-            630 strings with 6690 characters,
-and the built_in function-call counts, 4875 in all, are:
-= -- 528
-> -- 157
-< -- 6
-+ -- 53
-- -- 50
-* -- 342
-:= -- 756
-add.period$ -- 46
-call.type$ -- 11
-change.case$ -- 67
-chr.to.int$ -- 11
-cite$ -- 11
-duplicate$ -- 225
-empty$ -- 383
-format.name$ -- 63
-if$ -- 1057
+            651 strings with 7926 characters,
+and the built_in function-call counts, 7188 in all, are:
+= -- 759
+> -- 321
+< -- 9
++ -- 115
+- -- 112
+* -- 542
+:= -- 1124
+add.period$ -- 61
+call.type$ -- 14
+change.case$ -- 110
+chr.to.int$ -- 14
+cite$ -- 14
+duplicate$ -- 302
+empty$ -- 509
+format.name$ -- 128
+if$ -- 1539
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 10
-newline$ -- 69
-num.names$ -- 35
-pop$ -- 70
+missing$ -- 13
+newline$ -- 87
+num.names$ -- 44
+pop$ -- 118
 preamble$ -- 1
-purify$ -- 78
+purify$ -- 124
 quote$ -- 0
-skip$ -- 180
+skip$ -- 240
 stack$ -- 0
-substring$ -- 279
-swap$ -- 71
-text.length$ -- 6
+substring$ -- 377
+swap$ -- 101
+text.length$ -- 9
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 88
+type$ -- 112
 warning$ -- 0
-while$ -- 42
-width$ -- 14
-write$ -- 165
+while$ -- 57
+width$ -- 17
+write$ -- 214
 (There was 1 warning)
