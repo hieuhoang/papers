@@ -163,15 +163,8 @@ Secondly, the Probing phrase-table use a simple \textbf{compression} algorithm t
 
 \subsection{Lexicalized Reordering Model}
 
-The lexicalized reordering model is trained on parallel data, usually requiring random lookups of the model file during decoding. Using the model can increase translation quality at the cost of longer decoding time. Efforts such as~\newcite{junczys_tsd_2012b} have been made to increase the speed of the model, with some success at low core counts, Figure~\ref{fig:moses-lex-ro}.
-\begin{figure}[h]
-\centering
-\begin{tabular}{cc}
-{\includegraphics[scale=0.4]{moses-lex-ro.png}} 
-\end{tabular}
-\caption{Comparing Moses decoding time with different Lexicalized Reordering implementations}
-\label{fig:moses-lex-ro}
-\end{figure} 
+The lexicalized reordering model is trained on parallel data, usually requiring random lookups of the model file during decoding. Using the model can increase translation quality at the cost of longer decoding time. Efforts such as~\newcite{junczys_tsd_2012b} have been made to increase the speed of the model.
+
 
 However, the querying key to the lookup are the source and target phrase of each translation rule. Rather than storing the model separately, we shall investigate integrating the lexicalized reordering model into the translation model.
 
