@@ -143,7 +143,7 @@ For any realistic sized phrase-based model to be used in an online situation, me
 \caption{Moses decoding time with two different phrase-table implementations}
 \label{fig:moses-phrase-tables-time}
 \end{figure} 
-From this, it appears that the Probing phrase-table~\cite{Bogochev:Thesis:2013} has the fastest translation rule lookup, especially with large number of cores, therefore, we will concentrate exclusively on this implementation in our work as this . We will look at two main areas for phrase-table optimization specifically in relation to the Probing implementation.
+From this, it appears that the Probing phrase-table~\cite{Bogoychev:Thesis:2013} has the fastest translation rule lookup, especially with large number of cores, therefore, we will concentrate exclusively on this implementation in our work as this . We will look at two main areas for phrase-table optimization specifically in relation to the Probing implementation.
 
 We will focus on two main optimizations that differs from the current Probing phrase-table implementation and that have application to other implementations. Firstly, we will look at the \textbf{caching} of often used translation rules. The default caching framework save the most recently looked up rules. However, this caching mechanism is actually slower than re-querying the phrase-table, Table~\ref{tab:phrase-table-cache}. 
 \begin{table}[h]

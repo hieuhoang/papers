@@ -1,10 +1,11 @@
 \begin{thebibliography}{}
 
-\bibitem[\protect\citename{Bogochev}2014]{Bogochev:Thesis:2013}
-Nikolay Bogochev.
-\newblock 2014.
-\newblock {Big data: Fast, Small, and Read Only Lookup}.
-\newblock Master's thesis, University of Edinburgh, UK.
+\bibitem[\protect\citename{Bogoychev}2013]{Bogoychev:Thesis:2013}
+Nikolay Bogoychev.
+\newblock 2013.
+\newblock Big data: Fast, small, and read only lookup.
+\newblock University of Edinburgh.
+\newblock Undergraduate Thesis.
 
 \bibitem[\protect\citename{Brown \bgroup et al.\egroup }1993]{Brown:1993}
 Peter~F. Brown, Stephen~A. Della-Pietra, Vincent~J. Della-Pietra, and Robert~L.

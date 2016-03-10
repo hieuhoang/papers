@@ -1,45 +1,45 @@
-This is BibTeX, Version 0.99d (TeX Live 2015/Debian)
+This is BibTeX, Version 0.99d (TeX Live 2015)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: acl2016.aux
 The style file: acl2016.bst
 Database file #1: acl2016.bib
 Database file #2: mt.bib
 Warning--I'm ignoring mfernandez2016boosting's extra "publisher" field
---line 8342 of file mt.bib
+--line 8340 of file mt.bib
 Database file #3: more.bib
 You've used 14 entries,
             2490 wiz_defined-function locations,
-            651 strings with 7926 characters,
-and the built_in function-call counts, 7188 in all, are:
-= -- 759
+            651 strings with 7945 characters,
+and the built_in function-call counts, 7210 in all, are:
+= -- 760
 > -- 321
 < -- 9
 + -- 115
 - -- 112
-* -- 542
-:= -- 1124
-add.period$ -- 61
+* -- 540
+:= -- 1121
+add.period$ -- 62
 call.type$ -- 14
 change.case$ -- 110
 chr.to.int$ -- 14
 cite$ -- 14
-duplicate$ -- 302
-empty$ -- 509
+duplicate$ -- 301
+empty$ -- 517
 format.name$ -- 128
-if$ -- 1539
+if$ -- 1549
 int.to.chr$ -- 1
 int.to.str$ -- 0
 missing$ -- 13
-newline$ -- 87
+newline$ -- 88
 num.names$ -- 44
-pop$ -- 118
+pop$ -- 124
 preamble$ -- 1
 purify$ -- 124
 quote$ -- 0
 skip$ -- 240
 stack$ -- 0
 substring$ -- 377
-swap$ -- 101
+swap$ -- 102
 text.length$ -- 9
 text.prefix$ -- 0
 top$ -- 0
