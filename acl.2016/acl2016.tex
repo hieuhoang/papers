@@ -118,7 +118,7 @@ The standard feature functions in the phrase-based model include:
 \end{enumerate}
 %which we have suffixed with $_{TM} $ to avoid confusion with the overall model probability $ p(t|s) $ and $ p(s|t)$. 
 
-The first three feature functions frequently trained on data and require the feature to read the model from files. The other feature functions are simple and do not leave much room for optimization. The language model consumes a large part of decoding time, and it is for this reason that it has already been heavily optmized. We shall therefore investigate the first two feature functions for optimization.
+The first three feature functions frequently trained on data and require the feature to read the model from files. The other feature functions are simple and do not leave much room for optimization. The language model consumes a large part of decoding time, and it is for this reason that it has already been heavily optimized. %We shall therefore investigate the first two feature functions for optimization.
 
 %\subsection{Language Model}
 % TODO
@@ -134,30 +134,11 @@ For any realistic sized phrase-based model to be used in an online situation, me
 \caption{Moses decoding time with two different phrase-table implementations}
 \label{fig:moses-phrase-tables-time}
 \end{figure} 
-From this, it appears that the Probing phrase-table~\cite{Bogoychev:Thesis:2013} has the fastest translation rule lookup, especially with large number of cores, therefore, we will concentrate exclusively on this implementation in our work as this . We will look at two main areas for phrase-table optimization specifically in relation to the Probing implementation.
-
-We will focus on two main optimizations that differs from the current Probing phrase-table implementation and that have application to other implementations. Firstly, we will look at the \textbf{caching} of often used translation rules. The default caching framework save the most recently looked up rules. However, this caching mechanism is actually slower than re-querying the phrase-table, Table~\ref{tab:phrase-table-cache}. 
-\begin{table}[h]
-\small
-\begin{center}
-\begin{tabular}{|l|c|c|} \hline
-		& No cache	& Caching \\ \hline
-Decoding time  	& 2032 		& 2302 (+13\%) \\ \hline
-\end{tabular}
-\end{center}
-\caption{Decoding time (in sec with 32 threads) when using phrase-table cache}
-\label{tab:phrase-table-cache}
-\end{table}
-We shall explore a simpler caching mechanism that creates the cache at the start of decoding and remain static thereafter.
-
-Secondly, the Probing phrase-table use a simple \textbf{compression} algorithm to compress the target side of the translation rule. Compression was championed as the main reason behind the speed of the Compact phrase-table but as we saw in Figure~\ref{fig:moses-phrase-tables-time}, this comes at the cost of scalability to large number of threads. We shall therefore take the opposite approach to~\newcite{junczys_tsd_2012b} and explore optimizing decoding speed by disabling compression.
-
+From this, it appears that the Probing phrase-table~\cite{Bogoychev:Thesis:2013} has the fastest translation rule lookup, especially with large number of cores, therefore, we will concentrate exclusively on this implementation in our work as this.
+ 
 \subsection{Lexicalized Reordering Model}
 
 The lexicalized reordering model is trained on parallel data, usually requiring random lookups of the model file during decoding. Using the model can increase translation quality at the cost of longer decoding time. Efforts such as~\newcite{junczys_tsd_2012b} have been made to increase the speed of the model.
-
-
-However, the querying key to the lookup are the source and target phrase of each translation rule. Rather than storing the model separately, we shall investigate integrating the lexicalized reordering model into the translation model.
 
 \section{Proposed Improvements}
 
@@ -169,9 +150,27 @@ There are four main optimizations that we shall investigate. Firstly, the search
 
 Secondly, we shall investigate different stack configurations other than coverage cardinality to see whether they can improve speed and translation quality.
 
+Thirdly, we will look at for optimizating the phrase-table, specifically in relation to the Probing implementation, focusing on two techniques. One, we will investigate caching of often used translation rules. The default caching framework save the most recently looked up rules. However, this caching mechanism actually makes decoding slower, Table~\ref{tab:phrase-table-cache}. 
+\begin{table}[h]
+\small
+\begin{center}
+\begin{tabular}{|l|c|c|} \hline
+		& No cache	& Caching \\ \hline
+Decoding time  	& 2032 		& 2302 (+13\%) \\ \hline
+\end{tabular}
+\end{center}
+\caption{Decoding time (in sec with 32 threads) when using phrase-table cache}
+\label{tab:phrase-table-cache}
+\end{table}
+We shall explore a simpler caching mechanism that creates a static cache at the start of decoding.
+
+Two, the Probing phrase-table use a simple compression algorithm to compress the target side of the translation rule. Compression was championed by ~\newcite{junczys_tsd_2012b} as the main reason behind the speed of their phrase-table but as we saw in Figure~\ref{fig:moses-phrase-tables-time}, this comes at the cost of scalability to large number of threads. We shall therefore take the opposite approach to and explore optimizing decoding speed by disabling compression.
+
+Lastly, the lexicalized reordering model require random lookups but query key are the source and target phrase of each translation rule. Rather than storing this model separately, we shall investigate integrating it into the translation model.
+
 \section{Experimental Setup}
 
-We trained a phrase-based system using the Moses toolkit with standard settings. The training data consisted of most of the publicly available Arabic-English data from Opus~\cite{tiedemann2012parallel} containing over 69 million parallel sentences, and tuned on a held out set. The phrase-table was then pruned, keeping only the top 100 entries per source phrase, according to $p(t|s)$. All models files were then binarized; the language models were binarized using KenLM~\cite{Heafield-kenlm}, the phrase table using the Probing phrase-table, lexicalized reordering model using the compact datastructure. These binary formats were choosen for their best-in-class multithreaded performance. Table~\ref{tab:model-files} gives details of the resultant sizes of the model files. For verification with a different dataset, we also occasionally used a second system trained on the French-English Europarl corpus (2m parallel sentences). 
+We trained a phrase-based system using the Moses toolkit with standard settings. The training data consisted of most of the publicly available Arabic-English data from Opus~\cite{tiedemann2012parallel} containing over 69 million parallel sentences, and tuned on a held out set. The phrase-table was then pruned, keeping only the top 100 entries per source phrase, according to $p(t|s)$. All models files were then binarized; the language models were binarized using KenLM~\cite{Heafield-kenlm}, the phrase table using the Probing phrase-table, lexicalized reordering model using the compact datastructure. These binary formats were choosen for their best-in-class multithreaded performance. Table~\ref{tab:model-files} gives details of the resultant sizes of the model files. For testing decoding speed, we used a subset of the training data, Table~\ref{tab:test-sets}. 
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{|l|c|c|} \hline
@@ -184,7 +183,8 @@ Lex re. model	& 2.3	& 637MB \\ \hline
 \caption{Model sizes in GB}
 \label{tab:model-files}
 \end{table}
-For testing decoding speed, we used a subset of the training data, Table~\ref{tab:test-sets}. The two test scenarios have differing characterics that we are interested in analyzing, ar-en have short sentences with large models while fr-en have overly long sentences with smaller models. Where we need to compare model scores, we used held out test sets.
+
+For verification with a different dataset, we also used a second system trained on the French-English Europarl corpus (2m parallel sentences). The two different systems have characterics that we are interested in analyzing; ar-en have short sentences with large models while fr-en have overly long sentences with smaller models. Where we need to compare model scores, we used held out test sets.
 
 \begin{table}[h]
 \begin{center}
@@ -211,17 +211,17 @@ Standard Moses phrase-based configurations are used, except that we use the cube
 
 As a baseline, we use the latest version of the Moses decoder taken from the github repository.
 
-For all experiments, we used a Dell PowerEdge R620 server with 16 cores, 32 hyper-threads, split over 2 physical processors (Intel Xeon E5-2650 @ 2.00GHz). The server has 380GB RAM. The operating system was Ubuntu 14.04, the code was compiled with gcc 4.8.4 and Boost library 1.59.
+For all experiments, we used a Dell PowerEdge R620 server with 16 cores, 32 hyper-threads, split over 2 physical processors (Intel Xeon E5-2650 @ 2.00GHz). The server has 380GB RAM. The operating system was Ubuntu 14.04, the code was compiled with gcc 4.8.4 and Boost 1.59\footnote{http://boost.org/} and the tcmalloc library\footnote{http://goog-perftools.sourceforge.net/doc/tcmalloc.html}.
 
 \section{Results}
 
 \subsection{Optimizing Memory}
 
-We create a dynamic memory pool which can grow as more memory is requested. The memory is not released, instead the pool can be reset in order for the memory to be re-used. We instantiate two pools for each thread, one which is never reset and another which is reset after the decoding each sentence. Datastructures are created in either pool according to their life cycle.
+We create a dynamic memory pool which can grow as more memory is requested. The memory is not released, instead the pools are reset and re-used. We instantiate two pools for each thread, one which is never reset and another which is reset after the decoding of each sentence. Datastructures are created in either pool according to their life cycle.
 
 For critical datastructures with high churn such as hypotheses, thread-specific LIFO queues are used to recycle objects which are no longer used. This not only reduces memory wastage but re-uses recent objects which are likely to be in the CPU cache memory.
 
-Over 24\% of the Moses decoder running time is spent on memory management and this increases when more threads are used, Table~\ref{tab:optimizing-memory}, dampening the scalability of the decoder. By contrast, our decoder spends 11\% on memory management and does not significantly increase with more cores.
+Over 24\% of the Moses decoder running time is spent on memory management and this increases to 39\% when 32 threads are used, Table~\ref{tab:optimizing-memory}, dampening the scalability of the decoder. By contrast, our decoder spends 11\% on memory management and does not significantly increase with more threads.
 \begin{table}[h]
 \begin{center}
 \small
@@ -240,7 +240,7 @@ Misc/Unknown	& 45\%	 	& 39\% 	& 24\%		& 29\% \\ \hline
 \label{tab:optimizing-memory}
 \end{table}
 
-Figure~\ref{fig:mempool} compares the decoding time for Moses and our decoder, using the same models, parameters and test set. Our decoder is over 3 times faster with one thread, and 4.7\% faster using all cores. Like Moses, performance actually worsens after approximately 15 cores, however, the problem is not as pronounced. This gives us a better foundation on which to build further innovations for fast, multi-core decoding.
+Figure~\ref{fig:mempool} compares the decoding time for Moses and our decoder, using the same models, parameters and test set. Our decoder is over 3 times faster with one thread, and 4.7 times faster using all cores. Like Moses, performance actually worsens after approximately 15 threads, however, the problem is not as pronounced. This gives us a better foundation on which to build further innovations for fast, multi-core decoding.
 \begin{figure}[h]
 \centering
 \begin{tabular}{cc}
@@ -265,9 +265,9 @@ Figure~\ref{fig:mempool} compares the decoding time for Moses and our decoder, u
 
 \subsection{Stack Configuration}
 
-The most popular stack configuration for phrase-based model, as implemented in Pharaoh, Moses and Joshua, has been by coverage cardinality, ie. hypotheses that have translated the same number of source words are stored in the same stack. There have been research into other stack layouts such as~\cite{ortizmartinez-garciavarea-casacuberta:2006:WMT}, and it has been noted that the decoder in~\cite{Brown:1993} uses coverage stacks, as opposed to coverage cardinality. 
+The most popular stack configuration for phrase-based model, as implemented in Pharaoh, Moses and Joshua, is coverage cardinality, ie. hypotheses that have translated the same number of source words are stored in the same stack. There have been research into other stack layouts such as~\cite{ortizmartinez-garciavarea-casacuberta:2006:WMT}, and it has been noted that the decoder in~\cite{Brown:1993} uses coverage stacks, as opposed to coverage cardinality. 
 
-We also note that distortion limit which constrains hypothesis extension is dependent on the hypothesis' coverage vector, $C$ \emph{and} the end position of most recent source word that has been translated, $e$. The distortion limit must be checked for every instance of a hypothesis and translation rule, Figure~\ref{algo:Hypothesis Expansion with Unsorted Stack}.
+We also note that the distortion limit which constrains hypothesis extension is dependent on the hypothesis' coverage vector, $C$ \emph{and} the end position of most recent source word that has been translated, $e$. The distortion limit must be checked for every instance of a hypothesis and translation rule, Figure~\ref{algo:Hypothesis Expansion with Unsorted Stack}.
 \begin{figure} [h]
 \begin{algorithmic}
 %\REQUIRE source sentence $s$, translation options
@@ -335,44 +335,44 @@ Pop-limit	& \multicolumn{2}{c|}{Cardinality}	& \multicolumn{2}{c|}{Coverage}	& \
 \caption{Trade-off between decoding time average model scores for different stack configurations}
 \label{fig:stack-configuration}
 \end{figure} 
-As can be seen, the model scores for all stack configurations are identical for low pop-limits parameters but grouping hypotheses into coverage \& end position produces higher model scores for higher pop-limits. It is also slower but the time/quality tradeoff is better overall with this stack configuration. For lower pop-limits this configuration is slightly slower, but not by much, therefore, we shall stick with this Configuration for the remainder of the paper.
+As can be seen, the model scores for all stack configurations are identical for low pop-limits parameters but grouping hypotheses into coverage \& end position produces higher model scores for higher pop-limits. It is also slower but the time/quality tradeoff is better overall with this stack configuration. For lower pop-limits this configuration is slightly slower but not by much. %, therefore, we shall stick with this Configuration for the remainder of the paper.
 
-The cube-pruning algorithm contain a further priority queue which is attached to hypotheses sets which can be independent of how hypotheses are grouped. In the Moses implementation, the priority queue is also attached to the coverage cardinality, Figure~\ref{algo:Cube Pruning with Unsorted Stack}.
-\begin{figure} [h]
-\begin{algorithmic}
-%\REQUIRE source sentence $s$, translation options
-\STATE initialize $queue_{|C|}$
-\FOR{1 to pop-limit}
-  \STATE get best $item$ in $queue_{|C|}$
-  \STATE create hypo from $item$, coverage $C_{new}$
-  \STATE add hypo to $stack_{|C_{new}|}$
-  \STATE create next $items$
-  \STATE add new $items$ to $queue_{|C|}$
-\ENDFOR % { hypothesis in $stack_i$} 
-\end{algorithmic}
-\caption{Cube Pruning with Cardinality Stacks}
-\label{algo:Cube Pruning with Unsorted Stack}
-\end{figure}
-Again, we experiment with diffirent queue configurations, having separate queues for each cardinality, coverage, and coverage \& end position. The stack configuration remained constant (coverage \& end position with pop-limit of 400).
-\begin{table}[h]
-\small
-\begin{center}
-\begin{tabular}{|r|r|r|} \hline
-Queue configuration		& Time		& Score \\ \hline
-Cardinality			& 192		& -8.59922 \\
-Coverage			& 2,413		& -8.58635 \\
-Coverage \& end position	& 7,472		& -8.58263 \\ \hline
-\end{tabular}
-\end{center}
-\caption{Decoding time (in secs with 32 threads) and average model scores for different queue configurations}
-\label{tab:queue-configuration}
-\end{table}
-From the results in Table~\ref{tab:queue-configuration}, using finer grain queues does results in better model scores but it is significantly slower to decode.
-
+%Also, the cube-pruning algorithm contain a priority queue per set of hypotheses sets. This can be independent of how hypotheses are grouped. In the Moses implementation, the priority queue is also attached to the coverage cardinality, Figure~\ref{algo:Cube Pruning with Unsorted Stack}.
+%\begin{figure} [h]
+%\begin{algorithmic}
+%%\REQUIRE source sentence $s$, translation options
+%\STATE initialize $queue_{|C|}$
+%\FOR{1 to pop-limit}
+%  \STATE get best $item$ in $queue_{|C|}$
+%  \STATE create hypo from $item$, coverage $C_{new}$
+%  \STATE add hypo to $stack_{|C_{new}|}$
+%  \STATE create next $items$
+%  \STATE add new $items$ to $queue_{|C|}$
+%\ENDFOR % { hypothesis in $stack_i$} 
+%\end{algorithmic}
+%\caption{Cube Pruning with Cardinality Stacks}
+%\label{algo:Cube Pruning with Unsorted Stack}
+%\end{figure}
+%Again, we experiment with diffirent queue configurations, having separate queues for each cardinality, coverage, and coverage \& end position. The stack configuration remained constant (coverage \& end position with pop-limit of 400).
+%\begin{table}[h]
+%\small
+%\begin{center}
+%\begin{tabular}{|r|r|r|} \hline
+%Queue configuration		& Time		& Score \\ \hline
+%Cardinality			& 192		& -8.59922 \\
+%Coverage			& 2,413		& -8.58635 \\
+%Coverage \& end position	& 7,472		& -8.58263 \\ \hline
+%\end{tabular}
+%\end{center}
+%\caption{Decoding time (in secs with 32 threads) and average model scores for different queue configurations}
+%\label{tab:queue-configuration}
+%\end{table}
+%From the results in Table~\ref{tab:queue-configuration}, using finer grain queues does results in better model scores but it is significantly slower to decode.
+%
 
 \subsection{Translation Model}
 
-The Moses translation model caches the most recently queried translation rules for later re-use. This has been shown to perform badly for fast phrase-tables such as the Probing phrase-table. We explore a simple caching mechanism that populates the cache during loading with rules that translates the most common source phrases. 
+The Moses translation model caches the most recently queried translation rules for later re-use. This has been shown to perform badly for fast phrase-tables such as those described by~\cite{Bogoychev:Thesis:2013}. We explore a simple caching mechanism that populates the cache during loading with rules that translates the most common source phrases. 
 \begin{table}[h]
 \small
 \begin{center}
@@ -391,7 +391,7 @@ Before caching	& 229	& N/A	 \\
 \end{table}
 The static cache does not require the overhead of managing the most recently queried lookups but there is still some overhead in using a cache. Overall however, there was over a 10\% decrease in decoding time using the optimum cache size, Table~\ref{tab:cache}.
 
-In the second optimatization, we disable the compression. This increase the size of the binary files from 17GB to 23GB but the time saved not needing to decompress the data resulted in a 1.5\% decrease in decoding time with 1 thread and nearly 7\% when the CPU is saturated, Table~\ref{tab:compression}.
+In the second optimatization, we disable the compression. This increase the size of the binary files from 17GB to 23GB but the time saved not needing to decompress the data resulted in a 1.5\% decrease in decoding time with 1 thread and nearly 7\% when the CPUs are saturated, Table~\ref{tab:compression}.
 \begin{table}[h]
 \small
 \begin{center}
@@ -415,7 +415,7 @@ In the second optimatization, we disable the compression. This increase the size
 
 The lexicalized reordering model assign a probability to a translation rule, given the relative ordering of the rule in the hypothesis. 
 
-We take a different approach by integrating the lexicalized model file into the translation model, reducing the need to query another model file. This resulted in a significant decrease in decoding time, especially with high number of cores, Figure~\ref{fig:lex-ro}. 
+We integrate the lexicalized model file into the translation model but storing the model's probabilities in the phrase-table. This resulted in a significant decrease in decoding time, especially with high number of cores, Figure~\ref{fig:lex-ro}. 
 \begin{figure}[h]
 \centering
 \begin{tabular}{cc}
@@ -424,7 +424,7 @@ We take a different approach by integrating the lexicalized model file into the 
 \caption{Decoding time with Compact Lexicalized Reordering, and integrated into a model the phrase-table}
 \label{fig:lex-ro}
 \end{figure} 
-Integrating the lexicalized reordering model into the translation model decreases decoding time by 29\% with a single core but it is over 5 times faster using all cores. In fact, the decoding time with the integrated model is similar to that \emph{without} a lexilized reordering model. Critically for systems with large number of cores, it enables the decoder to continue to scale, making efficient use of all available cores. This is in contrast to using a separate lexicalized reordering model where decoding time flatten out and actually worsens after approximately 10 threads.
+Integrating the lexicalized reordering model into the translation model decreases decoding time by 29\% with a single core but it is over 5 times faster using all cores. In fact, the decoding time with the integrated model is similar to that \emph{without} a lexilized reordering model. Critically for systems with multicores servers, it enables the decoder to continue to scale, making efficient use of all available cores. This is in contrast to using a separate lexicalized reordering model where decoding time flatten out and actually worsens after approximately 15 threads.
 
 \subsection{Scalability}
 
@@ -437,13 +437,13 @@ Integrating the lexicalized reordering model into the translation model decrease
 \label{fig:speed}
 \end{figure} 
 
-Figure~\ref{fig:speed} shows decoding speed against the number of threads, measured in words translated per second. Speed increases linearly with 2 threads as each thread is run on separate physical processors. The translation rate only decrease slightly with every additional threads until 16 threads are used which produces a 12.5 times faster than single-threaded decoding. The need to share resources such as CPU cache and internal bus bandwidth is probably responsible for the non-linear increase in speed.
+Figure~\ref{fig:speed} shows decoding speed against the number of threads, measured in words translated per second. There is a constant increase in decoding speed when mrore threads are used, only decreasing slightly after 16 threads when hyperthreads are used. Overall, decoding is 12.5 times faster than single-threaded decoding when all 16 cores (32 hyperthreads) are fully utilized.
 
-Since the test server only has 16 real cores, additional threads must be run on the same physical cores as existing threads. This further constrains the resources that each thread has, therefore we see a markedly lower speed increase with each additional thread once there are more than 16 concurrent threads.
+%Since the test server only has 16 real cores, additional threads must be run on the same physical cores as existing threads. This further constrains the resources that each thread has, therefore we see a markedly lower speed increase with each additional thread once there are more than 16 concurrent threads.
 
 Overall though, the scalability is remarkably good, the decoder is able to make full use of all real and virtual cores. When all 16 cores are saturated with 2 hyper-thread each, the decoder is 16 times faster than single-threaded decoding. It is also 4.5 times faster than Moses with a single-thread and 9.6 faster when all cores are used.
 
-This contrast with Moses where speed increases to approximately 16 threads but then actually become slower if more threads are used, Figure~\ref{fig:moses-speed}.
+This contrast with Moses where speed increases to approximately 16 threads but then actually become slower thereafter, Figure~\ref{fig:moses-speed}.
 \begin{figure}[h]
 \centering
 \begin{tabular}{cc}
@@ -456,7 +456,7 @@ This contrast with Moses where speed increases to approximately 16 threads but t
 
 \section{Other Models and Even More Cores}
 
-We tested with the same model and tested set on bigger servers, our decoder shows no sign of scalability problems, Figure~\ref{fig:more-cores}.
+Our decoder show no scalability issues when we tested with the same model and tested set on a larger server, Figure~\ref{fig:more-cores}.
 \begin{figure}[h]
 \centering
 \begin{tabular}{cc}
@@ -466,7 +466,7 @@ We tested with the same model and tested set on bigger servers, our decoder show
 \label{fig:more-cores}
 \end{figure} 
 
-We verify the results on a smaller French-English phrase-based model and test set containng longer sentences. The speed gain is even greater than our main testing scenario, Figure~\ref{fig:fr-en-speed}. Our decoder is 5.4 times faster than Moses with a single-thread and 14.5 faster when all cores are saturated.
+We verify the results with the French-English phrase-based system and test set. The speed gains are even greater than the Arabic-English test scenario, Figure~\ref{fig:fr-en-speed}. Our decoder is 5.4 times faster than Moses with a single-thread and 14.5 faster when all cores are saturated.
 \begin{figure}[h]
 \centering
 \begin{tabular}{cc}
@@ -478,9 +478,9 @@ We verify the results on a smaller French-English phrase-based model and test se
 
 \section{Conclusion}
 
-We have presented a new decoder that is compatible with Moses. By studying the shortcomings of the current implementations, we are able to optimize for speed, especially for multicore operation. This has resulted in double digit gains compared to Moses on the same hardware. Our implementation is also unaffected by scalability issues that has afflicted Moses after 10-15 threads and continue to scale well for all possible cores we have tested it on.
+We have presented a new decoder that is compatible with Moses. By studying the shortcomings of the current implementation, we are able to optimize for speed, particularly for multicore operation. This resulted in double digit gains compared to Moses on the same hardware. Our implementation is also unaffected by scalability issues that has afflicted Moses. % and continue to scale well for all possible cores we have tested it on.
 
-In future, we shall investigate other major components of the decoding algorithm, particulaly the language model which has not been touched in this paper. We shall also explore the underlying reasons for the scalability issues in Moses to get a better understanding where potential performance issues can arise. This has application to other algorithms beside MT decoding. 
+In future, we shall investigate other major components of the decoding algorithm, particularly the language model which has not been touched in this paper. We shall also explore the underlying reasons for the scalability issues in Moses to get a better understanding where potential performance issues can arise. This has application to other algorithms beside MT decoding. 
 
 % \section*{Acknowledgments}
 % 
