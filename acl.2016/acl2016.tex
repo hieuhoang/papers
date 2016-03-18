@@ -82,7 +82,7 @@ The rest of the paper will be broken up into the following sections. Next, we wi
 
 \section{Phrase-Based Model}
 
-The objective of decoding is to find the target translation with the maximum probability, given a source sentence. That is, for a source sentence $s$, the objective is to find a target translation $\hat{t}$ which has the highest conditional probability $p(t | s)$. Mathematically, this is written as:
+The objective of decoding is to find the target translation with the maximum probability, given a source sentence. That is, for a source sentence $s$, the objective is to find a target translation $\hat{t}$ which has the highest conditional probability $p(t | s)$. Formally, this is written as:
 \begin{equation}
 \hat{t} = \arg \max_t p( t | s )
 \label{eq:argmax-factored-trans}
@@ -96,19 +96,11 @@ where $\lambda_m$ is the weight, and $h_m$ is the feature function, or `score', 
 
 \subsection{Beam Search}
 
-A translation of a source sentence is created by applying a series of translation rules which together translate each source word once, and only once. Each partial translation is called a \emph{hypothesis}, which is created by applying a rule to an existing hypothesis. This process is called \emph{hypothesis expansion} and starts with a hypothesis that has translated no source word and ends with a completed hypothesis that has translated all source words. The highest-scoring completed hypothesis, according to the model score, is returned as  most probable translation, $\hat{t} $. Incomplete hypotheses are referred to as partial hypotheses.
+A translation of a source sentence is created by applying a series of translation rules which together translate each source word once, and only once. Each partial translation is known as a \emph{hypothesis}, which is created by applying a rule to an existing hypothesis. This process is called \emph{hypothesis expansion} and starts with a hypothesis that has translated no source word and ends with a completed hypotheses that have translated all source words. The highest-scoring completed hypothesis, according to the model score, is returned as  most probable translation, $\hat{t} $.
 
-Each rule translates a contiguous sequence of source words but successive translation options do not have to be adjacent on the source side, depending on the distortion limit. However, the target output is constructed strictly left-to-right from the target string of successive translation options. Therefore, successive translation options which are not adjacent and monotonic in the source causes translation reordering.
+In the phrase-based model, each rule translates a contiguous sequence of source words but successive translation options do not have to be adjacent on the source side, depending on the distortion limit. The target output is constructed strictly left-to-right from the target side of successive translation rules. 
 
-A beam search algorithm is used to create the completed hypothesis set efficiently. Partial hypotheses are organized into stacks where each stack holds a number of comparable hypotheses. Hypotheses in the same stack have the same coverage cardinality $|C|$, where $C$ is  the coverage set, $C \subseteq \{1,2,... |s| \} $ of the number of  source words translated. Therefore, $|s| + 1$ number of stacks are created for the decoding of a sentence $s$. 
-
-There are three main optimization to the search that we shall investigate. Firstly, the search creates and destroy a large number of hypothesis objects in memory which puts a heavy burden on the operating system. We shall optimize the search algorithm to use memory pools and object pools, replacing the operating system's general purpose memory management with our own application-aware management. 
-
-%The speed of memory access is dependent on whether the data is in the CPU cache which is a constrained resource compared to memory size, typically 20MB in the latest processors. We shall seek to re-use recently accessed information to increase likelihood of the data being in the CPU cache. 
-
-In multiprocessor servers, the CPU cache is attached to each processor and each core. If a sentences is being decoded on one CPU is switched to another, the CPU cache on the new CPU must be repopulated, slowing down decoding. We will therefore investigate binding threads to specific cores.
-
-Lastly, we shall investigate different stack configurations other than coverage cardinality to see whether they can improve speed and translation quality.
+A beam search algorithm is used to create the completed hypothesis set efficiently. Partial translations are organized into stacks where each stack holds a number of comparable hypotheses. Most phrase-based implementations place hypotheses in the same stack that have the same coverage cardinality $|C|$, where $C$ is  the coverage set, $C \subseteq \{1,2,... |s| \} $ of the number of  source words translated. 
 
 \subsection{Feature Functions}
 
@@ -167,6 +159,15 @@ The lexicalized reordering model is trained on parallel data, usually requiring 
 
 However, the querying key to the lookup are the source and target phrase of each translation rule. Rather than storing the model separately, we shall investigate integrating the lexicalized reordering model into the translation model.
 
+\section{Proposed Improvements}
+
+There are four main optimizations that we shall investigate. Firstly, the search creates and destroy a large number of hypothesis objects in memory which puts a burden on the operating system. We shall optimize the search algorithm to use memory pools and object pools, replacing the operating system's general purpose memory management with our own application-aware management. 
+
+%The speed of memory access is dependent on whether the data is in the CPU cache which is a constrained resource compared to memory size, typically 20MB in the latest processors. We shall seek to re-use recently accessed information to increase likelihood of the data being in the CPU cache. 
+
+%In multiprocessor servers, the CPU cache is attached to each processor and each core. If a sentences is being decoded on one CPU is switched to another, the CPU cache on the new CPU must be repopulated, slowing down decoding. We will therefore investigate binding threads to specific cores.
+
+Secondly, we shall investigate different stack configurations other than coverage cardinality to see whether they can improve speed and translation quality.
 
 \section{Experimental Setup}
 
