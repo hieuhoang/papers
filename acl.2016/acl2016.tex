@@ -1,3 +1,6 @@
+% Jane - FastSCSS single-best output, but is considerably faster by not maintaining separate model costs and by deleting recombined hypotheses
+% Jane - not multithreaded
+% Zens & Ney - don't compare different coverage config. Not focused on speed.
 %
 % File ACL2016.tex
 %
@@ -55,23 +58,32 @@
 \begin{abstract}
 The utilization of statistical machine translation (SMT) has grown enormously over the last decade, many using open-source software developed by the NLP community. As commercial use has increased, there is need that for the software to be optimized for their requirements, in particular, faster phrase-based decoding and more efficient utilization of modern multicore servers.
 
-In this paper we re-assess the major components of phrase-based decoding and decoder implementation with particular emphasis on speed and scalability on multicore machines. The result is a drop-in replacement for the Moses decoder which is up to fifteen times faster and scales almost linearly with the number of cores. 
+In this paper we re-examining the major components of phrase-based decoding and decoder implementation with particular emphasis on speed and scalability on multicore machines. The result is a drop-in replacement for the Moses decoder which is up to fifteen times faster and scales monotonically with the number of cores. 
 
 \end{abstract}
 
 \section{Introduction}
 
-SMT has steadily progressed from a research discipline to public useability during the past decade via services such as Google Translate, Microsoft Translator Hub, as well as products and services for customized translation such as those from Language Weaver and the open-source Moses toolkit. The latter has spawned a cottage industry ranging from small language service providers seeking to reduce translation cost, to large inter-govermental agencies such as the EU and the UN that require high volume, in-house machine translation.
+SMT has steadily progressed from a research discipline to commercial viability during the past decade as can be seen from services such as the Google and Microsoft Translation services. As well as general purpose services such as these, there is a large number of companies that offer customized translation systems, as well as  companies and organization that implement in-house solutions. Many of these customized solutions use Moses as their SMT engine.
 
-For high volume users, decoding is a most time critical part of the translation process. A common strategy to increase decoding throughput is to make use of the multiple cores that are now ubiquitous in todays servers. However, it has been noticed that the Moses decoder, amongst others, is unable to efficiently use multiple~\cite{mfernandez2016boosting}. That is, decoding speed does not substantial increase when more cores are used, in fact, it may actually \emph{decrease} when more cores are added. 
+For many users, decoding is the most time-critical part of the translation process. Making use of the multiple cores that are now ubiquitous in todays servers is a common strategy to ameliorate this issue. However, it has been noticed that the Moses decoder, amongst others, is unable to efficiently use multiple cores~\cite{mfernandez2016boosting}. That is, decoding speed does not substantially increase when more cores are used, in fact, it may actually \emph{decrease} when using more cores. There have be speculation on the causes of the inefficiency as well as potential remedies. 
 
-There have be speculation on the causes of the inefficiency as well as potential remedies. This paper is the first we know of that seeks to tackle this problem head on. We present an phrase-based decoder that is not only significantly faster than the Moses baseline for single-threaded operation, but is able to run multiple threads on multicore machines with only a slightly loss in linear speed. Model scores and functionality are compatible with Moses to aid comparison and ease transition for users. All source code will be made available under an open-source license.
+This paper is the first we know of that focuses on improving decoding speed on multicore servers. We will take a holistic approach to solving this issue, re-implementing the decoder's structure to optimize for speed, re-assessing some of the optimization assumptions made in the implementation of significant parts of the decoder, as well as exploring changes to the core search algorithm. We will compare and contrast decoder implementations, not just decoding algorithms or individual components. 
+
+We will present a phrase-based decoder that is significantly faster than the Moses baseline for single-threaded operation, and scales monotonically with the number of cores.
+
+As far as possible, model scores and functionality are compatible with Moses to aid comparison and ease transition for existing users. All source code will be made available under an open-source license.
 
 \subsection{Prior Work}
 
-There are a number of open-source SMT projects, most includes a decoder. The most well known is Moses~\cite{koehn-EtAl:2007:PosterDemo}, which supports phrase-based models, hierarchical phrase-based as well as various syntax-based models. Joshua~\cite{Joshua-Decoder} also supports hierarchical and syntax models and has recently supported phrase-based models. Phrasal supports a number of variants of the phrase-based model. CDEC~\cite{dyer2010cdec} supports hierarchical and syntactic models.
+There are a number of phrase-based decoding implementations, we shall detail some of the open-source implementations. 
 
-A number of the decoders support multithreading whilst others use alternative methods such as Hadoop or external scripts to parallelize decoding. 
+The most well known is Moses~\cite{koehn-EtAl:2007:PosterDemo} which supports phrase-based models, hierarchical phrase-based as well as various syntax-based models. It is widely used for MT research and commercial use. 
+
+Joshua~\cite{Joshua-Decoder} also supports hierarchical and syntax models and has recently supported phrase-based models. Phrasal~\cite{spence2014phrasal} supports a number of variants of the phrase-based model. Jane~\cite{peitz2012jane} supports hierarchical and standard phrase-based models. mtplz~\newcite{Heafield-mtplz} implements an speed-optimized variant of the phrase-based search algorithm.
+
+The Moses, Joshua and Phrasal decoders implement multithreading, while Jane uses an external application to parallelize operation. All the multi-threaded implementations report scalability problems, either in the paper (Phrasal) or via social media (Moses\footnote{https://github.com/moses-smt/mosesdecoder/issues/39} and Joshua\footnote{https://twitter.com/ApacheJoshua/status/342022794097340416}).
+
 
 Most prior work on increasing decoding speed look to optimizing specific components of decoding. ~\newcite{Chiang:2007:cl} describes the cube-pruning and cube-growing algorithm for decoding which allows the tradeoff between speed and translation quality to the adjusted with a simgle parameter. ~\newcite{Heafield-kenlm} and ~\newcite{tanaka2013efficient} describes fast, efficient datastructures for language models. ~\newcite{zens2007efficient} describes an implementation of a phrase-table for an SMT decoder that is loaded on demand, reducing the initial loading time and memory requirements. ~\newcite{junczys_tsd_2012b} extends this by compressing the on-disk phrase table and lexicalized re-ordering model resulting in impressive speed gains over previous work. ~\newcite{mfernandez2016boosting} describes running multiple processes of the Moses decoder to increase speed, treating it as a black box within a parallelization framework.
 

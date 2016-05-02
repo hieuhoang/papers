@@ -20,15 +20,6 @@ David Chiang.
 \newblock Hierarchical phrase-based translation.
 \newblock {\em Computational Linguistics}, 33(2):201--228.
 
-\bibitem[\protect\citename{Dyer \bgroup et al.\egroup }2010]{dyer2010cdec}
-Chris Dyer, Jonathan Weese, Hendra Setiawan, Adam Lopez, Ferhan Ture, Vladimir
-  Eidelman, Juri Ganitkevitch, Phil Blunsom, and Philip Resnik.
-\newblock 2010.
-\newblock cdec: A decoder, alignment, and learning framework for finite-state
-  and context-free translation models.
-\newblock In {\em Proceedings of the ACL 2010 System Demonstrations}, pages
-  7--12. Association for Computational Linguistics.
-
 \bibitem[\protect\citename{Fern\'{a}ndez \bgroup et al.\egroup
   }2016]{mfernandez2016boosting}
 M.~Fern\'{a}ndez, Juan~C. Pichel, Jos\'{e}~C. Cabaleiro, and Tom\'{a}s~F. Pena.
@@ -93,6 +84,23 @@ Daniel Ortiz-Mart\'{i}nez, Ismael Garc\'{i}a-Varea, and Francisco Casacuberta.
 \newblock In {\em Proceedings on the Workshop on Statistical Machine
   Translation}, pages 64--71, New York City, June. Association for
   Computational Linguistics.
+
+\bibitem[\protect\citename{Peitz \bgroup et al.\egroup }2012]{peitz2012jane}
+Joern Wuebker Matthias Huck~Stephan Peitz, Malte Nuhn, Markus Freitag
+  Jan-Thorsten~Peter Saab, and Mansour~Hermann Ney.
+\newblock 2012.
+\newblock Jane 2: Open source phrase-based and hierarchical statistical machine
+  translation.
+\newblock In {\em 24th International Conference on Computational Linguistics},
+  page 483. Citeseer.
+
+\bibitem[\protect\citename{Spence~Green and Manning}2014]{spence2014phrasal}
+Daniel~Cer Spence~Green and Christopher~D Manning.
+\newblock 2014.
+\newblock Phrasal: A toolkit for new directions in statistical machine
+  translation.
+\newblock In {\em Proceedings of the Ninth Workshop on Statistical Machine
+  Translation}, pages 114--121. Citeseer.
 
 \bibitem[\protect\citename{Tanaka and Yamamoto}2013]{tanaka2013efficient}
 Makoto Yasuhara~Toru Tanaka and Jun-ya Norimatsu~Mikio Yamamoto.

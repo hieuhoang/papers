@@ -1,0 +1,25 @@
+Thank you for reviewing our paper, the comments are very useful for us in correcting our paper. I'll try and respond to most of questions.
+
+1. We will fix the numerous typos and difficult-to-read sentences all reviewers have pointed out.
+
+2. We will add references to (Zens & Ney, 2008) and (Wuebker et al, 2012), and look at references to the Jane decoder. 
+
+3. Strangely, using lexicalised reordering model results in slightly faster decoding than without the model. We double checked with other datasets. We suspect this may be an artifact of the algorithm or datastructures, for example, more work is needed to resolve hypothesis recombination. We will endeavour to find the cause of this issue.
+
+4. Two of the coverage curves in Figure 5 exactly overlap, we will make that clear in the paper.
+
+5. All models in all experiments are read on-demand. The text phrase-table is 8.1GB zipped (40GB unzipped), the Lex RO is 3.5GB zipped (20GB unzipped), the LM is 3.1GB zipped (5.3GB unzipped). Furthermore, the decoder often requires multiple times the file sizes in RAM to hold the datastructures in memory. 
+
+For example, trying to load the phrase-table into memory took 67 minutes to load and decode and used over 200GB of virtual memory. Trying to load the phrase-table and re-ordering model into memory exhausted our 340GB server.
+
+This compares to 3-4 minutes decoding time and approximately 30GB of virtual memory when on-demand models are used. 
+
+Therefore, even though it may be possible to load some models into RAM on our specific server, it is suboptimal and not advisable for most scenarios due to memory and/or time constraints. We will add these remarks to the paper.
+
+6. We cache the 'most common source phrase' according to the count statistics obtained from the training data. We will make that clearer in the paper.
+
+7. We will add a more detailed description of memory pools.
+
+8. We will add a more detailed explanation of the different stack configurations and discussions. We also have further results which will include as it will be appropriate if the paper contains more discussion on the subject.
+
+9. The speedup in our work was such that we could not accurately evaluate decoding speeds when measured on typical test sets which contains 1000-2000 sentences. Since decoding speed is not affected by whether it is decoding the training data, or held out data, we decoded the training data for convenience. We will test this assumption and add a remark in the paper. Where reporting model scores was necessary, we did, of course, used a held-out test set.
