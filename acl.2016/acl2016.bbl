@@ -102,17 +102,30 @@ Daniel~Cer Spence~Green and Christopher~D Manning.
 \newblock In {\em Proceedings of the Ninth Workshop on Statistical Machine
   Translation}, pages 114--121. Citeseer.
 
-\bibitem[\protect\citename{Tanaka and Yamamoto}2013]{tanaka2013efficient}
-Makoto Yasuhara~Toru Tanaka and Jun-ya Norimatsu~Mikio Yamamoto.
-\newblock 2013.
-\newblock An efficient language model using double-array structures.
-\newblock {\em Cited by}, 2.
-
 \bibitem[\protect\citename{Tiedemann}2012]{tiedemann2012parallel}
 J{\"o}rg Tiedemann.
 \newblock 2012.
 \newblock Parallel data, tools and interfaces in opus.
 \newblock In {\em LREC}, pages 2214--2218.
+
+\bibitem[\protect\citename{Wuebker \bgroup et al.\egroup
+  }2012]{wuebker2012fast}
+Joern Wuebker, Hermann Ney, and Richard Zens.
+\newblock 2012.
+\newblock Fast and scalable decoding with language model look-ahead for
+  phrase-based statistical machine translation.
+\newblock In {\em Proceedings of the 50th Annual Meeting of the Association for
+  Computational Linguistics: Short Papers-Volume 2}, pages 28--32. Association
+  for Computational Linguistics.
+
+\bibitem[\protect\citename{Yasuhara \bgroup et al.\egroup
+  }2013]{yasuhara-EtAl:2013:EMNLP}
+Makoto Yasuhara, Toru Tanaka, Jun-ya Norimatsu, and Mikio Yamamoto.
+\newblock 2013.
+\newblock An efficient language model using double-array structures.
+\newblock In {\em Proceedings of the 2013 Conference on Empirical Methods in
+  Natural Language Processing}, pages 222--232, Seattle, Washington, USA,
+  October. Association for Computational Linguistics.
 
 \bibitem[\protect\citename{Zens and Ney}2007]{zens2007efficient}
 Richard Zens and Hermann Ney.

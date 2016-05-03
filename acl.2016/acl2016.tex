@@ -76,20 +76,25 @@ As far as possible, model scores and functionality are compatible with Moses to 
 
 \subsection{Prior Work}
 
-There are a number of phrase-based decoding implementations, we shall detail some of the open-source implementations. 
+Most prior work on increasing decoding speed look to optimizing specific components of the decoder or the decoding algorithm. 
 
-The most well known is Moses~\cite{koehn-EtAl:2007:PosterDemo} which supports phrase-based models, hierarchical phrase-based as well as various syntax-based models. It is widely used for MT research and commercial use. 
+~\newcite{Heafield-kenlm} and ~\newcite{yasuhara-EtAl:2013:EMNLP} describes fast, efficient datastructures for language models. ~\newcite{zens2007efficient} describes an implementation of a phrase-table for an SMT decoder that is loaded on demand, reducing the initial loading time and memory requirements. ~\newcite{junczys_tsd_2012b} extends this by compressing the on-disk phrase table and lexicalized re-ordering model. 
 
-Joshua~\cite{Joshua-Decoder} also supports hierarchical and syntax models and has recently supported phrase-based models. Phrasal~\cite{spence2014phrasal} supports a number of variants of the phrase-based model. Jane~\cite{peitz2012jane} supports hierarchical and standard phrase-based models. mtplz~\newcite{Heafield-mtplz} implements an speed-optimized variant of the phrase-based search algorithm.
+~\newcite{Chiang:2007:cl} describes the cube-pruning and cube-growing algorithm which allows the tradeoff between speed and translation quality to the adjusted with a single parameter. ~\newcite{wuebker2012fast} note that language model querying is amongst the most expensive operation in decoding. They sought to improved decoding speed by caching score computations early pruning of translation options. This work is similar to ~\newcite{Heafield-mtplz} which group hypotheses with identical language model context and incrementally expand them, reducing LM querying.
+
+~\newcite{mfernandez2016boosting} was concerned with multi-core speed but treat the decoding process as a black box within a parallelization framework.
+
+There are a number of phrase-based decoding implementations, many of which implements the phrase-based extensions above.
+
+The most well known is Moses~\cite{koehn-EtAl:2007:PosterDemo} which implements a number of speed optimzations, including cube-pruning. It is widely used for MT research and commercial use. 
+
+Joshua~\cite{Joshua-Decoder} also supports cube-pruning for phrase-based models. Phrasal~\cite{spence2014phrasal} supports a number of variants of the phrase-based model. Jane~\cite{peitz2012jane} supports the language model look-ahead described in ~\newcite{wuebker2012fast} in addition to other tools to speed up decoding such as having a separate fast, lightweight decoder. mtplz is a specialized decoder developed to implement the incremental decoding described in ~\newcite{Heafield-mtplz}.
 
 The Moses, Joshua and Phrasal decoders implement multithreading, however, they all report scalability problems, either in the paper (Phrasal) or via social media (Moses\footnote{https://github.com/moses-smt/mosesdecoder/issues/39} and Joshua\footnote{https://twitter.com/ApacheJoshua/status/342022794097340416}).
 
-Jane and mtplz are single-threaded decoders, relying on external applications to parallelize operations. This has the advantage it is easier to parallelize processing across multiple servers, not just multiple cores. However, within one server, this method does not scale beyond a small number of cores, as we shall see.
+Jane and mtplz are single-threaded decoders, relying on external applications to parallelize operations. This has the advantage it is easier to parallelize processing across multiple servers, not just multiple cores. As we shall see, this method does not scale beyond a small number of cores when attempting to scale to multiple cores within one server.
 
-Most prior work on increasing decoding speed look to optimizing specific components of decoding. ~\newcite{Chiang:2007:cl} describes the cube-pruning and cube-growing algorithm for decoding which allows the tradeoff between speed and translation quality to the adjusted with a simgle parameter. ~\newcite{Heafield-kenlm} and ~\newcite{tanaka2013efficient} describes fast, efficient datastructures for language models. ~\newcite{zens2007efficient} describes an implementation of a phrase-table for an SMT decoder that is loaded on demand, reducing the initial loading time and memory requirements. ~\newcite{junczys_tsd_2012b} extends this by compressing the on-disk phrase table and lexicalized re-ordering model resulting in impressive speed gains over previous work. ~\newcite{mfernandez2016boosting} describes running multiple processes of the Moses decoder to increase speed, treating it as a black box within a parallelization framework.
-
-
-~\newcite{Heafield-mtplz} is perhaps closest in intent to our work. This takes a holistic approach to decoding, describing a novel decoding algorithm which is focused on better decoding speed. However, the decoding algorithm is only able to incorporate one stateful feature function which precludes some of the useful decoding configurations which contains multiple stateful feature functions. It does not include a load-on-demand phrase table, therefore, cannot be used in a commercial environment with any realistic size models. Neither did this paper analyze the scalability of their work to multicore servers.
+This paper focuses on overcoming the shortcomings of existing decoding implementations on multicore servers.
 
 The rest of the paper will be broken up into the following sections. Next, we will describe the phrase-based model and the major implementation components, with particular emphasis on decoding speed. We will then describe modifications to improve decoding speed and present results. We conclude in the last section and discuss future work.
 
