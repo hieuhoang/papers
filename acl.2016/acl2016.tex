@@ -198,9 +198,9 @@ Two, the Probing phrase-table use a simple compression algorithm to compress the
 
 \subsection{Lexicalized Reordering Model Optimizations}
 
-Similar to the phrase-table, the lexicalized reordering model is trained on parallel data, a model file is created during training which is then queried during decoding. Inevitably, the querying results in some loss of decoding speed. Efforts such as~\newcite{junczys_tsd_2012b} have been made to increase the speed of the query.
+Similar to the phrase-table, the lexicalized reordering model is trained on parallel data where a model file is created which is then queried during decoding. Inevitably, the querying results in loss of decoding speed. Efforts such as~\newcite{junczys_tsd_2012b} have been made to increase querying speed.
 
-However, the model's query key are the source and target phrase of each translation rule. Rather than storing the lexicalized reordering model separately, we shall integrating it into the translation model, eliminating the need to query a separate file.
+However, the model's query key are the source and target phrase of each translation rule. Rather than storing the lexicalized reordering model separately, we shall integrating it into the translation model, eliminating the need to query a separate file. This has precedent in ~\newcite{peitz2012jane} but the effect on decoding speed were not published. We will compare results with using a separate model in this paper.
 
 \section{Experimental Setup}
 
@@ -251,9 +251,9 @@ For all experiments, we used a Dell PowerEdge R620 server with 16 cores, 32 hype
 
 \subsection{Optimizing Memory}
 
-We create a dynamic memory pool which can grow as more memory is requested. The memory is not released, instead the pools are reset and re-used. We instantiate two pools for each thread, one which is never reset and another which is reset after the decoding of each sentence. Datastructures are created in either pool according to their life cycle.
+We create a dynamic memory pool which can grow as more memory is requested. The memory is not released, instead the pools are reset and re-used. We instantiate two pools for each thread, one which is never reset and another which is reset after the decoding of each sentence. Data structures are created in either pool according to their life cycle.
 
-For critical datastructures with high churn such as hypotheses, thread-specific LIFO queues are used to recycle objects which are no longer used. This not only reduces memory wastage but re-uses recent objects which are likely to be in the CPU cache memory.
+For critical data structures with high churn such as hypotheses, thread-specific LIFO queues are used to recycle objects which are no longer used. This not only reduces memory wastage but re-uses recent objects which are likely to be in the CPU cache memory.
 
 Over 24\% of the Moses decoder running time is spent on memory management and this increases to 39\% when 32 threads are used, Table~\ref{tab:optimizing-memory}, dampening the scalability of the decoder. By contrast, our decoder spends 11\% on memory management and does not significantly increase with more threads.
 \begin{table}[h]
