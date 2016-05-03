@@ -86,11 +86,11 @@ Most prior work on increasing decoding speed look to optimizing specific compone
 
 There are a number of phrase-based decoding implementations, many of which implements the phrase-based extensions above.
 
-The most well known is Moses~\cite{koehn-EtAl:2007:PosterDemo} which implements a number of speed optimzations, including cube-pruning. It is widely used for MT research and commercial use. 
+The most well known is Moses~\cite{koehn-EtAl:2007:PosterDemo} which implements a number of speed optimizations, including cube-pruning. It is widely used for MT research and commercial use. 
 
 Joshua~\cite{Joshua-Decoder} also supports cube-pruning for phrase-based models. Phrasal~\cite{spence2014phrasal} supports a number of variants of the phrase-based model. Jane~\cite{peitz2012jane} supports the language model look-ahead described in ~\newcite{wuebker2012fast} in addition to other tools to speed up decoding such as having a separate fast, lightweight decoder. mtplz is a specialized decoder developed to implement the incremental decoding described in ~\newcite{Heafield-mtplz}.
 
-The Moses, Joshua and Phrasal decoders implement multithreading, however, they all report scalability problems, either in the paper (Phrasal) or via social media (Moses\footnote{https://github.com/moses-smt/mosesdecoder/issues/39} and Joshua\footnote{https://twitter.com/ApacheJoshua/status/342022794097340416}).
+The Moses, Joshua and Phrasal decoders implement multithreading, however, they all report scalability problems, either in the paper (Phrasal) or via social media (Moses\footnote{\scriptsize https://github.com/moses-smt/mosesdecoder/issues/39} and Joshua\footnote{\scriptsize https://twitter.com/ApacheJoshua/status/342022794097340416}).
 
 Jane and mtplz are single-threaded decoders, relying on external applications to parallelize operations. This has the advantage it is easier to parallelize processing across multiple servers, not just multiple cores. As we shall see, this method does not scale beyond a small number of cores when attempting to scale to multiple cores within one server.
 
@@ -114,9 +114,9 @@ where $\lambda_m$ is the weight, and $h_m$ is the feature function, or `score', 
 
 \subsection{Beam Search}
 
-A translation of a source sentence is created by applying a series of translation rules which together translate each source word once, and only once. Each partial translation is known as a \emph{hypothesis}, which is created by applying a rule to an existing hypothesis. This process is called \emph{hypothesis expansion} and starts with a hypothesis that has translated no source word and ends with a completed hypotheses that have translated all source words. The highest-scoring completed hypothesis, according to the model score, is returned as  most probable translation, $\hat{t} $.
+A translation of a source sentence is created by applying a series of translation rules which together translate each source word once, and only once. Each partial translation is known as a \emph{hypothesis}, which is created by applying a rule to an existing hypothesis. This \emph{hypothesis expansion} process starts with a hypothesis that has translated no source word and ends with completed hypotheses that have translated all source words. The highest-scoring completed hypothesis, according to the model score, is considered the best translation, $\hat{t} $.
 
-In the phrase-based model, each rule translates a contiguous sequence of source words but successive translation options do not have to be adjacent on the source side, depending on the distortion limit. The target output is constructed strictly left-to-right from the target side of successive translation rules. 
+In the phrase-based model, each rule translates a contiguous sequence of source words. Successive applications of translation rules do not have to be adjacent on the source side, depending on the distortion limit. The target output is constructed strictly left-to-right from the target side from the series of translation rules. 
 
 A beam search algorithm is used to create the completed hypothesis set efficiently. Partial translations are organized into stacks where each stack holds a number of comparable hypotheses. Most phrase-based implementations place hypotheses in the same stack that have the same coverage cardinality $|C|$, where $C$ is  the coverage set, $C \subseteq \{1,2,... |s| \} $ of the number of  source words translated. 
 
@@ -136,14 +136,16 @@ The standard feature functions in the phrase-based model include:
 \end{enumerate}
 %which we have suffixed with $_{TM} $ to avoid confusion with the overall model probability $ p(t|s) $ and $ p(s|t)$. 
 
-The first three feature functions frequently trained on data and require the feature to read the model from files. The other feature functions are simple and do not leave much room for optimization. The language model consumes a large part of decoding time, and it is for this reason that it has already been heavily optimized. %We shall therefore investigate the first two feature functions for optimization.
+Of these feature functions, the last four are simple and do not leave much room for optimization. As have already been mentioned, the language model consumes a large part of decoding time but it has already been heavily optimized in previous works such as ~\newcite{Heafield-kenlm} and ~\newcite{yasuhara-EtAl:2013:EMNLP}.
+
+Therefore, we will focus on optimizing the functionality of the phrase-table and lexicalized re-ordering model.
 
 %\subsection{Language Model}
 % TODO
 %
 \subsection{Translation Model}
 
-For any realistic sized phrase-based model to be used in an online situation, memory and loading time constraints requires us to use load-on-demand phrase-table implementations. Moses contains a number of such implementations with different performance characterics, we show the time take to decode 800,000 sentences for the fastest two in Figure~\ref{fig:moses-phrase-tables-time}.
+For any phrase-table table of a realistic size, memory and loading time constraints requires us to use load-on-demand implementations of which Moses can make use of, each with differing performance characteristics. Figure~\ref{fig:moses-phrase-tables-time} shows the time taken to decode 800,000 sentences for the fastest two implementations.
 \begin{figure}[h]
 \centering
 \begin{tabular}{cc}
@@ -160,15 +162,33 @@ The lexicalized reordering model is trained on parallel data, usually requiring 
 
 \section{Proposed Improvements}
 
-There are four main optimizations that we shall investigate. Firstly, the search creates and destroy a large number of hypothesis objects in memory which puts a burden on the operating system. We shall optimize the search algorithm to use memory pools and object pools, replacing the operating system's general purpose memory management with our own application-aware management. 
+There are four main optimizations that we shall investigate. 
+
+\subsection{Efficient Memory Allocation}
+
+Firstly, the search algorithm creates and destroy a large number of hypothesis and related objects. The memory allocation required puts a burden on the operating system due to the need to synchronize  memory access. This problem worsens with multi-threaded applications such as Moses.
+
+Libraries such as tcmalloc~\cite{ghemawat2009tcmalloc} are designed to reduce locking contention for multi-threaded application but in our case, this is still not enough. 
+
+We shall seek to improve decoding speed by replacing the operating system's general purpose memory management with our own custom memory management scheme. In time-critical parts of the decoder, memory will be allocated from a memory pool. 
+
+A memory pool is a large block of memory that has been pre-allocated by the operating system from which smaller blocks can be give out to the application. We will use a thread-specific memory pools to avoid locking contention during memory access. Our memory pool will be dynamic, growing in size when required but never reducing in size.
+
+To further increase memory management speed, objects are not deleted, instead the memory pool is simply reset and reused for each input sentence. This can result in high memory usage so object queues are available for high-churn objects which allows the decoder to re-use portion of the memory pool before it is reset. The object queues are LIFO so that recently accessed memory are used, increasing CPU cache hits.
 
 %The speed of memory access is dependent on whether the data is in the CPU cache which is a constrained resource compared to memory size, typically 20MB in the latest processors. We shall seek to re-use recently accessed information to increase likelihood of the data being in the CPU cache. 
 
 %In multiprocessor servers, the CPU cache is attached to each processor and each core. If a sentences is being decoded on one CPU is switched to another, the CPU cache on the new CPU must be repopulated, slowing down decoding. We will therefore investigate binding threads to specific cores.
 
+\subsection{Stack Configurations}
+
 Secondly, we shall investigate different stack configurations other than coverage cardinality to see whether they can improve speed and translation quality.
 
-Thirdly, we will look at for optimizating the phrase-table, specifically in relation to the Probing implementation, focusing on two techniques. One, we will investigate caching of often used translation rules. The default caching framework save the most recently looked up rules. However, this caching mechanism actually makes decoding slower, Table~\ref{tab:phrase-table-cache}. 
+\subsection{Phrase-Table Optimizations}
+
+Thirdly, we will look at for optimizating the phrase-table, specifically in relation to the Probing implementation, focusing on two techniques. 
+
+One, the default translation rule caching mechanism in Moses saves the most recently used rules. However, this is a complex mechanism which require locking when timestamping datastructures and periodic clearing of old rules in order in order to reduce memory consumption. It actually makes decoding slower, Table~\ref{tab:phrase-table-cache}. 
 \begin{table}[h]
 \small
 \begin{center}
@@ -180,9 +200,12 @@ Decoding time  	& 2032 		& 2302 (+13\%) \\ \hline
 \caption{Decoding time (in sec with 32 threads) when using phrase-table cache}
 \label{tab:phrase-table-cache}
 \end{table}
-We shall explore a simpler caching mechanism that creates a static cache at the start of decoding.
+
+We shall explore a simpler caching mechanism that creates a static cache at the start of decoding of the most likely translation rules to be used.
 
 Two, the Probing phrase-table use a simple compression algorithm to compress the target side of the translation rule. Compression was championed by ~\newcite{junczys_tsd_2012b} as the main reason behind the speed of their phrase-table but as we saw in Figure~\ref{fig:moses-phrase-tables-time}, this comes at the cost of scalability to large number of threads. We shall therefore take the opposite approach to and explore optimizing decoding speed by disabling compression.
+
+\subsection{Lexicalized Reordering Model Optimizations}
 
 Lastly, the lexicalized reordering model require random lookups but query key are the source and target phrase of each translation rule. Rather than storing this model separately, we shall investigate integrating it into the translation model.
 
