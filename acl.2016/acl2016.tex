@@ -66,7 +66,7 @@ In this paper we re-examining the major components of phrase-based decoding and 
 
 SMT has steadily progressed from a research discipline to commercial viability during the past decade as can be seen from services such as the Google and Microsoft Translation services. As well as general purpose services such as these, there is a large number of companies that offer customized translation systems, as well as  companies and organization that implement in-house solutions. Many of these customized solutions use Moses as their SMT engine.
 
-For many users, decoding is the most time-critical part of the translation process. Making use of the multiple cores that are now ubiquitous in todays servers is a common strategy to ameliorate this issue. However, it has been noticed that the Moses decoder, amongst others, is unable to efficiently use multiple cores~\cite{mfernandez2016boosting}. That is, decoding speed does not substantially increase when more cores are used, in fact, it may actually \emph{decrease} when using more cores. There have be speculation on the causes of the inefficiency as well as potential remedies. 
+For many users, decoding is the most time-critical part of the translation process. Making use of the multiple cores that are now ubiquitous in todays servers is a common strategy to ameliorate this issue. However, it has been noticed that the Moses decoder, amongst others, is unable to efficiently use multiple cores~\cite{mfernandez2016boosting}. That is, decoding speed does not substantially increase when more cores are used, in fact, it may actually \emph{decrease} when using more cores. There have been speculation on the causes of the inefficiency as well as potential remedies. 
 
 This paper is the first we know of that focuses on improving decoding speed on multicore servers. We will take a holistic approach to solving this issue, re-implementing the decoder's structure to optimize for speed, re-assessing some of the optimization assumptions made in the implementation of significant parts of the decoder, as well as exploring changes to the core search algorithm. We will compare and contrast decoder implementations, not just decoding algorithms or individual components. 
 
@@ -84,7 +84,7 @@ Most prior work on increasing decoding speed look to optimizing specific compone
 
 ~\newcite{mfernandez2016boosting} was concerned with multi-core speed but treat the decoding process as a black box within a parallelization framework.
 
-There are a number of phrase-based decoding implementations, many of which implements the phrase-based extensions above.
+There are a number of phrase-based decoding implementations, many of which implements the extensions to the phrase-based model described above.
 
 The most well known is Moses~\cite{koehn-EtAl:2007:PosterDemo} which implements a number of speed optimizations, including cube-pruning. It is widely used for MT research and commercial use. 
 
@@ -94,7 +94,7 @@ The Moses, Joshua and Phrasal decoders implement multithreading, however, they a
 
 Jane and mtplz are single-threaded decoders, relying on external applications to parallelize operations. This has the advantage it is easier to parallelize processing across multiple servers, not just multiple cores. As we shall see, this method does not scale beyond a small number of cores when attempting to scale to multiple cores within one server.
 
-This paper focuses on overcoming the shortcomings of existing decoding implementations on multicore servers.
+This paper not only focuses faster single-threaded decoding but also on overcoming the shortcomings of existing decoding implementations on multicore servers.
 
 The rest of the paper will be broken up into the following sections. Next, we will describe the phrase-based model and the major implementation components, with particular emphasis on decoding speed. We will then describe modifications to improve decoding speed and present results. We conclude in the last section and discuss future work.
 
@@ -126,43 +126,23 @@ Features functions are the $h_m$ in Equation~\ref{eq:Log-Linear}, calculating a 
 
 The standard feature functions in the phrase-based model include:
 \begin{enumerate}
-  \item \vspace{-2 mm} log transforms translation model probabilities, $p_{TM}(t|s) $ and $p_{TM}(s|t)$, and word-based translation probabilities $p_w(t|s)$ and $p_w(s|t)$,
-  \item \vspace{-2 mm} log transforms of the lexicalized re-ordering probabilities,
-  \item \vspace{-2 mm} log transforms of the target language model probability $p(t)$, 
   \item \vspace{-2 mm} a distortion penalty
   \item \vspace{-2 mm} a phrase-penalty,
   \item \vspace{-2 mm} a word penalty,
   \item \vspace{-2 mm} an unknown word penalty.
+  \item \vspace{-2 mm} log transforms of the target language model probability $p(t)$, 
+  \item \vspace{-2 mm} log transforms translation model probabilities, $p_{TM}(t|s) $ and $p_{TM}(s|t)$, and word-based translation probabilities $p_w(t|s)$ and $p_w(s|t)$,
+  \item \vspace{-2 mm} log transforms of the lexicalized re-ordering probabilities,
 \end{enumerate}
 %which we have suffixed with $_{TM} $ to avoid confusion with the overall model probability $ p(t|s) $ and $ p(s|t)$. 
 
-Of these feature functions, the last four are simple and do not leave much room for optimization. As have already been mentioned, the language model consumes a large part of decoding time but it has already been heavily optimized in previous works such as ~\newcite{Heafield-kenlm} and ~\newcite{yasuhara-EtAl:2013:EMNLP}.
+Of these feature functions, the first four are simple and do not leave much room for optimization. As have already been mentioned, the language model consumes a large part of decoding time but it has already been heavily optimized in previous works such as ~\newcite{Heafield-kenlm} and ~\newcite{yasuhara-EtAl:2013:EMNLP}.
 
-Therefore, we will focus on optimizing the functionality of the phrase-table and lexicalized re-ordering model.
-
-%\subsection{Language Model}
-% TODO
-%
-\subsection{Translation Model}
-
-For any phrase-table table of a realistic size, memory and loading time constraints requires us to use load-on-demand implementations of which Moses can make use of, each with differing performance characteristics. Figure~\ref{fig:moses-phrase-tables-time} shows the time taken to decode 800,000 sentences for the fastest two implementations.
-\begin{figure}[h]
-\centering
-\begin{tabular}{cc}
-{\includegraphics[scale=0.4]{moses-phrase-table.png}} 
-\end{tabular}
-\caption{Moses decoding time with two different phrase-table implementations}
-\label{fig:moses-phrase-tables-time}
-\end{figure} 
-From this, it appears that the Probing phrase-table~\cite{Bogoychev:Thesis:2013} has the fastest translation rule lookup, especially with large number of cores, therefore, we will concentrate exclusively on this implementation in our work as this.
- 
-\subsection{Lexicalized Reordering Model}
-
-The lexicalized reordering model is trained on parallel data, usually requiring random lookups of the model file during decoding. Using the model can increase translation quality at the cost of longer decoding time. Efforts such as~\newcite{junczys_tsd_2012b} have been made to increase the speed of the model.
+Therefore, we will focus on optimizing only the phrase-table and lexicalized reordering model.
 
 \section{Proposed Improvements}
 
-There are four main optimizations that we shall investigate. 
+Apart from the two feature function optimization detailed in the last section, we will investigate two other optimizations, all described below.
 
 \subsection{Efficient Memory Allocation}
 
@@ -186,9 +166,20 @@ Secondly, we shall investigate different stack configurations other than coverag
 
 \subsection{Phrase-Table Optimizations}
 
-Thirdly, we will look at for optimizating the phrase-table, specifically in relation to the Probing implementation, focusing on two techniques. 
+Thirdly, we will look at optimizing the phrase-table.
 
-One, the default translation rule caching mechanism in Moses saves the most recently used rules. However, this is a complex mechanism which require locking when timestamping datastructures and periodic clearing of old rules in order in order to reduce memory consumption. It actually makes decoding slower, Table~\ref{tab:phrase-table-cache}. 
+For any phrase-table table of a realistic size, memory and loading time constraints requires us to use load-on-demand implementations of which Moses can make use of, each with differing performance characteristics. Figure~\ref{fig:moses-phrase-tables-time} shows the time taken to decode 800,000 sentences for the fastest two implementations.
+\begin{figure}[h]
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.4]{moses-phrase-table.png}} 
+\end{tabular}
+\caption{Moses decoding time with two different phrase-table implementations}
+\label{fig:moses-phrase-tables-time}
+\end{figure} 
+From this, it appears that the Probing phrase-table~\cite{Bogoychev:Thesis:2013} has the fastest translation rule lookup, especially with large number of cores, therefore, we will concentrate exclusively on this implementation in our work as this.
+
+We will focus on two techniques. One, the default translation rule caching mechanism in Moses saves the most recently used rules. However, this require locking and periodic clearing of old rules in order to reduce memory consumption resulting in \emph{slower} decoding, Table~\ref{tab:phrase-table-cache}. 
 \begin{table}[h]
 \small
 \begin{center}
@@ -207,11 +198,13 @@ Two, the Probing phrase-table use a simple compression algorithm to compress the
 
 \subsection{Lexicalized Reordering Model Optimizations}
 
-Lastly, the lexicalized reordering model require random lookups but query key are the source and target phrase of each translation rule. Rather than storing this model separately, we shall investigate integrating it into the translation model.
+Similar to the phrase-table, the lexicalized reordering model is trained on parallel data, a model file is created during training which is then queried during decoding. Inevitably, the querying results in some loss of decoding speed. Efforts such as~\newcite{junczys_tsd_2012b} have been made to increase the speed of the query.
+
+However, the model's query key are the source and target phrase of each translation rule. Rather than storing the lexicalized reordering model separately, we shall integrating it into the translation model, eliminating the need to query a separate file.
 
 \section{Experimental Setup}
 
-We trained a phrase-based system using the Moses toolkit with standard settings. The training data consisted of most of the publicly available Arabic-English data from Opus~\cite{tiedemann2012parallel} containing over 69 million parallel sentences, and tuned on a held out set. The phrase-table was then pruned, keeping only the top 100 entries per source phrase, according to $p(t|s)$. All models files were then binarized; the language models were binarized using KenLM~\cite{Heafield-kenlm}, the phrase table using the Probing phrase-table, lexicalized reordering model using the compact datastructure. These binary formats were choosen for their best-in-class multithreaded performance. Table~\ref{tab:model-files} gives details of the resultant sizes of the model files. For testing decoding speed, we used a subset of the training data, Table~\ref{tab:test-sets}. 
+We trained a phrase-based system using the Moses toolkit with standard settings. The training data consisted of most of the publicly available Arabic-English data from Opus~\cite{tiedemann2012parallel} containing over 69 million parallel sentences, and tuned on a held out set. The phrase-table was then pruned, keeping only the top 100 entries per source phrase, according to $p(t|s)$. All model files were then binarized; the language models were binarized using KenLM~\cite{Heafield-kenlm}, the phrase table using the Probing phrase-table, lexicalized reordering model using the compact datastructure. These binary formats were chosen for their best-in-class multithreaded performance. Table~\ref{tab:model-files} gives details of the resultant sizes of the model files. For testing decoding speed, we used a subset of the training data, Table~\ref{tab:test-sets}. 
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{|l|c|c|} \hline
@@ -432,7 +425,7 @@ Before caching	& 229	& N/A	 \\
 \end{table}
 The static cache does not require the overhead of managing the most recently queried lookups but there is still some overhead in using a cache. Overall however, there was over a 10\% decrease in decoding time using the optimum cache size, Table~\ref{tab:cache}.
 
-In the second optimatization, we disable the compression. This increase the size of the binary files from 17GB to 23GB but the time saved not needing to decompress the data resulted in a 1.5\% decrease in decoding time with 1 thread and nearly 7\% when the CPUs are saturated, Table~\ref{tab:compression}.
+In the second optimization, we disable the compression. This increase the size of the binary files from 17GB to 23GB but the time saved not needing to decompress the data resulted in a 1.5\% decrease in decoding time with 1 thread and nearly 7\% when the CPUs are saturated, Table~\ref{tab:compression}.
 \begin{table}[h]
 \small
 \begin{center}
@@ -478,7 +471,7 @@ Integrating the lexicalized reordering model into the translation model decrease
 \label{fig:speed}
 \end{figure} 
 
-Figure~\ref{fig:speed} shows decoding speed against the number of threads, measured in words translated per second. There is a constant increase in decoding speed when mrore threads are used, only decreasing slightly after 16 threads when hyperthreads are used. Overall, decoding is 12.5 times faster than single-threaded decoding when all 16 cores (32 hyperthreads) are fully utilized.
+Figure~\ref{fig:speed} shows decoding speed against the number of threads, measured in words translated per second. There is a constant increase in decoding speed when more threads are used, only decreasing slightly after 16 threads when hyperthreads are used. Overall, decoding is 12.5 times faster than single-threaded decoding when all 16 cores (32 hyperthreads) are fully utilized.
 
 %Since the test server only has 16 real cores, additional threads must be run on the same physical cores as existing threads. This further constrains the resources that each thread has, therefore we see a markedly lower speed increase with each additional thread once there are more than 16 concurrent threads.
 
