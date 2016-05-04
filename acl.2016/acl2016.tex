@@ -146,7 +146,7 @@ Apart from the two feature function optimization detailed in the last section, w
 
 \subsection{Efficient Memory Allocation}
 
-Firstly, the search algorithm creates and destroy a large number of hypothesis and related objects. The memory allocation required puts a burden on the operating system due to the need to synchronize  memory access. This problem worsens with multi-threaded applications such as Moses.
+The search algorithm creates and destroy a large number of hypothesis and related objects. The memory allocation required puts a burden on the operating system due to the need to synchronize  memory access. This problem worsens with multi-threaded applications such as Moses.
 
 Libraries such as tcmalloc~\cite{ghemawat2009tcmalloc} are designed to reduce locking contention for multi-threaded application but in our case, this is still not enough. 
 
@@ -162,11 +162,15 @@ To further increase memory management speed, objects are not deleted, instead th
 
 \subsection{Stack Configurations}
 
-Secondly, we shall investigate different stack configurations other than coverage cardinality to see whether they can improve speed and translation quality.
+The most popular stack configuration for phrase-based model, as implemented in Pharaoh, Moses and Joshua, is coverage cardinality, that is, hypotheses that have translated the same number of source words are stored in the same stack. Since stack pruning occurs in each stack independently of each other, this affect the decoder's search errors.
+
+However, there are alternatives to the coverage cardinality configuration. ~\newcite{Och:2001a} uses a single stack for all hypotheses, ~\newcite{Brown:1993} uses coverage stacks (ie. one stack per unique coverage vector) while ~\newcite{peitz2012jane} and ~\newcite{Zens+Ney:2008:iwslt} apply both coverage and cardinality pruning. While useful, these prior works present only one particular stack configuration each.
+
+~\newcite{ortizmartinez-garciavarea-casacuberta:2006:WMT} explore a range of stack configurations by defining a granularity parameter which controls the maximum number of stacks required to decode a sentence. 
+
+We shall re-visit the question of stack configuration with a particular emphasis on how they can help improve the tradeoff between speed and translation quality. We will do so in the context of the cube-pruning algorithm, the algorithm that we will be using and which was not available to many of the earlier work.
 
 \subsection{Phrase-Table Optimizations}
-
-Thirdly, we will look at optimizing the phrase-table.
 
 For any phrase-table table of a realistic size, memory and loading time constraints requires us to use load-on-demand implementations of which Moses can make use of, each with differing performance characteristics. Figure~\ref{fig:moses-phrase-tables-time} shows the time taken to decode 800,000 sentences for the fastest two implementations.
 \begin{figure}[h]
@@ -179,7 +183,7 @@ For any phrase-table table of a realistic size, memory and loading time constrai
 \end{figure} 
 From this, it appears that the Probing phrase-table~\cite{Bogoychev:Thesis:2013} has the fastest translation rule lookup, especially with large number of cores, therefore, we will concentrate exclusively on this implementation from hereon.
 
-We propose two optimizations. One, the default translation rule caching mechanism in Moses saves the most recently used rules. However, this require locking and periodic clearing of old rules in order to reduce memory consumption resulting in \emph{slower} decoding, Table~\ref{tab:phrase-table-cache}. 
+We propose two optimizations. Firstly, the default translation rule caching mechanism in Moses saves the most recently used rules. However, this require locking and periodic clearing of old rules in order to reduce memory consumption resulting in \emph{slower} decoding, Table~\ref{tab:phrase-table-cache}. 
 \begin{table}[h]
 \small
 \begin{center}
@@ -194,7 +198,7 @@ Decoding time  	& 2032 		& 2302 (+13\%) \\ \hline
 
 We shall explore a simpler caching mechanism that creates a static cache at the start of decoding of the most likely translation rules to be used.
 
-Two, the Probing phrase-table use a simple compression algorithm to compress the target side of the translation rule. Compression was championed by ~\newcite{junczys_tsd_2012b} as the main reason behind the speed of their phrase-table but as we saw in Figure~\ref{fig:moses-phrase-tables-time}, this comes at the cost of scalability to large number of threads. We shall therefore take the opposite approach to and explore optimizing decoding speed by disabling compression.
+Secondly, the Probing phrase-table use a simple compression algorithm to compress the target side of the translation rule. Compression was championed by ~\newcite{junczys_tsd_2012b} as the main reason behind the speed of their phrase-table but as we saw in Figure~\ref{fig:moses-phrase-tables-time}, this comes at the cost of scalability to large number of threads. We shall therefore take the opposite approach to and explore optimizing decoding speed by disabling compression.
 
 \subsection{Lexicalized Reordering Model Optimizations}
 
@@ -243,19 +247,21 @@ Avg words/sent	& 7.3		& 28.7 \\ \hline
 
 Standard Moses phrase-based configurations are used, except that we use the cube-pruning algorithm~\cite{Chiang:2007:cl} with a pop-limit of 400, rather than the basic phrase-based algorithm. The cube-pruning algorithm is often employed by users who require fast decoding as it gives them the ability to trade speed with translation quality via a simple pop-limit parameter.
 
-As a baseline, we use the latest version of the Moses decoder taken from the github repository.
+As a baseline, we use a recent\footnote{between January and May 2016} version of the Moses decoder taken from the github repository.
 
-For all experiments, we used a Dell PowerEdge R620 server with 16 cores, 32 hyper-threads, split over 2 physical processors (Intel Xeon E5-2650 @ 2.00GHz). The server has 380GB RAM. The operating system was Ubuntu 14.04, the code was compiled with gcc 4.8.4 and Boost 1.59\footnote{http://boost.org/} and the tcmalloc library\footnote{http://goog-perftools.sourceforge.net/doc/tcmalloc.html}.
+For all experiments, we used a Dell PowerEdge R620 server with 16 cores, 32 hyper-threads, split over 2 physical processors (Intel Xeon E5-2650 @ 2.00GHz). The server has 380GB RAM. The operating system was Ubuntu 14.04, the code was compiled with gcc 4.8.4 and Boost 1.59\footnote{http://boost.org/} and the tcmalloc library.
 
 \section{Results}
 
 \subsection{Optimizing Memory}
 
-We create a dynamic memory pool which can grow as more memory is requested. The memory is not released, instead the pools are reset and re-used. We instantiate two pools for each thread, one which is never reset and another which is reset after the decoding of each sentence. Data structures are created in either pool according to their life cycle.
+We instantiate two memory pools per decoding thread, one which is never reset and another which is reset after the decoding of each sentence. Data structures are created in either pool according to their life cycle.
 
-For critical data structures with high churn such as hypotheses, thread-specific LIFO queues are used to recycle objects which are no longer used. This not only reduces memory wastage but re-uses recent objects which are likely to be in the CPU cache memory.
+Hypothesis objects and the data structures it contains are re-used by maintaining a thread-specific LIFO queue of unused, recombined and pruned objects from which new hypotheses are allocated in preference to create new hypotheses in the memory pool.
 
-Over 24\% of the Moses decoder running time is spent on memory management and this increases to 39\% when 32 threads are used, Table~\ref{tab:optimizing-memory}, dampening the scalability of the decoder. By contrast, our decoder spends 11\% on memory management and does not significantly increase with more threads.
+Each sentence is decoded from start to finish using one worker thread. The CPU affinity of each thread is set to a specific core to minimize memory page faults as a result of threads switching cores.
+
+As can be seen in Table~\ref{tab:optimizing-memory}, over 24\% of the Moses decoder running time is spent on memory management and this increases to 39\% when 32 threads are used, dampening the scalability of the decoder. By contrast, our decoder spends 11\% on memory management and does not significantly increase with more threads.
 \begin{table}[h]
 \begin{center}
 \small
@@ -298,8 +304,6 @@ Figure~\ref{fig:mempool} compares the decoding time for Moses and our decoder, u
 % \end{table}
 
 \subsection{Stack Configuration}
-
-The most popular stack configuration for phrase-based model, as implemented in Pharaoh, Moses and Joshua, is coverage cardinality, ie. hypotheses that have translated the same number of source words are stored in the same stack. There have been research into other stack layouts such as~\cite{ortizmartinez-garciavarea-casacuberta:2006:WMT}, and it has been noted that the decoder in~\cite{Brown:1993} uses coverage stacks, as opposed to coverage cardinality. 
 
 We also note that the distortion limit which constrains hypothesis extension is dependent on the hypothesis' coverage vector, $C$ \emph{and} the end position of most recent source word that has been translated, $e$. The distortion limit must be checked for every instance of a hypothesis and translation rule, Figure~\ref{algo:Hypothesis Expansion with Unsorted Stack}.
 \begin{figure} [h]
