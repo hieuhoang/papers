@@ -183,7 +183,7 @@ For any phrase-table table of a realistic size, memory and loading time constrai
 \end{figure} 
 From this, it appears that the Probing phrase-table~\cite{Bogoychev:Thesis:2013} has the fastest translation rule lookup, especially with large number of cores, therefore, we will concentrate exclusively on this implementation from hereon.
 
-We propose two optimizations. Firstly, the default translation rule caching mechanism in Moses saves the most recently used rules. However, this require locking and periodic clearing of old rules in order to reduce memory consumption resulting in \emph{slower} decoding, Table~\ref{tab:phrase-table-cache}. 
+We propose two optimizations. Firstly, the translation rule caching mechanism in Moses saves the most recently used rules. However, this require locking and periodic clearing of old rules in order to reduce memory consumption resulting in \emph{slower} decoding, Table~\ref{tab:phrase-table-cache}. 
 \begin{table}[h]
 \small
 \begin{center}
