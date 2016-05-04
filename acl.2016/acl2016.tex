@@ -418,7 +418,7 @@ Pop-limit	& \multicolumn{2}{c|}{Cardinality}	& \multicolumn{2}{c|}{Coverage}	& \
 
 \subsection{Translation Model}
 
-The Moses translation model caches the most recently queried translation rules for later re-use. This has been shown to perform badly for fast phrase-tables such as those described by~\cite{Bogoychev:Thesis:2013}. We explore a simple caching mechanism that populates the cache during loading with rules that translates the most common source phrases. 
+In the first optimization, we create a static translation model cache containing translation rules that translates the most common source phrases. This is constructed during phrase-table training based on the source counts. The cache is then loaded when the decoder is started. It does not require the overhead of managing an active cache but there is still some overhead in using a cache. 
 \begin{table}[h]
 \small
 \begin{center}
@@ -435,9 +435,9 @@ Before caching	& 229	& N/A	 \\
 \caption{Decoding time (in secs with 32 threads) for varying cache sizes}
 \label{tab:cache}
 \end{table}
-The static cache does not require the overhead of managing the most recently queried lookups but there is still some overhead in using a cache. Overall however, there was over a 10\% decrease in decoding time using the optimum cache size, Table~\ref{tab:cache}.
+Overall however, using a static cache result in a 10\% decrease in decoding time if the optimum cache size is used, Table~\ref{tab:cache}.
 
-In the second optimization, we disable the compression. This increase the size of the binary files from 17GB to 23GB but the time saved not needing to decompress the data resulted in a 1.5\% decrease in decoding time with 1 thread and nearly 7\% when the CPUs are saturated, Table~\ref{tab:compression}.
+For the second optimization, we disable the compression of the target side of the translation rules. This increase the size of the binary files from 17GB to 23GB but the time saved not needing to decompress the data resulted in a 1.5\% decrease in decoding time with 1 thread and nearly 7\% when the CPUs are saturated, Table~\ref{tab:compression}.
 \begin{table}[h]
 \small
 \begin{center}
