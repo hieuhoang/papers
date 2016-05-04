@@ -305,15 +305,25 @@ Figure~\ref{fig:mempool} compares the decoding time for Moses and our decoder, u
 
 \subsection{Stack Configuration}
 
-We also note that the distortion limit which constrains hypothesis extension is dependent on the hypothesis' coverage vector, $C$ \emph{and} the end position of most recent source word that has been translated, $e$. The distortion limit must be checked for every instance of a hypothesis and translation rule, Figure~\ref{algo:Hypothesis Expansion with Unsorted Stack}.
+We shall investigate the effects of the following three stack configurations on model score and decoding speed:
+\begin{enumerate}
+  \item \vspace{-2 mm} coverage cardinality,
+  \item \vspace{-2 mm} coverage,
+  \item \vspace{-2 mm} coverage and end position of most recently translated source word.
+\end{enumerate}
+Coverage cardinality is the same as that in Moses and Joshua. Coverage configuration uses one stack per unique coverage vector.
+
+\emph{Coverage and end position of most recently translated source word} extends the coverage configuration by separating hypotheses where the last translate word are different. This is an optimization to reduce the number of checks on the distortion limit, which is dependent on the last word position. 
+
+The check is a binary function $d(C_{h}, e_{hypo}, range_r)$, where $C_{h}$ is the coverage vector of hypothesis $h$, $e_{h}$ is the end position of most recent source word that has been translated, and $range_r$ is the coverage of the rule to be applied. Figure~\ref{algo:Hypothesis Expansion with Unsorted Stack} shows the standard hypothesis expansion algorithm.
 \begin{figure} [h]
 \begin{algorithmic}
 %\REQUIRE source sentence $s$, translation options
-\FORALL{ $hypo$ in $stack_{|C|}$} 
-  \FORALL{ translation rules}
-      \IF {can-expand($C(hypo)$, $e(hypo)$, translation rule range)}
-	\STATE expand hypo with translation rule $\rightarrow$ new hypo
-	\STATE add new hypo to next stack
+\FORALL{ $h$ in $stack_{|C|}$} 
+  \FORALL{$r$ in translation rules}
+      \IF {$d(C_{h}, e_{hypo}, range_r)$}
+	\STATE expand $h$ with $r$ $\rightarrow$ $h'$
+	\STATE add $h'$ to stack $stack_{C'}$
       \ENDIF
   \ENDFOR % { translation options}
 \ENDFOR % { hypothesis in $stack_i$} 
@@ -321,16 +331,17 @@ We also note that the distortion limit which constrains hypothesis extension is 
 \caption{Hypothesis Expansion with Cardinality Stacks}
 \label{algo:Hypothesis Expansion with Unsorted Stack}
 \end{figure}
-However, by separating hypotheses into set of hypotheses (\emph{'ministacks'}) according to coverage and end position, the distortion limit only needs to be checked for each ministack, Figure~\ref{algo:Hypothesis Expansion with Sorted Stack}. Furthermore, stack pruning is done on each of these hypotheses set therefore, changing how hypotheses are grouped can affect model scores. 
+
+By grouping hypotheses according to coverage \emph{and} end position into groups we call \emph{'ministack'}, the distortion limit only needs to be checked for each group, Figure~\ref{algo:Hypothesis Expansion with Sorted Stack}. 
 \begin{figure} [h]
 \begin{algorithmic}
 %\REQUIRE source sentence $s$, translation options
 \FORALL{ $ministack_{C, e}$ in $stack_{|C|}$} 
-  \FORALL{ translation rules}
-    \IF {can-expand($C$, $e$, translation rule range)}
-      \FORALL{ $hypo$ in $ministack_{C, e}$} 
-	\STATE expand hypo with translation rule $\rightarrow$ new hypo
-	\STATE add new hypo to next ministack
+  \FORALL{$r$ in translation rules}
+    \IF {$d(C_{h}, e_{hypo}, range_r)$}
+      \FORALL{ $h$ in $ministack_{C, e}$} 
+	\STATE expand $h$ with $r$ $\rightarrow$ $h'$
+	\STATE add $h'$ to $ministack_{C',e'}$
       \ENDFOR
     \ENDIF
   \ENDFOR % { translation options}
@@ -339,13 +350,10 @@ However, by separating hypotheses into set of hypotheses (\emph{'ministacks'}) a
 \caption{Hypothesis Expansion with Coverage \& End Position Stacks}
 \label{algo:Hypothesis Expansion with Sorted Stack}
 \end{figure}
-We therefore looked at the effects of three stack configurations:
-\begin{enumerate}
-  \item \vspace{-2 mm} coverage cardinality,
-  \item \vspace{-2 mm} coverage,
-  \item \vspace{-2 mm} coverage and end position of most recent translated source word.
-\end{enumerate}
-Table~\ref{tab:stack-configuration} and Figure~\ref{fig:stack-configuration} present the tradeoff between decoding time and average model at various pop-limits.
+
+Also, stack pruning occurs on each hypothesis group independently, therefore, potentially affect search errors and model scores. 
+
+Table~\ref{tab:stack-configuration} and Figure~\ref{fig:stack-configuration} present the tradeoff between decoding time and average model at various pop-limits. The model scores for all stack configurations are identical for low pop-limits but grouping hypotheses into coverage \& end position produces higher model scores for higher pop-limits. It is also slower but the time/quality tradeoff is better overall with this stack configuration. Model scores for coverage and cardinality configurations are identical, which differs from the results in ~\newcite{ortizmartinez-garciavarea-casacuberta:2006:WMT}. This may be due to differing test set characteristics, or interactions with cube-pruning algorithm we used.
 \begin{table*}[t]
 \small
 \begin{center}
@@ -373,7 +381,7 @@ Pop-limit	& \multicolumn{2}{c|}{Cardinality}	& \multicolumn{2}{c|}{Coverage}	& \
 \caption{Trade-off between decoding time average model scores for different stack configurations}
 \label{fig:stack-configuration}
 \end{figure} 
-As can be seen, the model scores for all stack configurations are identical for low pop-limits parameters but grouping hypotheses into coverage \& end position produces higher model scores for higher pop-limits. It is also slower but the time/quality tradeoff is better overall with this stack configuration. For lower pop-limits this configuration is slightly slower but not by much. %, therefore, we shall stick with this Configuration for the remainder of the paper.
+ %, therefore, we shall stick with this Configuration for the remainder of the paper.
 
 %Also, the cube-pruning algorithm contain a priority queue per set of hypotheses sets. This can be independent of how hypotheses are grouped. In the Moses implementation, the priority queue is also attached to the coverage cardinality, Figure~\ref{algo:Cube Pruning with Unsorted Stack}.
 %\begin{figure} [h]
