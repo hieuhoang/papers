@@ -353,25 +353,26 @@ By grouping hypotheses according to coverage \emph{and} end position into groups
 
 Also, stack pruning occurs on each hypothesis group independently, therefore, potentially affect search errors and model scores. 
 
-Table~\ref{tab:stack-configuration} and Figure~\ref{fig:stack-configuration} present the tradeoff between decoding time and average model at various pop-limits. The model scores for all stack configurations are identical for low pop-limits but grouping hypotheses into coverage \& end position produces higher model scores for higher pop-limits. It is also slower but the time/quality tradeoff is better overall with this stack configuration. Model scores for coverage and cardinality configurations are identical, which differs from the results in ~\newcite{ortizmartinez-garciavarea-casacuberta:2006:WMT}. This may be due to differing test set characteristics, or interactions with cube-pruning algorithm we used.
-\begin{table*}[t]
-\small
-\begin{center}
-\begin{tabular}{|r|r|r|r|r|r|r|} \hline
-Pop-limit	& \multicolumn{2}{c|}{Cardinality}	& \multicolumn{2}{c|}{Coverage}	& \multicolumn{2}{c|}{Coverage \& end pos} \\ \hline
-		& Time		& Score			& Time		& Score		& Time		& Score	\\ \hline
-100  		& 73		& -8.64513 		& 75		& -8.64513	& 72	& -8.64513 \\
-500		& 237		& -8.59563		& 225		& -8.59563 	& 229	& -8.59612 \\
-1,000	 	& 416		& -8.58700		& 397		& -8.58700	& 423	& -8.58700 \\ 
-5,000 		& 1930		& -8.58165		& 1931		& -8.58165	& 2153	& -8.58098 \\ 
-10,000 		& 3619		& -8.58133		& 3630		& -8.58133	& 4576	& -8.58015 \\ 
-15,000 		& 4830		& -8.58130		& 5001		& -8.58130	& 7156	& -8.57999 \\ 
-20,000 		& 5849		& -8.58130		& 5916		& -8.58130	& 9583	& -8.57994 \\ \hline
-\end{tabular}
-\end{center}
-\caption{Decoding time (in secs with 32 threads) and average model scores for different stack configurations}
-\label{tab:stack-configuration}
-\end{table*}
+%Table~\ref{tab:stack-configuration} and 
+Figure~\ref{fig:stack-configuration} present the tradeoff between decoding time and average model at various pop-limits. The model scores for all stack configurations are identical for low pop-limits but grouping hypotheses into coverage \& end position produces higher model scores for higher pop-limits. It is also slower but the time/quality tradeoff is better overall with this stack configuration. Model scores for coverage and cardinality configurations are identical, which differs from the results in ~\newcite{ortizmartinez-garciavarea-casacuberta:2006:WMT}. This may be due to differing test set characteristics, or interactions with cube-pruning algorithm we used.
+%\begin{table*}[t]
+%\small
+%\begin{center}
+%\begin{tabular}{|r|r|r|r|r|r|r|} \hline
+%Pop-limit	& \multicolumn{2}{c|}{Cardinality}	& \multicolumn{2}{c|}{Coverage}	& \multicolumn{2}{c|}{Coverage \& end pos} \\ \hline
+%		& Time		& Score			& Time		& Score		& Time		& Score	\\ \hline
+%100  		& 73		& -8.64513 		& 75		& -8.64513	& 72	& -8.64513 \\
+%500		& 237		& -8.59563		& 225		& -8.59563 	& 229	& -8.59612 \\
+%1,000	 	& 416		& -8.58700		& 397		& -8.58700	& 423	& -8.58700 \\ 
+%5,000 		& 1930		& -8.58165		& 1931		& -8.58165	& 2153	& -8.58098 \\ 
+%10,000 		& 3619		& -8.58133		& 3630		& -8.58133	& 4576	& -8.58015 \\ 
+%15,000 		& 4830		& -8.58130		& 5001		& -8.58130	& 7156	& -8.57999 \\ 
+%20,000 		& 5849		& -8.58130		& 5916		& -8.58130	& 9583	& -8.57994 \\ \hline
+%\end{tabular}
+%\end{center}
+%\caption{Decoding time (in secs with 32 threads) and average model scores for different stack configurations}
+%\label{tab:stack-configuration}
+%\end{table*}
 
 \begin{figure}[h]
 \centering
@@ -503,6 +504,9 @@ This contrast with Moses where speed increases to approximately 16 threads but t
 
 Our work is 4.5 times faster than Moses with a single-thread and 9.6 faster when all cores are used.
 
+We mimic the use of multi-core servers by single-threaded decoders such as mtplz~\cite{Heafield-mtplz} and Jane~\cite{peitz2012jane} by running multiple processes of the Moses decoder, each running one thread. The input is distributed to the processes using a external script.
+ 
+The results in ??? shows that not only does the parallelization method scales badly even compared to Moses, it is unable to run at all when more that a certain number of threads, possibly due to higher memory requirements of running multiple memory-hungry processes, or the inefficiency of distributing work to many processes. Based on this result, single-thread decoding applications are not a viable option for efficiently utilizing the multicore servers of today.
 
 \section{Other Models and Even More Cores}
 
