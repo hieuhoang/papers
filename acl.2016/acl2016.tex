@@ -92,7 +92,7 @@ Joshua~\cite{Joshua-Decoder} also supports cube-pruning for phrase-based models.
 
 The Moses, Joshua and Phrasal decoders implement multithreading, however, they all report scalability problems, either in the paper (Phrasal) or via social media (Moses\footnote{\scriptsize https://github.com/moses-smt/mosesdecoder/issues/39} and Joshua\footnote{\scriptsize https://twitter.com/ApacheJoshua/status/342022794097340416}).
 
-Jane and mtplz are single-threaded decoders, relying on external applications to parallelize operations. This has the advantage it is easier to parallelize processing across multiple servers, not just multiple cores. As we shall see, this method does not scale beyond a small number of cores when attempting to scale to multiple cores within one server.
+Jane and mtplz are single-threaded decoders, relying on external applications to parallelize operations. %This has the advantage it is easier to parallelize processing across multiple servers, not just multiple cores. As we shall see, this method does not scale beyond a small number of cores when attempting to scale to multiple cores within one server.
 
 This paper not only focuses faster single-threaded decoding but also on overcoming the shortcomings of existing decoding implementations on multicore servers.
 
@@ -490,11 +490,11 @@ Showing decoding \emph{speed} rather than decoding time better illustrate the sc
 
 %Since the test server only has 16 real cores, additional threads must be run on the same physical cores as existing threads. This further constrains the resources that each thread has, therefore we see a markedly lower speed increase with each additional thread once there are more than 16 concurrent threads.
 
-This contrast with Moses where speed increases to approximately 16 threads but then actually become slower thereafter, Figure~\ref{fig:moses-speed} (solid line).
+This contrast with Moses where speed increases to approximately 16 threads but then actually become slower thereafter, Figure~\ref{fig:moses-speed}.
 \begin{figure}[h]
 \centering
 \begin{tabular}{cc}
-{\includegraphics[scale=0.5]{moses-scalability.png}} 
+{\includegraphics[scale=0.4]{moses-scalability.png}} 
 \end{tabular}
 \caption{Moses' decoding speed}
 \label{fig:moses-speed}
@@ -504,7 +504,7 @@ This contrast with Moses where speed increases to approximately 16 threads but t
 
 Our work is 4.5 times faster than Moses with a single-thread and 9.6 faster when all cores are used.
 
-We mimic the use of multi-core servers by single-threaded decoders such as mtplz~\cite{Heafield-mtplz} and Jane~\cite{peitz2012jane} by running multiple processes of the Moses decoder, each running one thread. The input is distributed to the processes using a external script. The result in Figure~\ref{fig:moses-speed} (dashed line) shows that this method scales much better than multithreading the application.
+%We mimic the use of multi-core servers by single-threaded decoders such as mtplz~\cite{Heafield-mtplz} and Jane~\cite{peitz2012jane} by running multiple processes of the Moses decoder, each running one thread. The input is distributed to the processes using a external script. The result in Figure~\ref{fig:moses-speed} (dashed line) shows that this method scales much better than multithreading the application.
  
 
 \section{Other Models and Even More Cores}
