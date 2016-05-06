@@ -150,11 +150,11 @@ The search algorithm creates and destroy a large number of intermediate objects 
 
 Libraries such as tcmalloc~\cite{ghemawat2009tcmalloc} are designed to reduce locking contention for multi-threaded application but in our case, this is still not enough. 
 
-We shall seek to improve decoding speed by replacing the operating system's general purpose memory management with our own custom memory management scheme. In time-critical parts of the decoder, memory will be allocated from a memory pool. 
+We shall seek to improve decoding speed by replacing the operating system's general purpose memory management with our own custom memory management scheme. Memory will be allocated from a memory pool rather than use the operating system's general purpose allocation functions.
 
 A memory pool is a large block of memory that has been pre-allocated by the operating system from which smaller blocks can be give out to the application. We will use a thread-specific memory pools to avoid locking contention during memory access. Our memory pool will be dynamic, growing in size when required but never reducing in size.
 
-To further increase memory management speed, objects are not deleted, instead the memory pool is simply reset and reused for each input sentence. This can result in high memory usage so object queues are available for high-churn objects which allows the decoder to re-use portion of the memory pool before it is reset. The object queues are LIFO so that recently accessed memory are used, increasing CPU cache hits.
+To further increase memory management speed, objects are not deleted, instead the memory pool is simply reset and reused for each input sentence. Not deleting objects can result in unacceptably high memory usage so object queues are available for high-churn objects which allows the decoder to re-use portion of the memory pool before it is reset. The object queues are LIFO so that recently accessed memory are used, increasing CPU cache hits.
 
 %The speed of memory access is dependent on whether the data is in the CPU cache which is a constrained resource compared to memory size, typically 20MB in the latest processors. We shall seek to re-use recently accessed information to increase likelihood of the data being in the CPU cache. 
 
