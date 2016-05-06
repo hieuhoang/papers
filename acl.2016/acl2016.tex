@@ -146,7 +146,7 @@ Apart from the two feature function optimization detailed in the last section, w
 
 \subsection{Efficient Memory Allocation}
 
-The search algorithm creates and destroy a large number of hypothesis and related objects. The memory allocation required puts a burden on the operating system due to the need to synchronize  memory access. This problem worsens with multi-threaded applications such as Moses.
+The search algorithm creates and destroy a large number of intermediate objects such as hypotheses and feature function states. The memory management this requires puts a burden on the operating system due to the need to synchronize memory access. This problem worsens with multi-threaded applications such as Moses.
 
 Libraries such as tcmalloc~\cite{ghemawat2009tcmalloc} are designed to reduce locking contention for multi-threaded application but in our case, this is still not enough. 
 
