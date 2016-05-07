@@ -490,7 +490,7 @@ Showing decoding \emph{speed} rather than decoding time better illustrate the sc
 
 %Since the test server only has 16 real cores, additional threads must be run on the same physical cores as existing threads. This further constrains the resources that each thread has, therefore we see a markedly lower speed increase with each additional thread once there are more than 16 concurrent threads.
 
-This contrast with Moses where speed increases to approximately 16 threads but then actually become slower thereafter, Figure~\ref{fig:moses-speed}. Using the tcmalloc library has a small positive effect on decoding speed. 
+This contrast with Moses where speed increases to approximately 16 threads but then actually become slower thereafter, Figure~\ref{fig:moses-speed}. Using the tcmalloc library has a small positive effect on decoding speed but does little to improve scalability 
 \begin{figure}[h]
 \centering
 \begin{tabular}{cc}
