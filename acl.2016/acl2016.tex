@@ -494,7 +494,7 @@ This contrast with Moses where speed increases to approximately 16 threads but t
 \begin{figure}[h]
 \centering
 \begin{tabular}{cc}
-{\includegraphics[scale=0.4]{moses-scalability.png}} 
+{\includegraphics[scale=0.5]{moses-scalability.png}} 
 \end{tabular}
 \caption{Moses' decoding speed}
 \label{fig:moses-speed}
@@ -527,6 +527,16 @@ We verify the results with the French-English phrase-based system and test set. 
 \end{tabular}
 \caption{Decoding speed for fr-en model}
 \label{fig:fr-en-speed}
+\end{figure} 
+
+It has been suggested that using a larger language model would overpower the improvements in decoding speed. We tested this posit by replacing the language model in our ar-en experiment with a 96GB language model. Results show that the decoding speed compared to Moses is less than with a smaller language model, Figure~\ref{fig:large-lm}, however, our work still scales monotonically until all CPUs are saturated, unlike Moses.
+\begin{figure}[h]
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.4]{large-lm.png}} 
+\end{tabular}
+\caption{Decoding speed with a large language model}
+\label{fig:large-lm}
 \end{figure} 
 
 \section{Conclusion}
