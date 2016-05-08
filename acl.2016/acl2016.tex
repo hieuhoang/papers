@@ -529,7 +529,7 @@ We verify the results with the French-English phrase-based system and test set. 
 \label{fig:fr-en-speed}
 \end{figure} 
 
-It has been suggested that using a larger language model would overpower the improvements in decoding speed. We tested this posit by replacing the language model in our ar-en experiment with a 96GB language model. Results show that the decoding speed compared to Moses is less than with a smaller language model, Figure~\ref{fig:large-lm}, however, our work still scales monotonically until all CPUs are saturated, unlike Moses.
+It has been suggested that using a larger language model would overpower the improvements in decoding speed. We tested this conjecture by replacing the language model in the ar-en experiment with a 96GB language model. The time to load of language model is significant (394 sec) and was excluded from the translation speed. Results show that our decoder is 7 times faster than Moses and still scales monotonically until all CPUs are saturated, Figure~\ref{fig:large-lm}.
 \begin{figure}[h]
 \centering
 \begin{tabular}{cc}
