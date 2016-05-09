@@ -1,4 +1,4 @@
-I% Jane - FastSCSS single-best output, but is considerably faster by not maintaining separate model costs and by deleting recombined hypotheses
+% Jane - FastSCSS single-best output, but is considerably faster by not maintaining separate model costs and by deleting recombined hypotheses
 % Jane - not multithreaded
 % Zens & Ney - don't compare different coverage config. Not focused on speed.
 %
@@ -138,7 +138,7 @@ The standard feature functions in the phrase-based model include:
 
 Of these feature functions, the first four are simple and do not leave much room for optimization. As have already been mentioned, the language model consumes a large part of decoding time but it has already been heavily optimized in previous works such as ~\newcite{Heafield-kenlm} and ~\newcite{yasuhara-EtAl:2013:EMNLP}.
 
-Therefore, we will focus on optimizing only the phrase-table and lexicalized reordering model.
+Therefore, we will focus on optimizing only the phrase-table and lexicalized re-ordering model.
 
 \section{Proposed Improvements}
 
@@ -172,7 +172,7 @@ We shall re-visit the question of stack configuration with a particular emphasis
 
 \subsection{Phrase-Table Optimizations}
 
-For any phrase-table table of a realistic size, memory and loading time constraints requires us to use load-on-demand implementations of which Moses can make use of, each with differing performance characteristics. Figure~\ref{fig:moses-phrase-tables-time} shows the time taken to decode 800,000 sentences for the fastest two implementations.
+For any phrase-table table of a realistic size, memory and loading time constraints requires us to use a load-on-demand implementation. Moses has several which we can make use of, each with differing performance characteristics. Figure~\ref{fig:moses-phrase-tables-time} shows the time taken to decode 800,000 sentences for the fastest two implementations.
 \begin{figure}[h]
 \centering
 \begin{tabular}{cc}
@@ -200,15 +200,15 @@ We shall explore a simpler caching mechanism that creates a static cache at the 
 
 Secondly, the Probing phrase-table use a simple compression algorithm to compress the target side of the translation rule. Compression was championed by ~\newcite{junczys_tsd_2012b} as the main reason behind the speed of their phrase-table but as we saw in Figure~\ref{fig:moses-phrase-tables-time}, this comes at the cost of scalability to large number of threads. We shall therefore take the opposite approach to and explore optimizing decoding speed by disabling compression.
 
-\subsection{Lexicalized Reordering Model Optimizations}
+\subsection{Lexicalized Re-ordering Model Optimizations}
 
-Similar to the phrase-table, the lexicalized reordering model is trained on parallel data. A resultant model file is created in training which is then queried during decoding. Inevitably, the querying results in loss of decoding speed. Previous work such as~\newcite{junczys_tsd_2012b} improve querying speed with more efficient data structures.
+Similar to the phrase-table, the lexicalized re-ordering model is trained on parallel data. A resultant model file is created in training which is then queried during decoding. Inevitably, the querying results in loss of decoding speed. Previous work such as~\newcite{junczys_tsd_2012b} improve querying speed with more efficient data structures.
 
-However, the model's query keys are the source and target phrase of each translation rule. Rather than storing the lexicalized reordering model separately, we shall integrating it into the translation model, eliminating the need to query a separate file. This has precedent in ~\newcite{peitz2012jane} but the effect on decoding speed were not published. We will compare results with using a separate model in this paper.
+However, the model's query keys are the source and target phrase of each translation rule. Rather than storing the lexicalized re-ordering model separately, we shall integrating it into the translation model, eliminating the need to query a separate file. This has precedent in ~\newcite{peitz2012jane} but the effect on decoding speed were not published. We will compare results with using a separate model in this paper.
 
 \section{Experimental Setup}
 
-We trained a phrase-based system using the Moses toolkit with standard settings. The training data consisted of most of the publicly available Arabic-English data from Opus~\cite{tiedemann2012parallel} containing over 69 million parallel sentences, and tuned on a held out set. The phrase-table was then pruned, keeping only the top 100 entries per source phrase, according to $p(t|s)$. All model files were then binarized; the language models were binarized using KenLM~\cite{Heafield-kenlm}, the phrase table using the Probing phrase-table, lexicalized reordering model using the compact data structure. These binary formats were chosen for their best-in-class multithreaded performance. Table~\ref{tab:model-files} gives details of the resultant sizes of the model files. For testing decoding speed, we used a subset of the training data, Table~\ref{tab:test-sets}. 
+We trained a phrase-based system using the Moses toolkit with standard settings. The training data consisted of most of the publicly available Arabic-English data from Opus~\cite{tiedemann2012parallel} containing over 69 million parallel sentences, and tuned on a held out set. The phrase-table was then pruned, keeping only the top 100 entries per source phrase, according to $p(t|s)$. All model files were then binarized; the language models were binarized using KenLM~\cite{Heafield-kenlm}, the phrase table using the Probing phrase-table, lexicalized re-ordering model using the compact data structure. These binary formats were chosen for their best-in-class multithreaded performance. Table~\ref{tab:model-files} gives details of the resultant sizes of the model files. For testing decoding speed, we used a subset of the training data, Table~\ref{tab:test-sets}. 
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{|l|c|c|} \hline
@@ -458,11 +458,11 @@ For the second optimization, we disable the compression of the target side of th
 \label{tab:compression}
 \end{table}
 
-\subsection{Lexicalized Reordering Model}
+\subsection{Lexicalized Re-ordering Model}
 
-The lexicalized reordering model requires a probability distribution of the reordering behaviour of each translation rule learnt from the training data. This is represented in the model file as a fixed number of probabilities for each rule, exactly how many probabilities is dependant on the model's parameterization during training. During decoding, a probability from this distribution is assigned to each hypothesis according to the reordering of the translation rule.
+The lexicalized re-ordering model requires a probability distribution of the re-ordering behaviour of each translation rule learnt from the training data. This is represented in the model file as a fixed number of probabilities for each rule, exactly how many probabilities is dependant on the model's parameterization during training. During decoding, a probability from this distribution is assigned to each hypothesis according to the re-ordering of the translation rule.
 
-Rather than holding the model probability distributions in the separate file, we pre-process the translation model file to include the lexicalized reordering model distributions for each rule. During decoding, the probability distribution is then taken from the translation model instead of querying a separate file. 
+Rather than holding the model probability distributions in the separate file, we pre-process the translation model file to include the lexicalized re-ordering model distributions for each rule. During decoding, the probability distribution is then taken from the translation model instead of querying a separate file. 
 
 This resulted in a significant decrease in decoding time, especially with high number of cores, Figure~\ref{fig:lex-ro}. 
 \begin{figure}[h]
@@ -470,10 +470,10 @@ This resulted in a significant decrease in decoding time, especially with high n
 \begin{tabular}{cc}
 {\includegraphics[scale=0.4]{lex-ro.png}} 
 \end{tabular}
-\caption{Decoding time with Compact Lexicalized Reordering, and integrated into a model the phrase-table}
+\caption{Decoding time with Compact Lexicalized Re-ordering, and integrated into a model the phrase-table}
 \label{fig:lex-ro}
 \end{figure} 
-Decoding time decreased by 29\% with running with a single thread but it is over 5 times faster using 32 threads. In fact, the decoding time with the integrated model is similar to that \emph{without} a lexicalized reordering model\footnote{Strangely, using lexicalized reordering model results in slightly faster decoding than without the model. We double checked with other datasets. We suspect this may be an artefact of the algorithm or data structures, for example, more work is needed to resolve hypothesis recombination.}. Critically for systems with multicores servers, it enables the decoder to continue to scale, making efficient use of all available cores. 
+Decoding time decreased by 29\% with running with a single thread but it is over 5 times faster using 32 threads. In fact, the decoding time with the integrated model is similar to that \emph{without} a lexicalized re-ordering model\footnote{Strangely, using lexicalized re-ordering model results in slightly faster decoding than without the model. We double checked with other datasets. We suspect this may be an artefact of the algorithm or data structures, for example, more work is needed to resolve hypothesis recombination.}. Critically for systems with multicores servers, it enables the decoder to continue to scale, making efficient use of all available cores. 
 
 \subsection{Scalability}
 
