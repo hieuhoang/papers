@@ -103,7 +103,7 @@ This paper not only focuses faster single-threaded decoding but also on overcomi
 
 The rest of the paper will be broken up into the following sections. Next, we will describe the phrase-based model and the major implementation components, with particular emphasis on decoding speed. We will then describe modifications to improve decoding speed and present results. We conclude in the last section and discuss future work.
 
-\section{Phrase-Based Model}
+\subsection{Feature Functions}
 
 The objective of decoding is to find the target translation with the maximum probability, given a source sentence. That is, for a source sentence $s$, the objective is to find a target translation $\hat{t}$ which has the highest conditional probability $p(t | s)$. Formally, this is written as:
 \begin{equation}
@@ -115,19 +115,7 @@ where the \emph{arg max} function is the search. The log-linear model generalize
 \label{eq:Log-Linear}
 p(t | s) 	=  \frac{1}{Z} \exp ( \sum_m \lambda_m h_m ( t, s)^{} )
 \end{equation}
-where $\lambda_m$ is the weight, and $h_m$ is the feature function, or `score', for model $m$. $Z$ is the partition function which can be ignored for optimization. 
-
-\subsection{Beam Search}
-
-A translation of a source sentence is created by applying a series of translation rules which together translate each source word once, and only once. Each partial translation is known as a \emph{hypothesis}, which is created by applying a rule to an existing hypothesis. This \emph{hypothesis expansion} process starts with a hypothesis that has translated no source word and ends with completed hypotheses that have translated all source words. The highest-scoring completed hypothesis, according to the model score, is considered the best translation, $\hat{t} $.
-
-In the phrase-based model, each rule translates a contiguous sequence of source words. Successive applications of translation rules do not have to be adjacent on the source side, depending on the distortion limit. The target output is constructed strictly left-to-right from the target side from the series of translation rules. 
-
-A beam search algorithm is used to create the completed hypothesis set efficiently. Partial translations are organized into stacks where each stack holds a number of comparable hypotheses. Most phrase-based implementations place hypotheses in the same stack that have the same coverage cardinality $|C|$, where $C$ is  the coverage set, $C \subseteq \{1,2,... |s| \} $ of the number of  source words translated. 
-
-\subsection{Feature Functions}
-
-Features functions are the $h_m$ in Equation~\ref{eq:Log-Linear}, calculating a score for each hypothesis.
+where $\lambda_m$ is the weight, and $h_m$ is the \emph{feature function}, or `score', for model $m$. $Z$ is the partition function which can be ignored for optimization. 
 
 The standard feature functions in the phrase-based model include:
 \begin{enumerate}
@@ -141,13 +129,21 @@ The standard feature functions in the phrase-based model include:
 \end{enumerate}
 %which we have suffixed with $_{TM} $ to avoid confusion with the overall model probability $ p(t|s) $ and $ p(s|t)$. 
 
-Of these feature functions, we will focus on optimizing only the phrase-table and lexicalized re-ordering model.
+Of these feature functions, we will focus on optimizing the speed of the phrase-table and lexicalized re-ordering models.
 
-The first four feature functions are simple and do not leave much room for optimization. As have already been mentioned, the language model consumes a large part of decoding time but it has already been heavily optimized in previous works such as ~\newcite{Heafield-kenlm} and ~\newcite{yasuhara-EtAl:2013:EMNLP}.
+%The first four feature functions are simple and do not leave much room for optimization. As have already been mentioned, the language model consumes a large part of decoding time but it has already been heavily optimized in previous works such as ~\newcite{Heafield-kenlm} and ~\newcite{yasuhara-EtAl:2013:EMNLP}.
+
+\subsection{Beam Search}
+
+A translation of a source sentence is created by applying a series of translation rules which together translate each source word once, and only once. Each partial translation is known as a \emph{hypothesis}, which is created by applying a rule to an existing hypothesis. This \emph{hypothesis expansion} process starts with a hypothesis that has translated no source word and ends with completed hypotheses that has translated all source words. The highest-scoring completed hypothesis, according to the model score, is considered the best translation, $\hat{t} $.
+
+In the phrase-based model, each rule translates a contiguous sequence of source words. Successive applications of translation rules do not have to be adjacent on the source side, depending on the distortion limit. The target output is constructed strictly left-to-right from the target side from the series of translation rules. 
+
+A beam search algorithm is used to create the completed hypothesis set efficiently. Hypotheses are grouped into stacks where each stack holds a number of comparable hypotheses. Most phrase-based implementations group hypotheses according to coverage cardinality. % in the same stack that have the same coverage cardinality $|C|$, where $C$ is  the coverage set, $C \subseteq \{1,2,... |s| \} $ of the number of  source words translated. 
 
 \section{Proposed Improvements}
 
-We will also investigate two other optimizations described below.
+We will also concentrate on four main areas for optimization.
 
 \subsection{Efficient Memory Allocation}
 
@@ -157,9 +153,9 @@ Libraries such as tcmalloc~\cite{ghemawat2009tcmalloc} are designed to reduce lo
 
 We shall seek to improve decoding speed by replacing the operating system's general purpose memory management with our own custom memory management scheme. Memory will be allocated from a memory pool rather than use the operating system's general purpose allocation functions.
 
-A memory pool is a large block of memory that has been pre-allocated by the operating system from which smaller blocks can be give out to the application. We will use a thread-specific memory pools to avoid locking contention during memory access. Our memory pool will be dynamic, growing in size when required but never reducing in size.
+A memory pool is a large block of memory that has been pre-allocated by the operating system from which smaller blocks can be given out to the application. We will use thread-specific memory pools to avoid locking contention during memory access. Our memory pool will be dynamic, growing in size when required but never reducing in size.
 
-To further increase memory management speed, objects are not deleted, instead the memory pool is simply reset and reused for each input sentence. Not deleting objects can result in unacceptably high memory usage so object queues are available for high-churn objects which allows the decoder to re-use portion of the memory pool before it is reset. The object queues are LIFO so that recently accessed memory are used, increasing CPU cache hits.
+To further increase memory management speed, objects in the memory pool are not deleted. Unused objects accumulates in the pool until the decoding of a sentence completes and the pool is simply reused for the decoding of the next sentence. Accumulating unused objects can result in unacceptably high memory usage so object queues are available for high-churn objects which allows the decoder to re-cycle some unused objects during the decoding of a particular sentence. LIFO queues are used so that the most recently accessed memory are used, increasing CPU cache hits.
 
 %The speed of memory access is dependent on whether the data is in the CPU cache which is a constrained resource compared to memory size, typically 20MB in the latest processors. We shall seek to re-use recently accessed information to increase likelihood of the data being in the CPU cache. 
 
