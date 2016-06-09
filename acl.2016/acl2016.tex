@@ -99,7 +99,7 @@ The Moses, Joshua and Phrasal decoders implement multithreading, however, they a
 
 Jane and mtplz are single-threaded decoders, relying on external applications to parallelize operations. %This has the advantage it is easier to parallelize processing across multiple servers, not just multiple cores. As we shall see, this method does not scale beyond a small number of cores when attempting to scale to multiple cores within one server.
 
-This paper not only focuses faster single-threaded decoding but also on overcoming the shortcomings of existing decoding implementations on multicore servers.
+This paper not only focuses on faster single-threaded decoding but also on overcoming the shortcomings of existing decoding implementations on multicore servers.
 
 The rest of the paper will be broken up into the following sections. Next, we will describe the phrase-based model and the major implementation components, with particular emphasis on decoding speed. We will then describe modifications to improve decoding speed and present results. We conclude in the last section and discuss future work.
 
@@ -188,7 +188,7 @@ For any phrase-table table of a realistic size, memory and loading time constrai
 \caption{Moses decoding time with two different phrase-table implementations}
 \label{fig:moses-phrase-tables-time}
 \end{figure} 
-From this, it appears that the Probing phrase-table~\cite{Bogoychev:Thesis:2013} has the fastest translation rule lookup, especially with large number of cores, therefore, we will concentrate exclusively on this implementation from hereon.
+From this, it appears that the Probing phrase-table~\cite{Bogoychev.probing.2016} has the fastest translation rule lookup, especially with large number of cores, therefore, we will concentrate exclusively on this implementation from hereon.
 
 We propose two optimizations. Firstly, the translation rule caching mechanism in Moses saves the most recently used rules. However, this require locking and active management in clearing of old rules. The result is \emph{slower} decoding, Table~\ref{tab:phrase-table-cache}. 
 \begin{table}[h]
