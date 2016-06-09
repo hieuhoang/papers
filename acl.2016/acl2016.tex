@@ -79,6 +79,8 @@ The result is a decoder that is significantly faster than the Moses baseline for
 
 As far as possible, model scores and functionality are compatible with Moses to aid comparison and ease transition for existing users. All source code will be made available under an open-source license.
 
+The rest of the paper will be broken up into the following sections. The rest of this section will discuss prior work and an outline of the phrase-based model. Section~\ref{sec:Proposed Improvements} will then describe the modifications to improve decoding speed. We describe the experiment setup in Section~\ref{sec:Experimental Setup} and present results Section~\ref{sec:Results}. We conclude in the last section and discuss possible future work.
+
 \subsection{Prior Work}
 
 Most prior work on increasing decoding speed look to optimizing specific components of the decoder or the decoding algorithm. 
@@ -101,9 +103,7 @@ Jane and mtplz are single-threaded decoders, relying on external applications to
 
 This paper not only focuses on faster single-threaded decoding but also on overcoming the shortcomings of existing decoding implementations on multicore servers.
 
-The rest of the paper will be broken up into the following sections. Next, we will describe the phrase-based model and the major implementation components, with particular emphasis on decoding speed. We will then describe modifications to improve decoding speed and present results. We conclude in the last section and discuss future work.
-
-\subsection{Feature Functions}
+\subsection{Phrase-Based Model}
 
 The objective of decoding is to find the target translation with the maximum probability, given a source sentence. That is, for a source sentence $s$, the objective is to find a target translation $\hat{t}$ which has the highest conditional probability $p(t | s)$. Formally, this is written as:
 \begin{equation}
@@ -142,6 +142,7 @@ In the phrase-based model, each rule translates a contiguous sequence of source 
 A beam search algorithm is used to create the completed hypothesis set efficiently. Hypotheses are grouped into stacks where each stack holds a number of comparable hypotheses. Most phrase-based implementations group hypotheses according to coverage cardinality. % in the same stack that have the same coverage cardinality $|C|$, where $C$ is  the coverage set, $C \subseteq \{1,2,... |s| \} $ of the number of  source words translated. 
 
 \section{Proposed Improvements}
+\label{sec:Proposed Improvements}
 
 We will also concentrate on four main areas for optimization.
 
@@ -216,6 +217,7 @@ However, the model's query keys are the source and target phrase of each transla
 This optimization has precedent in ~\newcite{peitz2012jane} but the effect on decoding speed were not published. We will compare results with using a separate model in this paper.
 
 \section{Experimental Setup}
+\label{sec:Experimental Setup}
 
 We trained a phrase-based system using the Moses toolkit with standard settings. The training data consisted of most of the publicly available Arabic-English data from Opus~\cite{tiedemann2012parallel} containing over 69 million parallel sentences, and tuned on a held out set. The phrase-table was then pruned, keeping only the top 100 entries per source phrase, according to $p(t|s)$. All model files were then binarized; the language models were binarized using KenLM~\cite{Heafield-kenlm}, the phrase table using the Probing phrase-table, lexicalized re-ordering model using the compact data structure. These binary formats were chosen for their best-in-class multithreaded performance. Table~\ref{tab:model-files} gives details of the resultant sizes of the model files. For testing decoding speed, we used a subset of the training data, Table~\ref{tab:test-sets}. 
 \begin{table}[h]
@@ -262,6 +264,7 @@ As a baseline, we use a recent\footnote{as at 8th June, 2016, commit hash \scrip
 For all experiments, we used a Dell PowerEdge R620 server with 16 cores, 32 hyper-threads, split over 2 physical processors (Intel Xeon E5-2650 @ 2.00GHz). The server has 380GB RAM. The operating system was Ubuntu 14.04, the code was compiled with gcc 4.8.4 and Boost 1.59\footnote{http://boost.org/} and the tcmalloc library.
 
 \section{Results}
+\label{sec:Results}
 
 \subsection{Optimizing Memory}
 
@@ -549,7 +552,7 @@ It has been suggested that using a larger language model would overpower the imp
 
 We have presented a new decoder that is compatible with Moses. By studying the shortcomings of the current implementation, we are able to optimize for speed, particularly for multicore operation. This resulted in double digit gains compared to Moses on the same hardware. Our implementation is also unaffected by scalability issues that has afflicted Moses. % and continue to scale well for all possible cores we have tested it on.
 
-In future, we shall investigate other major components of the decoding algorithm, particularly the language model which has not been touched in this paper. We shall also explore the underlying reasons for the scalability issues in Moses to get a better understanding where potential performance issues can arise. This has application to other algorithms beside MT decoding. 
+In future, we shall investigate other major components of the decoding algorithm, particularly the language model which has not been touched in this paper. We are also keen to explore the underlying reasons for the scalability issues in Moses to get a better understanding where potential performance issues can arise. 
 
 % \section*{Acknowledgments}
 % 
