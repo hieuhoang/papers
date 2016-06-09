@@ -56,9 +56,9 @@
 \maketitle
 
 \begin{abstract}
-The utilization of statistical machine translation (SMT) has grown enormously over the last decade, many using open-source software developed by the NLP community. As commercial use has increased, there is need that for the software to be optimized for their requirements, in particular, faster phrase-based decoding and more efficient utilization of modern multicore servers.
+The utilization of statistical machine translation (SMT) has grown enormously over the last decade, many using open-source software developed by the NLP community. As commercial use has increased, there is need for  software that is optimized for commercial requirements, in particular, faster phrase-based decoding and more efficient utilization of modern multicore servers.
 
-In this paper we re-examining the major components of phrase-based decoding and decoder implementation with particular emphasis on speed and scalability on multicore machines. The result is a drop-in replacement for the Moses decoder which is up to fifteen times faster and scales monotonically with the number of cores. 
+In this paper we re-examine the major components of phrase-based decoding and decoder implementation with particular emphasis on speed and scalability on multicore machines. The result is a drop-in replacement for the Moses decoder which is up to fifteen times faster and scales monotonically with the number of cores. 
 
 \end{abstract}
 
@@ -254,9 +254,10 @@ Avg words/sent	& 7.3		& 28.7 \\ \hline
 \label{tab:test-sets}
 \end{table}
 
-Standard Moses phrase-based configurations are used, except that we use the cube-pruning algorithm~\cite{Chiang:2007:cl} with a pop-limit of 400\footnote{\scriptsize the pop-limit was chosen following public discussion on finding a balance between decoding speed and translation quality with Moses for commercial use https://www.mail-archive.com/moses-support\%40mit.edu/msg13181.html }, rather than the basic phrase-based algorithm. The cube-pruning algorithm is often employed by users who require fast decoding as it gives them the ability to trade speed with translation quality via a simple pop-limit parameter.
+Standard Moses phrase-based configurations are used, except that we use the cube-pruning algorithm~\cite{Chiang:2007:cl} with a pop-limit of 400\footnote{the pop-limit was chosen from public discussion on the Moses mailing list on an acceptable balance between decoding speed and translation quality with Moses for commercial use %https://www.mail-archive.com/moses-support\%40mit.edu/msg13181.html 
+}, rather than the basic phrase-based algorithm. The cube-pruning algorithm is often employed by users who require fast decoding as it gives them the ability to trade speed with translation quality via a simple pop-limit parameter.
 
-As a baseline, we use a recent\footnote{as at 8th June, 2016, commit hash 482457bf2bbb5673fbab5f663da5fd3d78ed132f } version of the Moses decoder taken from the github repository.
+As a baseline, we use a recent\footnote{as at 8th June, 2016, commit hash \scriptsize{482457bf2bbb5673fbab5f663da5fd3d78ed132f} } version of the Moses decoder taken from the github repository.
 
 For all experiments, we used a Dell PowerEdge R620 server with 16 cores, 32 hyper-threads, split over 2 physical processors (Intel Xeon E5-2650 @ 2.00GHz). The server has 380GB RAM. The operating system was Ubuntu 14.04, the code was compiled with gcc 4.8.4 and Boost 1.59\footnote{http://boost.org/} and the tcmalloc library.
 
