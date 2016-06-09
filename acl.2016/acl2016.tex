@@ -153,9 +153,13 @@ Libraries such as tcmalloc~\cite{ghemawat2009tcmalloc} are designed to reduce lo
 
 We shall seek to improve decoding speed by replacing the operating system's general purpose memory management with our own custom memory management scheme. Memory will be allocated from a memory pool rather than use the operating system's general purpose allocation functions.
 
-A memory pool is a large block of memory that has been pre-allocated by the operating system from which smaller blocks can be given out to the application. We will use thread-specific memory pools to avoid locking contention during memory access. Our memory pool will be dynamic, growing in size when required but never reducing in size.
+A memory pool is a large block of memory that has been given to the application by the operating system. The application is then responsible for allocating portions of this memory to its components as required. We will use thread-specific memory pools to increase speed by avoiding locking contention during memory access. Our memory pools will be dynamic, growing in size when required but never reducing in size. The pools are not deleted until the decoder application ends. 
 
-To further increase memory management speed, objects in the memory pool are not deleted. Unused objects accumulates in the pool until the decoding of a sentence completes and the pool is simply reused for the decoding of the next sentence. Accumulating unused objects can result in unacceptably high memory usage so object queues are available for high-churn objects which allows the decoder to re-cycle some unused objects during the decoding of a particular sentence. LIFO queues are used so that the most recently accessed memory are used, increasing CPU cache hits.
+To further increase memory management speed, objects in the memory pool are not deleted. Unused data structures accumulates in the pool until a reset event. After the event, the pool is assumed to be empty and simply reused. 
+
+We instantiate two memory pools per decoding thread, one which is never reset and another which is reset after the decoding of each sentence. Data structures are created in either pool according to their life cycle.
+
+Accumulating unused objects in the memory pools can result in unacceptably high memory usage so object queues are available for high-churn objects which allows the decoder to re-cycle unused objects before the reset event. This also increase speed as LIFO queues are used so that the most recently accessed memory are used, increasing CPU cache hits.
 
 %The speed of memory access is dependent on whether the data is in the CPU cache which is a constrained resource compared to memory size, typically 20MB in the latest processors. We shall seek to re-use recently accessed information to increase likelihood of the data being in the CPU cache. 
 
@@ -163,9 +167,11 @@ To further increase memory management speed, objects in the memory pool are not 
 
 \subsection{Stack Configurations}
 
-The most popular stack configuration for phrase-based model, as implemented in Pharaoh, Moses and Joshua, is coverage cardinality, that is, hypotheses that have translated the same number of source words are stored in the same stack. Since stack pruning occurs in each stack independently of each other, this affect the decoder's search errors.
+The most popular stack configuration for phrase-based models is coverage cardinality, that is, hypotheses that have translated the same number of source words are stored in the same stack. This is implemented in Pharaoh, Moses and Joshua.
 
-However, there are alternatives to the coverage cardinality configuration. ~\newcite{Och:2001a} uses a single stack for all hypotheses, ~\newcite{Brown:1993} uses coverage stacks (ie. one stack per unique coverage vector) while ~\newcite{peitz2012jane} and ~\newcite{Zens+Ney:2008:iwslt} apply both coverage and cardinality pruning. While useful, these prior works present only one particular stack configuration each.
+%Since stack pruning occurs in each stack independently of each other, this affect the decoder's search errors.
+
+However, there are alternatives to this configuration. ~\newcite{Och:2001a} uses a single stack for all hypotheses, ~\newcite{Brown:1993} uses coverage stacks (ie. one stack per unique coverage vector) while ~\newcite{peitz2012jane} and ~\newcite{Zens+Ney:2008:iwslt} apply both coverage and cardinality pruning. While useful, these prior works present only one particular stack configuration each.
 
 ~\newcite{ortizmartinez-garciavarea-casacuberta:2006:WMT} explore a range of stack configurations by defining a granularity parameter which controls the maximum number of stacks required to decode a sentence. 
 
@@ -184,7 +190,7 @@ For any phrase-table table of a realistic size, memory and loading time constrai
 \end{figure} 
 From this, it appears that the Probing phrase-table~\cite{Bogoychev:Thesis:2013} has the fastest translation rule lookup, especially with large number of cores, therefore, we will concentrate exclusively on this implementation from hereon.
 
-We propose two optimizations. Firstly, the translation rule caching mechanism in Moses saves the most recently used rules. However, this require locking and periodic clearing of old rules in order to reduce memory consumption resulting in \emph{slower} decoding, Table~\ref{tab:phrase-table-cache}. 
+We propose two optimizations. Firstly, the translation rule caching mechanism in Moses saves the most recently used rules. However, this require locking and active management in clearing of old rules. The result is \emph{slower} decoding, Table~\ref{tab:phrase-table-cache}. 
 \begin{table}[h]
 \small
 \begin{center}
@@ -199,11 +205,11 @@ Decoding time  	& 2032 		& 2302 (+13\%) \\ \hline
 
 We shall explore a simpler caching mechanism that creates a static cache at the start of decoding of the most likely translation rules to be used.
 
-Secondly, the Probing phrase-table use a simple compression algorithm to compress the target side of the translation rule. Compression was championed by ~\newcite{junczys_tsd_2012b} as the main reason behind the speed of their phrase-table but as we saw in Figure~\ref{fig:moses-phrase-tables-time}, this comes at the cost of scalability to large number of threads. We shall therefore take the opposite approach to and explore optimizing decoding speed by disabling compression.
+Secondly, the Probing phrase-table use a simple compression algorithm to compress the target side of the translation rule. Compression was championed by ~\newcite{junczys_tsd_2012b} as the main reason behind the speed of their phrase-table but as we saw in Figure~\ref{fig:moses-phrase-tables-time}, this comes at the cost of scalability to large number of threads. We shall therefore take the opposite approach to and improve decoding speed by disabling compression.
 
 \subsection{Lexicalized Re-ordering Model Optimizations}
 
-Similar to the phrase-table, the lexicalized re-ordering model is trained on parallel data. A resultant model file is created in training which is then queried during decoding. Inevitably, the querying results in loss of decoding speed. Previous work such as~\newcite{junczys_tsd_2012b} improve querying speed with more efficient data structures.
+Similar to the phrase-table, the lexicalized re-ordering model is trained on parallel data. A resultant model file is then queried during decoding. The need for random lookup during querying inevitably results in slower decoding speed. Previous work such as~\newcite{junczys_tsd_2012b} improve querying speed with more efficient data structures.
 
 However, the model's query keys are the source and target phrase of each translation rule. Rather than storing the lexicalized re-ordering model separately, we shall integrating it into the translation model, eliminating the need to query a separate file. This has precedent in ~\newcite{peitz2012jane} but the effect on decoding speed were not published. We will compare results with using a separate model in this paper.
 
@@ -246,9 +252,9 @@ Avg words/sent	& 7.3		& 28.7 \\ \hline
 \label{tab:test-sets}
 \end{table}
 
-Standard Moses phrase-based configurations are used, except that we use the cube-pruning algorithm~\cite{Chiang:2007:cl} with a pop-limit of 400, rather than the basic phrase-based algorithm. The cube-pruning algorithm is often employed by users who require fast decoding as it gives them the ability to trade speed with translation quality via a simple pop-limit parameter.
+Standard Moses phrase-based configurations are used, except that we use the cube-pruning algorithm~\cite{Chiang:2007:cl} with a pop-limit of 400\footnote{\scriptsize the pop-limit was chosen following public discussion on finding a balance between decoding speed and translation quality with Moses https://www.mail-archive.com/moses-support\%40mit.edu/msg13181.html }, rather than the basic phrase-based algorithm. The cube-pruning algorithm is often employed by users who require fast decoding as it gives them the ability to trade speed with translation quality via a simple pop-limit parameter.
 
-As a baseline, we use a recent\footnote{between January and May 2016} version of the Moses decoder taken from the github repository.
+As a baseline, we use a recent\footnote{between January and June 2016} version of the Moses decoder taken from the github repository.
 
 For all experiments, we used a Dell PowerEdge R620 server with 16 cores, 32 hyper-threads, split over 2 physical processors (Intel Xeon E5-2650 @ 2.00GHz). The server has 380GB RAM. The operating system was Ubuntu 14.04, the code was compiled with gcc 4.8.4 and Boost 1.59\footnote{http://boost.org/} and the tcmalloc library.
 
@@ -256,11 +262,7 @@ For all experiments, we used a Dell PowerEdge R620 server with 16 cores, 32 hype
 
 \subsection{Optimizing Memory}
 
-We instantiate two memory pools per decoding thread, one which is never reset and another which is reset after the decoding of each sentence. Data structures are created in either pool according to their life cycle.
-
-Hypothesis objects and the data structures it contains are re-used by maintaining a thread-specific LIFO queue of unused, recombined and pruned objects from which new hypotheses are allocated in preference to create new hypotheses in the memory pool.
-
-Each sentence is decoded from start to finish using one worker thread. The CPU affinity of each thread is set to a specific core to minimize memory page faults as a result of threads switching cores.
+Each sentence is decoded from start to finish using one worker thread. %The CPU affinity of each thread is set to a specific core to minimize memory page faults as a result of threads switching cores.
 
 As can be seen in Table~\ref{tab:optimizing-memory}, over 24\% of the Moses decoder running time is spent on memory management and this increases to 39\% when 32 threads are used, dampening the scalability of the decoder. By contrast, our decoder spends 11\% on memory management and does not significantly increase with more threads.
 \begin{table}[h]
@@ -474,7 +476,7 @@ This resulted in a significant decrease in decoding time, especially with high n
 \caption{Decoding time with Compact Lexicalized Re-ordering, and integrated into a model the phrase-table}
 \label{fig:lex-ro}
 \end{figure} 
-Decoding time decreased by 29\% with running with a single thread but it is over 5 times faster using 32 threads. In fact, the decoding time with the integrated model is similar to that \emph{without} a lexicalized re-ordering model\footnote{Strangely, using lexicalized re-ordering model results in slightly faster decoding than without the model. We double checked with other datasets. We suspect this may be an artefact of the algorithm or data structures, for example, more work is needed to resolve hypothesis recombination.}. Critically for systems with multicores servers, it enables the decoder to continue to scale, making efficient use of all available cores. 
+Decoding time decreased by 29\% with running with a single thread but it is over 5 times faster using 32 threads. %In fact, the decoding time with the integrated model is similar to that \emph{without} a lexicalized re-ordering model\footnote{Strangely, using lexicalized re-ordering model results in slightly faster decoding than without the model. We double checked with other datasets. We suspect this may be an artefact of the algorithm or data structures, for example, more work is needed to resolve hypothesis recombination.}. Critically for systems with multicores servers, it enables the decoder to continue to scale, making efficient use of all available cores. 
 
 \subsection{Scalability}
 
