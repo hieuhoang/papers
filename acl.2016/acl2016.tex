@@ -68,9 +68,14 @@ SMT has steadily progressed from a research discipline to commercial viability d
 
 For many users, decoding is the most time-critical part of the translation process. Making use of the multiple cores that are now ubiquitous in todays servers is a common strategy to ameliorate this issue. However, it has been noticed that the Moses decoder, amongst others, is unable to efficiently use multiple cores~\cite{mfernandez2016boosting}. That is, decoding speed does not substantially increase when more cores are used, in fact, it may actually \emph{decrease} when using more cores. There have been speculation on the causes of the inefficiency as well as potential remedies. 
 
-This paper is the first we know of that focuses on improving decoding speed on multicore servers. We will take a holistic approach to solving this issue, re-implementing the decoder's structure to optimize for speed, re-assessing some of the optimization assumptions made in the implementation of significant parts of the decoder, as well as exploring changes to the core search algorithm. We will compare and contrast decoder implementations, not just decoding algorithms or individual components. 
-
-We will present a phrase-based decoder that is significantly faster than the Moses baseline for single-threaded operation, and scales monotonically with the number of cores.
+This paper is the first we know of that focuses on improving decoding speed on multicore servers. We will take a holistic approach to solving this issue. We create a decoder that is optimized for multi-core processing speed by concentrating on four main areas.
+\begin{enumerate}
+  \item \vspace{-2 mm} Faster memory management of data-structures through the use of customized memory pools
+  \item \vspace{-2 mm} Exploring alternatives to cardinality-based hypothesis stack configuration
+  \item \vspace{-2 mm} Re-examining the efficiency of phrase-table lookup using translation rule caching and data compression
+  \item \vspace{-2 mm} Integrating the lexicalized re-ordering model into the phrase-table, thus eliminating the need for independent random lookup this model 
+\end{enumerate}
+The result is a decoder that is significantly faster than the Moses baseline for single-threaded operation, and scales with the number of cores.
 
 As far as possible, model scores and functionality are compatible with Moses to aid comparison and ease transition for existing users. All source code will be made available under an open-source license.
 
@@ -136,13 +141,13 @@ The standard feature functions in the phrase-based model include:
 \end{enumerate}
 %which we have suffixed with $_{TM} $ to avoid confusion with the overall model probability $ p(t|s) $ and $ p(s|t)$. 
 
-Of these feature functions, the first four are simple and do not leave much room for optimization. As have already been mentioned, the language model consumes a large part of decoding time but it has already been heavily optimized in previous works such as ~\newcite{Heafield-kenlm} and ~\newcite{yasuhara-EtAl:2013:EMNLP}.
+Of these feature functions, we will focus on optimizing only the phrase-table and lexicalized re-ordering model.
 
-Therefore, we will focus on optimizing only the phrase-table and lexicalized re-ordering model.
+The first four feature functions are simple and do not leave much room for optimization. As have already been mentioned, the language model consumes a large part of decoding time but it has already been heavily optimized in previous works such as ~\newcite{Heafield-kenlm} and ~\newcite{yasuhara-EtAl:2013:EMNLP}.
 
 \section{Proposed Improvements}
 
-Apart from the two feature function optimization detailed in the last section, we will investigate two other optimizations, all described below.
+We will also investigate two other optimizations described below.
 
 \subsection{Efficient Memory Allocation}
 
