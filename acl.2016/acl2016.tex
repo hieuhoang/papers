@@ -211,7 +211,9 @@ Secondly, the Probing phrase-table use a simple compression algorithm to compres
 
 Similar to the phrase-table, the lexicalized re-ordering model is trained on parallel data. A resultant model file is then queried during decoding. The need for random lookup during querying inevitably results in slower decoding speed. Previous work such as~\newcite{junczys_tsd_2012b} improve querying speed with more efficient data structures.
 
-However, the model's query keys are the source and target phrase of each translation rule. Rather than storing the lexicalized re-ordering model separately, we shall integrating it into the translation model, eliminating the need to query a separate file. This has precedent in ~\newcite{peitz2012jane} but the effect on decoding speed were not published. We will compare results with using a separate model in this paper.
+However, the model's query keys are the source and target phrase of each translation rule. Rather than storing the lexicalized re-ordering model separately, we shall integrating it into the translation model, eliminating the need to query a separate file. The lexicalized reordering model retains its own weights in the log-linear framework. The total weighted score is expected to be identical to the Moses baseline apart from rare training configurations where the lexicalized reordering model is trained on a different dataset than the translation model.
+
+This optimization has precedent in ~\newcite{peitz2012jane} but the effect on decoding speed were not published. We will compare results with using a separate model in this paper.
 
 \section{Experimental Setup}
 
@@ -254,7 +256,7 @@ Avg words/sent	& 7.3		& 28.7 \\ \hline
 
 Standard Moses phrase-based configurations are used, except that we use the cube-pruning algorithm~\cite{Chiang:2007:cl} with a pop-limit of 400\footnote{\scriptsize the pop-limit was chosen following public discussion on finding a balance between decoding speed and translation quality with Moses for commercial use https://www.mail-archive.com/moses-support\%40mit.edu/msg13181.html }, rather than the basic phrase-based algorithm. The cube-pruning algorithm is often employed by users who require fast decoding as it gives them the ability to trade speed with translation quality via a simple pop-limit parameter.
 
-As a baseline, we use a recent\footnote{between January and June 2016} version of the Moses decoder taken from the github repository.
+As a baseline, we use a recent\footnote{as at 8th June, 2016, commit hash 482457bf2bbb5673fbab5f663da5fd3d78ed132f } version of the Moses decoder taken from the github repository.
 
 For all experiments, we used a Dell PowerEdge R620 server with 16 cores, 32 hyper-threads, split over 2 physical processors (Intel Xeon E5-2650 @ 2.00GHz). The server has 380GB RAM. The operating system was Ubuntu 14.04, the code was compiled with gcc 4.8.4 and Boost 1.59\footnote{http://boost.org/} and the tcmalloc library.
 
