@@ -533,7 +533,15 @@ It has been suggested that using a larger language model would overpower the imp
 
 \subsection{Translation Quality}
 
-Our work is intended as a drop-in replacement for the Moses decoder. Given the same parameters and models, the model scores are comparable and the search space should be identical (or very nearly identical). This should lead to almost translation quality, which we verify with Figure~\ref{???}.
+Our work is intended as a drop-in replacement for the Moses decoder. Given the same parameters and models, the model scores are comparable and the search space should be identical (or very nearly identical). This should lead to almost identical translation quality, which we verify with Figure~\ref{fig:bleu}.
+\begin{figure}[h]
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.5]{bleu.png}} 
+\end{tabular}
+\caption{Translation quality (BLEU) for different pop-limits}
+\label{fig:bleu}
+\end{figure} 
 
 \section{Conclusion}
 
