@@ -259,7 +259,7 @@ Avg words/sent	& 7.3		& 28.7 \\ \hline
 Standard Moses phrase-based configurations are used, except that we use the cube-pruning algorithm~\cite{Chiang:2007:cl} with a pop-limit of 400\footnote{the pop-limit was chosen from public discussion on the Moses mailing list on an acceptable balance between decoding speed and translation quality with Moses for commercial use %https://www.mail-archive.com/moses-support\%40mit.edu/msg13181.html 
 }, rather than the basic phrase-based algorithm. The cube-pruning algorithm is often employed by users who require fast decoding as it gives them the ability to trade speed with translation quality via a simple pop-limit parameter.
 
-As a baseline, we use a recent\footnote{as at 8th June, 2016, commit hash \scriptsize{bc5f8d15c6ce4bc678ba992860bfd4be6719cee8} } version of the Moses decoder taken from the github repository.
+As a baseline, we use a recent\footnote{The experiments were performed between January and May 2016 with the latest github code to hand. The main ar-en experiments were rerun with the source code as at 8th June, 2016 to ensure there were no material difference. The commit hash was \scriptsize{bc5f8d15c6ce4bc678ba992860bfd4be6719cee8} } version of the Moses decoder taken from the github repository.
 
 For all experiments, we used a Dell PowerEdge R620 server with 16 cores, 32 hyper-threads, split over 2 physical processors (Intel Xeon E5-2650 @ 2.00GHz). The server has 380GB RAM. The operating system was Ubuntu 14.04, the code was compiled with gcc 4.8.4 and Boost 1.59\footnote{http://boost.org/} and the tcmalloc library.
 
