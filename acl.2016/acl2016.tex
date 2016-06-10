@@ -491,27 +491,27 @@ Decoding time decreased by 29\% with running with a single thread but it is over
 \begin{tabular}{cc}
 {\includegraphics[scale=0.4]{scalability.png}} 
 \end{tabular}
-\caption{Our decoder's decoding speed}
+\caption{Comparison of decoding speed of our work and Moses (with \& without the tcmalloc library}
 \label{fig:speed}
 \end{figure} 
 
-Showing decoding \emph{speed} rather than decoding time better illustrate the scalability of our approach. Figure~\ref{fig:speed} shows decoding speed against the number of threads, measured in words translated per second. There is a constant increase in decoding speed when more threads are used, decreasing slightly after 16 threads when virtual cores are employed by the CPU. Overall, decoding is 12.5 times faster than single-threaded decoding when all 16 cores (32 hyperthreads) are fully utilized.
+Figure~\ref{fig:speed} shows decoding speed against the number of threads used. In our work, there is a constant increase in decoding speed when more threads are used, decreasing slightly after 16 threads when virtual cores are employed by the CPU. Overall, decoding is 16 times faster than single-threaded decoding when all 16 cores (32 hyperthreads) are fully utilized.
 
 %Since the test server only has 16 real cores, additional threads must be run on the same physical cores as existing threads. This further constrains the resources that each thread has, therefore we see a markedly lower speed increase with each additional thread once there are more than 16 concurrent threads.
 
-This contrast with Moses where speed increases to approximately 16 threads but then actually become slower thereafter, Figure~\ref{fig:moses-speed}. Using the tcmalloc library has a small positive effect on decoding speed but does little to improve scalability 
-\begin{figure}[h]
-\centering
-\begin{tabular}{cc}
-{\includegraphics[scale=0.5]{moses-scalability.png}} 
-\end{tabular}
-\caption{Moses' decoding speed}
-\label{fig:moses-speed}
-\end{figure} 
+This contrast with Moses where speed increases to approximately 16 threads but then actually become slower thereafter. Using the tcmalloc library has a small positive effect on decoding speed but does little to improve scalability 
+%\begin{figure}[h]
+%\centering
+%\begin{tabular}{cc}
+%{\includegraphics[scale=0.5]{moses-scalability.png}} 
+%\end{tabular}
+%\caption{Moses' decoding speed}
+%\label{fig:moses-speed}
+%\end{figure} 
 
 %Overall though, the scalability is remarkably good, the decoder is able to make full use of all real and virtual cores. When all 16 cores are saturated with 2 hyper-thread each, the decoder is 16 times faster than single-threaded decoding. 
 
-Our work is 4.5 times faster than Moses with a single-thread and 9.6 faster when all cores are used.
+Our work is 4.3 times faster than Moses with a single-thread and 10.4 faster when all cores are used.
 
 %We mimic the use of multi-core servers by single-threaded decoders such as mtplz~\cite{Heafield-mtplz} and Jane~\cite{peitz2012jane} by running multiple processes of the Moses decoder, each running one thread. The input is distributed to the processes using a external script. The result in Figure~\ref{fig:moses-speed} (dashed line) shows that this method scales much better than multithreading the application.
  
