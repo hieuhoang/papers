@@ -136,17 +136,13 @@ We will also concentrate on four main areas for optimization.
 
 \subsection{Efficient Memory Allocation}
 
-The search algorithm creates and destroy a large number of intermediate objects such as hypotheses and feature function states. The memory management this requires puts a burden on the operating system due to the need to synchronize memory access. This problem worsens with multi-threaded applications such as Moses.
-
-Libraries such as tcmalloc~\citep{ghemawat2009tcmalloc} are designed to reduce locking contention for multi-threaded application but in our case, this is still not enough. 
+The search algorithm creates and destroy a large number of intermediate objects such as hypotheses and feature function states. This puts a burden on the operating system due to the need to synchronize memory access, especially when using a large number of threads. Libraries such as tcmalloc~\citep{ghemawat2009tcmalloc} are designed to reduce locking contention for multi-threaded application but in our case, this is still not enough. 
 
 We shall seek to improve decoding speed by replacing the operating system's general purpose memory management with our own custom memory management scheme. Memory will be allocated from a memory pool rather than use the operating system's general purpose allocation functions.
 
-A memory pool is a large block of memory that has been given to the application by the operating system. The application is then responsible for allocating portions of this memory to its components as required. We will use thread-specific memory pools to increase speed by avoiding locking contention during memory access. Our memory pools will be dynamic, growing in size when required but never reducing in size. The pools are not deleted until the decoder application ends. 
+A memory pool is a large block of memory that has been given to the application by the operating system. The application is then responsible for allocating portions of this memory to its components when requested. We will use thread-specific memory pools to increase speed by avoiding locking contention during memory access. Our memory pools will be dynamic. That is, the memory requirement does not have to be known or specified before running the application, the pool can grow when required but they will never reduce in size. The pools are deleted only when the application ends. 
 
-To further increase memory management speed, objects in the memory pool are not deleted. Unused data structures accumulates in the pool until a reset event. After the event, the pool is assumed to be empty and simply reused. 
-
-We instantiate two memory pools per decoding thread, one which is never reset and another which is reset after the decoding of each sentence. Data structures are created in either pool according to their life cycle.
+To further increase memory management speed, objects in the memory pool are not deleted. Unused data structures accumulates in the pool until a reset event. The pool is assumed to be empty and simply reused after the event. We instantiate two memory pools per decoding thread, one which is never reset and another which is reset after the decoding of each sentence. Data structures are created in either pool according to their life cycle.
 
 Accumulating unused objects in the memory pools can result in unacceptably high memory usage so object queues are available for high-churn objects which allows the decoder to re-cycle unused objects before the reset event. This also increase speed as LIFO queues are used so that the most recently accessed memory are used, increasing CPU cache hits.
 
