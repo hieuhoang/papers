@@ -499,8 +499,7 @@ Our work is 4.3 times faster than Moses with a single-thread and 10.4 faster whe
 
 %We mimic the use of multi-core servers by single-threaded decoders such as mtplz~\citep{Heafield-mtplz} and Jane~\citep{peitz2012jane} by running multiple processes of the Moses decoder, each running one thread. The input is distributed to the processes using a external script. The result in Figure~\ref{fig:moses-speed} (dashed line) shows that this method scales much better than multithreading the application.
  
-
-\section{Other Models and Even More Cores}
+\subsection{Other Models and Even More Cores}
 
 Our decoder show no scalability issues when we tested with the same model and tested set on a larger server, Figure~\ref{fig:more-cores}.
 \begin{figure}[h]
@@ -531,6 +530,10 @@ It has been suggested that using a larger language model would overpower the imp
 \caption{Decoding speed with a large language model}
 \label{fig:large-lm}
 \end{figure} 
+
+\subsection{Translation Quality}
+
+Our work is intended as a drop-in replacement for the Moses decoder. Given the same parameters and models, the model scores are comparable and the search space should be identical (or very nearly identical). This should lead to almost translation quality, which we verify with Figure~\ref{???}.
 
 \section{Conclusion}
 
