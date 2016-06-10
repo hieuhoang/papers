@@ -273,7 +273,7 @@ Misc/Unknown	& 45\%	 	& 39\% 	& 24\%		& 29\% \\ \hline
 \label{tab:optimizing-memory}
 \end{table}
 
-Figure~\ref{fig:mempool} compares the decoding speed for Moses and our decoder, using the same models, parameters and test set. Our decoder is over 3 times faster with one thread, and 5.0 times faster using all cores. However, like Moses, performance actually worsens after approximately 15 threads. %, however, the problem is not as pronounced. This gives us a better foundation on which to build further innovations for fast, multi-core decoding.
+Figure~\ref{fig:mempool} compares the decoding speed for Moses and our decoder, using the same models, parameters and test set. Our decoder is 4.4 times faster with one thread, and 5.0 times faster using all cores. Like Moses, however, performance actually worsens after approximately 15 threads. %, however, the problem is not as pronounced. This gives us a better foundation on which to build further innovations for fast, multi-core decoding.
 \begin{figure}[h]
 \centering
 \begin{tabular}{cc}
@@ -507,7 +507,7 @@ Our decoder show no scalability issues when we tested with the same model and te
 \begin{tabular}{cc}
 {\includegraphics[scale=0.4]{more-cores.png}} 
 \end{tabular}
-\caption{Decoding speed for with bigger servers}
+\caption{Decoding speed with more cores}
 \label{fig:more-cores}
 \end{figure} 
 
