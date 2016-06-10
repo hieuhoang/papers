@@ -463,10 +463,10 @@ This resulted in a significant decrease in decoding time, especially with high n
 \begin{tabular}{cc}
 {\includegraphics[scale=0.4]{lex-ro.png}} 
 \end{tabular}
-\caption{Decoding time with Compact Lexicalized Re-ordering, and integrated into a model the phrase-table}
+\caption{Decoding speed with Compact Lexicalized Re-ordering, and integrated into a model the phrase-table}
 \label{fig:lex-ro}
 \end{figure} 
-Decoding time decreased by 29\% with running with a single thread but it is over 5 times faster using 32 threads. %In fact, the decoding time with the integrated model is similar to that \emph{without} a lexicalized re-ordering model\footnote{Strangely, using lexicalized re-ordering model results in slightly faster decoding than without the model. We double checked with other datasets. We suspect this may be an artefact of the algorithm or data structures, for example, more work is needed to resolve hypothesis recombination.}. Critically for systems with multicores servers, it enables the decoder to continue to scale, making efficient use of all available cores. 
+Decoding speed increased by 40\% when using one thread but is 5 times faster when using 32 threads. %In fact, the decoding time with the integrated model is similar to that \emph{without} a lexicalized re-ordering model\footnote{Strangely, using lexicalized re-ordering model results in slightly faster decoding than without the model. We double checked with other datasets. We suspect this may be an artefact of the algorithm or data structures, for example, more work is needed to resolve hypothesis recombination.}. Critically for systems with multicores servers, it enables the decoder to continue to scale, making efficient use of all available cores. 
 
 \subsection{Scalability}
 
