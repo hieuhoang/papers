@@ -347,7 +347,7 @@ By grouping hypotheses according to coverage \emph{and} end position into groups
 Also, stack pruning occurs on each hypothesis group independently, therefore, potentially affecting search errors and model scores. 
 
 %Table~\ref{tab:stack-configuration} and 
-Figure~\ref{fig:stack-configuration} present the tradeoff between decoding time and average model at various pop-limits. The model scores for all stack configurations are identical for low pop-limits but grouping hypotheses into coverage \& end position produces higher model scores for higher pop-limits. It is also slower but the time/quality tradeoff is better overall with this stack configuration. Model scores for coverage and cardinality configurations are identical, which differs from the results in ~\cite{ortizmartinez-garciavarea-casacuberta:2006:WMT}. This may be due to differing test set characteristics, or interactions with cube-pruning algorithm we used.
+Figure~\ref{fig:stack-configuration} present the tradeoff between decoding time and average model, created by varying the cube-pruning pop-limit. The model scores for all stack configurations are identical for low pop-limits but grouping hypotheses into coverage \& end position produces higher model scores for higher pop-limits. It is also slower but the time/quality tradeoff is better overall with this stack configuration. Model scores for coverage and cardinality configurations are identical, which differs from the results in ~\cite{ortizmartinez-garciavarea-casacuberta:2006:WMT}. This may be due to differing test set characteristics, or interactions with cube-pruning algorithm we used.
 %\begin{table*}[t]
 %\small
 %\begin{center}
@@ -408,7 +408,16 @@ Figure~\ref{fig:stack-configuration} present the tradeoff between decoding time 
 %\label{tab:queue-configuration}
 %\end{table}
 %From the results in Table~\ref{tab:queue-configuration}, using finer grain queues does results in better model scores but it is significantly slower to decode.
-%
+% 
+We verified that the translation quality of our decoder is comparable to that of Moses in Figure~\ref{fig:bleu}. This fits in with our intention of creating a drop-in replacement for the Moses decoder. 
+\begin{figure}[h]
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.5]{bleu.png}} 
+\end{tabular}
+\caption{Translation quality (BLEU) for different pop-limits}
+\label{fig:bleu}
+\end{figure} 
 
 \subsection{Translation Model}
 
@@ -483,7 +492,7 @@ Figure~\ref{fig:speed} shows decoding speed against the number of threads used. 
 
 %Since the test server only has 16 real cores, additional threads must be run on the same physical cores as existing threads. This further constrains the resources that each thread has, therefore we see a markedly lower speed increase with each additional thread once there are more than 16 concurrent threads.
 
-This contrast with Moses where speed increases to approximately 16 threads but then actually become slower thereafter. Using the tcmalloc library has a small positive effect on decoding speed but does little to improve scalability 
+This contrast with Moses where speed increases up to approximately 16 threads but then become slower thereafter. Using the tcmalloc library has a small positive effect on decoding speed but does little to improve scalability 
 %\begin{figure}[h]
 %\centering
 %\begin{tabular}{cc}
@@ -529,18 +538,6 @@ It has been suggested that using a larger language model would overpower the imp
 \end{tabular}
 \caption{Decoding speed with a large language model}
 \label{fig:large-lm}
-\end{figure} 
-
-\subsection{Translation Quality}
-
-Our work is intended as a drop-in replacement for the Moses decoder. Given the same parameters and models, the model scores are comparable and the search space should be identical (or very nearly identical). This should lead to almost identical translation quality, which we verify with Figure~\ref{fig:bleu}.
-\begin{figure}[h]
-\centering
-\begin{tabular}{cc}
-{\includegraphics[scale=0.5]{bleu.png}} 
-\end{tabular}
-\caption{Translation quality (BLEU) for different pop-limits}
-\label{fig:bleu}
 \end{figure} 
 
 \section{Conclusion}
