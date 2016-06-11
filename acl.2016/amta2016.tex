@@ -344,7 +344,7 @@ By grouping hypotheses according to coverage \emph{and} end position into groups
 \label{algo:Hypothesis Expansion with Sorted Stack}
 \end{figure}
 
-Also, stack pruning occurs on each hypothesis group independently, therefore, potentially affect search errors and model scores. 
+Also, stack pruning occurs on each hypothesis group independently, therefore, potentially affecting search errors and model scores. 
 
 %Table~\ref{tab:stack-configuration} and 
 Figure~\ref{fig:stack-configuration} present the tradeoff between decoding time and average model at various pop-limits. The model scores for all stack configurations are identical for low pop-limits but grouping hypotheses into coverage \& end position produces higher model scores for higher pop-limits. It is also slower but the time/quality tradeoff is better overall with this stack configuration. Model scores for coverage and cardinality configurations are identical, which differs from the results in ~\cite{ortizmartinez-garciavarea-casacuberta:2006:WMT}. This may be due to differing test set characteristics, or interactions with cube-pruning algorithm we used.
