@@ -56,7 +56,7 @@ SMT has steadily progressed from a research discipline to commercial viability d
 
 For many users, decoding is the most time-critical part of the translation process. Making use of the multiple cores that are now ubiquitous in todays servers is a common strategy to ameliorate this issue. However, it has been noticed that the Moses decoder, amongst others, is unable to efficiently use multiple cores~\citep{mfernandez2016boosting}. That is, decoding speed does not substantially increase when more cores are used, in fact, it may actually \emph{decrease} when using more cores. There have been speculation on the causes of the inefficiency as well as potential remedies. 
 
-This paper is the first we know of that focuses on improving decoding speed on multicore servers. We will take a holistic approach to solving this issue. We create a decoder that is optimized for multi-core processing speed by concentrating on four main areas.
+This paper is the first we know of that focuses on improving decoding speed on multicore servers. We take a holistic approach to solving this issue, creating a decoder that is optimized for multi-core processing speed by concentrating on four main areas:
 \begin{enumerate}
   \item \vspace{-2 mm} Faster memory management of data-structures through the use of customized memory pools
   \item \vspace{-2 mm} Exploring alternatives to cardinality-based hypothesis stack configuration
