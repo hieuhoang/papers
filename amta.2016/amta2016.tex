@@ -78,11 +78,9 @@ Most prior work on increasing decoding speed look to optimizing specific compone
 
 ~\cite{Chiang:2007:cl} describes the cube-pruning and cube-growing algorithm which allows the tradeoff between speed and translation quality to the adjusted with a single parameter. ~\cite{wuebker2012fast} note that language model querying is amongst the most expensive operation in decoding. They sought to improved decoding speed by caching score computations early pruning of translation options. This work is similar to ~\cite{Heafield-mtplz} which group hypotheses with identical language model context and incrementally expand them, reducing LM querying.
 
-~\cite{mfernandez2016boosting} was concerned with multi-core speed but treated the decoding process as a black box within a parallelization framework.
+~\cite{mfernandez2016boosting} was concerned with multi-core speed but treated decoding as a black box within a parallelization framework.
 
-There are a number of phrase-based decoding implementations, many of which implements the extensions to the phrase-based model described above.
-
-The most well known is Moses~\citep{koehn-EtAl:2007:PosterDemo} which implements a number of speed optimizations, including cube-pruning. It is widely used for MT research and commercial use. 
+There are a number of phrase-based decoding implementations, many of which implements the extensions to the phrase-based model described above. The most well known is Moses~\citep{koehn-EtAl:2007:PosterDemo} which implements a number of speed optimizations, including cube-pruning. It is widely used for MT research and commercial use. 
 
 Joshua~\citep{Joshua-Decoder} also supports cube-pruning for phrase-based models. Phrasal~\citep{spence2014phrasal} supports a number of variants of the phrase-based model. Jane~\citep{peitz2012jane} supports the language model look-ahead described in ~\cite{wuebker2012fast} in addition to other tools to speed up decoding such as having a separate fast, lightweight decoder. mtplz is a specialized decoder developed to implement the incremental decoding described in ~\cite{Heafield-mtplz}.
 
