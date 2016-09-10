@@ -63,9 +63,10 @@ This paper is the first we know of that focuses on improving decoding speed on m
   \item \vspace{-2 mm} Re-examining the efficiency of phrase-table lookup using translation rule caching and data compression
   \item \vspace{-2 mm} Integrating the lexicalized re-ordering model into the phrase-table, thus eliminating the need for independent random lookup this model 
 \end{enumerate}
+
 The result is a decoder that is significantly faster than the Moses baseline for single-threaded operation, and scales with the number of cores.
 
-As far as possible, model scores and functionality are compatible with Moses to aid comparison and ease transition for existing users. All source code will be made available under an open-source license.
+We will maintain the Moses decoder's embarrassingly parallel, one sentence-per-thread decoding framework. As far as possible, model scores and functionality are compatible with Moses to aid comparison and ease transition for existing users. The source code is available in the existing Moses repository\footnote{\scriptsize https://github.com/moses-smt/mosesdecoder/tree/master/contrib/moses2}.
 
 The rest of the paper will be broken up into the following sections. The rest of this section will discuss prior work and an outline of the phrase-based model. Section~\ref{sec:Proposed Improvements} will then describe the modifications to improve decoding speed. We describe the experiment setup in Section~\ref{sec:Experimental Setup} and present results Section~\ref{sec:Results}. We conclude in the last section and discuss possible future work.
 
