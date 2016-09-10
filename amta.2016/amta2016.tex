@@ -208,7 +208,7 @@ We trained a phrase-based system using the Moses toolkit with standard settings.
 \begin{tabular}{|l|c|c|} \hline
 		& ar-en	& fr-en \\ \hline
 Phrase table  	& 17 	& 5.8 \\
-Language model 	& 3.1  	& 1.8 \\ 
+Language model (5-gram) 	& 3.1  	& 1.8 \\ 
 Lex re. model	& 2.3	& 0.6 \\ \hline
 \end{tabular}
 \end{center}
@@ -251,9 +251,9 @@ For all experiments, we used a Dell PowerEdge R620 server with 16 cores, 32 hype
 
 \subsection{Optimizing Memory}
 
-Each sentence is decoded from start to finish using one worker thread. %The CPU affinity of each thread is set to a specific core to minimize memory page faults as a result of threads switching cores.
+%Each sentence is decoded from start to finish using one worker thread. %The CPU affinity of each thread is set to a specific core to minimize memory page faults as a result of threads switching cores.
 
-As can be seen in Table~\ref{tab:optimizing-memory}, over 24\% of the Moses decoder running time is spent on memory management and this increases to 39\% when 32 threads are used, dampening the scalability of the decoder. By contrast, our decoder spends 11\% on memory management and does not significantly increase with more threads.
+Over 24\% of the Moses decoder running time is spent on memory management, Table~\ref{tab:optimizing-memory}. This increases to 39\% when 32 threads are used, dampening the scalability of the decoder. By contrast, our decoder spends 11\% on memory management and does not significantly increase with more threads.
 \begin{table}
 \begin{center}
 \small
@@ -297,7 +297,7 @@ Figure~\ref{fig:mempool} compares the decoding speed for Moses and our decoder, 
 
 \subsection{Stack Configuration}
 
-We shall investigate the effects of the following three stack configurations on model score and decoding speed:
+We investigated the effects of the following three stack configurations on model score and decoding speed:
 \begin{enumerate}
   \item \vspace{-2 mm} coverage cardinality,
   \item \vspace{-2 mm} coverage,
@@ -342,11 +342,14 @@ By grouping hypotheses according to coverage \emph{and} end position into groups
 \caption{Hypothesis Expansion with Coverage \& End Position Stacks}
 \label{algo:Hypothesis Expansion with Sorted Stack}
 \end{figure}
-
-Also, stack pruning occurs on each hypothesis group independently, therefore, potentially affecting search errors and model scores. 
+However, stack pruning occurs on each hypothesis group independently, therefore, potentially affecting search errors and model scores. 
 
 %Table~\ref{tab:stack-configuration} and 
-Figure~\ref{fig:stack-configuration} present the tradeoff between decoding time and average model, created by varying the cube-pruning pop-limit. The model scores for all stack configurations are identical for low pop-limits but grouping hypotheses into coverage \& end position produces higher model scores for higher pop-limits. It is also slower but the time/quality tradeoff is better overall with this stack configuration. Model scores for coverage and cardinality configurations are identical, which differs from the results in ~\cite{ortizmartinez-garciavarea-casacuberta:2006:WMT}. This may be due to differing test set characteristics, or interactions with cube-pruning algorithm we used.
+Figure~\ref{fig:stack-configuration} present the tradeoff between decoding time and average model, created by varying the cube-pruning pop-limit. None of the different stack configurations significantly outperform the others in either quality or decoding speed. However, the coverage \& end position produces slightly higher model scores at higher pop-limits, therefore, we continue to use this configuration throughout the rest of this paper.
+
+%The model scores for all stack configurations are identical for low pop-limits but grouping hypotheses into coverage \& end position produces higher model scores for higher pop-limits. It is also slower but the time/quality tradeoff is better overall with this stack configuration. Model scores for coverage and cardinality configurations are identical, which differs from the results in ~\cite{ortizmartinez-garciavarea-casacuberta:2006:WMT}. This may be due to differing test set characteristics, or interactions with cube-pruning algorithm we used.
+
+
 %\begin{table*}[t]
 %\small
 %\begin{center}
