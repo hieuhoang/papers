@@ -88,7 +88,7 @@ The Moses, Joshua and Phrasal decoders implement multithreading, however, they a
 
 Jane and mtplz are single-threaded decoders, relying on external applications to parallelize operations. %This has the advantage it is easier to parallelize processing across multiple servers, not just multiple cores. As we shall see, this method does not scale beyond a small number of cores when attempting to scale to multiple cores within one server.
 
-This paper not only focuses on faster single-threaded decoding but also on overcoming the shortcomings of existing decoding implementations on multicore servers.
+This paper not only focuses on faster single-threaded decoding but also on overcoming the shortcomings of existing decoding implementations on multicore servers. We will compare multicore performance the best-of-breed phrase-table described in ~\cite{junczys_tsd_2012b} with our own implementation. We will use the cube-pruning algorithm, however, the standard phrase-based decoding algorithm is also available.
 
 \subsection{Phrase-Based Model}
 
@@ -164,7 +164,7 @@ We shall re-visit the question of stack configuration with a particular emphasis
 \subsection{Phrase-Table Optimizations}
 
 For any phrase-table table of a realistic size, memory and loading time constraints requires us to use a load-on-demand implementation. Moses has several which we can make use of, each with differing performance characteristics. Figure~\ref{fig:moses-phrase-tables-time} shows the decoding speed for the fastest two implementations.
-\begin{figure}[h]
+\begin{figure}
 \centering
 \begin{tabular}{cc}
 {\includegraphics[scale=0.4]{moses-phrase-table.png}} 
@@ -175,7 +175,7 @@ For any phrase-table table of a realistic size, memory and loading time constrai
 From this, it appears that the Probing phrase-table~\citep{Bogoychev.probing.2016} has the fastest translation rule lookup, especially with large number of cores, therefore, we will concentrate exclusively on this implementation from hereon.
 
 We propose two optimizations. Firstly, the translation rule caching mechanism in Moses saves the most recently used rules. However, this require locking and active management in clearing of old rules. The result is \emph{slower} decoding, Table~\ref{tab:phrase-table-cache}. 
-\begin{table}[h]
+\begin{table}
 \small
 \begin{center}
 \begin{tabular}{|l|c|c|} \hline
@@ -203,13 +203,13 @@ This optimization has precedent in ~\cite{peitz2012jane} but the effect on decod
 \label{sec:Experimental Setup}
 
 We trained a phrase-based system using the Moses toolkit with standard settings. The training data consisted of most of the publicly available Arabic-English data from Opus~\citep{tiedemann2012parallel} containing over 69 million parallel sentences, and tuned on a held out set. The phrase-table was then pruned, keeping only the top 100 entries per source phrase, according to $p(t|s)$. All model files were then binarized; the language models were binarized using KenLM~\citep{Heafield-kenlm}, the phrase table using the Probing phrase-table, lexicalized re-ordering model using the compact data structure. These binary formats were chosen for their best-in-class multithreaded performance. Table~\ref{tab:model-files} gives details of the resultant sizes of the model files. For testing decoding speed, we used a subset of the training data, Table~\ref{tab:test-sets}. 
-\begin{table}[h]
+\begin{table}
 \begin{center}
 \begin{tabular}{|l|c|c|} \hline
 		& ar-en	& fr-en \\ \hline
 Phrase table  	& 17 	& 5.8 \\
 Language model 	& 3.1  	& 1.8 \\ 
-Lex re. model	& 2.3	& 637MB \\ \hline
+Lex re. model	& 2.3	& 0.6 \\ \hline
 \end{tabular}
 \end{center}
 \caption{Model sizes in GB}
@@ -218,7 +218,7 @@ Lex re. model	& 2.3	& 637MB \\ \hline
 
 For verification with a different dataset, we also used a second system trained on the French-English Europarl corpus (2m parallel sentences). The two different systems have characterics that we are interested in analyzing; ar-en have short sentences with large models while fr-en have overly long sentences with smaller models. Where we need to compare model scores, we used held out test sets.
 
-\begin{table}[h]
+\begin{table}
 \begin{center}
 \small
 \begin{tabular}{|l|r|r|} \hline
@@ -254,7 +254,7 @@ For all experiments, we used a Dell PowerEdge R620 server with 16 cores, 32 hype
 Each sentence is decoded from start to finish using one worker thread. %The CPU affinity of each thread is set to a specific core to minimize memory page faults as a result of threads switching cores.
 
 As can be seen in Table~\ref{tab:optimizing-memory}, over 24\% of the Moses decoder running time is spent on memory management and this increases to 39\% when 32 threads are used, dampening the scalability of the decoder. By contrast, our decoder spends 11\% on memory management and does not significantly increase with more threads.
-\begin{table}[h]
+\begin{table}
 \begin{center}
 \small
 \begin{tabular}{|l|c|c|c|c|} \hline
@@ -273,7 +273,7 @@ Misc/Unknown	& 45\%	 	& 39\% 	& 24\%		& 29\% \\ \hline
 \end{table}
 
 Figure~\ref{fig:mempool} compares the decoding speed for Moses and our decoder, using the same models, parameters and test set. Our decoder is 4.4 times faster with one thread, and 5.0 times faster using all cores. Like Moses, however, performance actually worsens after approximately 15 threads. %, however, the problem is not as pronounced. This gives us a better foundation on which to build further innovations for fast, multi-core decoding.
-\begin{figure}[h]
+\begin{figure}
 \centering
 \begin{tabular}{cc}
 {\includegraphics[scale=0.4]{mempool.png}} 
@@ -366,7 +366,7 @@ Figure~\ref{fig:stack-configuration} present the tradeoff between decoding time 
 %\label{tab:stack-configuration}
 %\end{table*}
 
-\begin{figure}[h]
+\begin{figure}
 \centering
 \begin{tabular}{cc}
 {\includegraphics[scale=0.4]{stack-configuration.png}} 
@@ -409,7 +409,7 @@ Figure~\ref{fig:stack-configuration} present the tradeoff between decoding time 
 %From the results in Table~\ref{tab:queue-configuration}, using finer grain queues does results in better model scores but it is significantly slower to decode.
 % 
 We verified that the translation quality of our decoder is comparable to that of Moses in Figure~\ref{fig:bleu}, given the same parameters and models. This fits in with our intention of creating a drop-in replacement for the Moses decoder. 
-\begin{figure}[h]
+\begin{figure}
 \centering
 \begin{tabular}{cc}
 {\includegraphics[scale=0.5]{bleu.png}} 
@@ -421,7 +421,7 @@ We verified that the translation quality of our decoder is comparable to that of
 \subsection{Translation Model}
 
 In the first optimization, we create a static translation model cache containing translation rules that translates the most common source phrases. This is constructed during phrase-table training based on the source counts. The cache is then loaded when the decoder is started. It does not require the overhead of managing an active cache but there is still some overhead in using a cache. 
-\begin{table}[h]
+\begin{table}
 \small
 \begin{center}
 \begin{tabular}{|r|r|r|} \hline
@@ -440,7 +440,7 @@ Before caching	& 229	& N/A	 \\
 Overall however, using a static cache result in a 10\% decrease in decoding time if the optimum cache size is used, Table~\ref{tab:cache}.
 
 For the second optimization, we disable the compression of the target side of the translation rules. This increase the size of the binary files from 17GB to 23GB but the time saved not needing to decompress the data resulted in a 1.5\% decrease in decoding time with 1 thread and nearly 7\% when the CPUs are saturated, Table~\ref{tab:compression}.
-\begin{table}[h]
+\begin{table}
 \small
 \begin{center}
 \begin{tabular}{|r|r|r|} \hline
@@ -466,7 +466,7 @@ The lexicalized re-ordering model requires a probability distribution of the re-
 Rather than holding the model probability distributions in the separate file, we pre-process the translation model file to include the lexicalized re-ordering model distributions for each rule. During decoding, the probability distribution is then taken from the translation model instead of querying a separate file. 
 
 This resulted in a significant decrease in decoding time, especially with high number of cores, Figure~\ref{fig:lex-ro}. 
-\begin{figure}[h]
+\begin{figure}
 \centering
 \begin{tabular}{cc}
 {\includegraphics[scale=0.4]{lex-ro.png}} 
@@ -478,7 +478,7 @@ Decoding speed increased by 40\% when using one thread but is 5 times faster whe
 
 \subsection{Scalability}
 
-\begin{figure}[h]
+\begin{figure}
 \centering
 \begin{tabular}{cc}
 {\includegraphics[scale=0.4]{scalability.png}} 
@@ -510,7 +510,7 @@ Our work is 4.3 times faster than Moses with a single-thread and 10.4 faster whe
 \subsection{Other Models and Even More Cores}
 
 Our decoder show no scalability issues when we tested with the same model and tested set on a larger server, Figure~\ref{fig:more-cores}.
-\begin{figure}[h]
+\begin{figure}
 \centering
 \begin{tabular}{cc}
 {\includegraphics[scale=0.4]{more-cores.png}} 
@@ -520,7 +520,7 @@ Our decoder show no scalability issues when we tested with the same model and te
 \end{figure} 
 
 We verify the results with the French-English phrase-based system and test set. The speed gains are even greater than the Arabic-English test scenario, Figure~\ref{fig:fr-en-speed}. Our decoder is 5.4 times faster than Moses with a single-thread and 14.5 faster when all cores are saturated.
-\begin{figure}[h]
+\begin{figure}
 \centering
 \begin{tabular}{cc}
 {\includegraphics[scale=0.4]{fr-en-speed.png}} 
@@ -530,7 +530,7 @@ We verify the results with the French-English phrase-based system and test set. 
 \end{figure} 
 
 It has been suggested that using a larger language model would overpower the improvements in decoding speed. We tested this conjecture by replacing the language model in the ar-en experiment with a 96GB language model. The time to load of language model is significant (394 sec) and was excluded from the translation speed. Results show that our decoder is 7 times faster than Moses and still scales monotonically until all CPUs are saturated, Figure~\ref{fig:large-lm}.
-\begin{figure}[h]
+\begin{figure}
 \centering
 \begin{tabular}{cc}
 {\includegraphics[scale=0.4]{large-lm.png}} 
