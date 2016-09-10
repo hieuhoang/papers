@@ -155,9 +155,7 @@ The most popular stack configuration for phrase-based models is coverage cardina
 
 %Since stack pruning occurs in each stack independently of each other, this affect the decoder's search errors.
 
-However, there are alternatives to this configuration. ~\cite{Och:2001a} uses a single stack for all hypotheses, ~\cite{Brown:1993} uses coverage stacks (ie. one stack per unique coverage vector) while ~\cite{peitz2012jane} and ~\cite{Zens+Ney:2008:iwslt} apply both coverage and cardinality pruning. While useful, these prior works present only one particular stack configuration each.
-
-~\cite{ortizmartinez-garciavarea-casacuberta:2006:WMT} explore a range of stack configurations by defining a granularity parameter which controls the maximum number of stacks required to decode a sentence. 
+However, there are alternatives to this configuration. ~\cite{Och:2001a} uses a single stack for all hypotheses, ~\cite{Brown:1993} uses coverage stacks (ie. one stack per unique coverage vector) while ~\cite{peitz2012jane} and ~\cite{Zens+Ney:2008:iwslt} apply both coverage and cardinality pruning. While useful, these prior works present only one particular stack configuration each. ~\cite{ortizmartinez-garciavarea-casacuberta:2006:WMT} explore a range of stack configurations by defining a granularity parameter which controls the maximum number of stacks required to decode a sentence. 
 
 We shall re-visit the question of stack configuration with a particular emphasis on how they can help improve the tradeoff between speed and translation quality. We will do so in the context of the cube-pruning algorithm, the algorithm that we will be using and which was not available to many of the earlier work.
 
