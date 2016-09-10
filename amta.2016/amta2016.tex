@@ -54,7 +54,7 @@ In this paper we re-examine the major components of phrase-based decoding and de
 
 SMT has steadily progressed from a research discipline to commercial viability during the past decade as can be seen from services such as the Google and Microsoft Translation services. As well as general purpose services such as these, there is a large number of companies that offer customized translation systems, as well as  companies and organization that implement in-house solutions. Many of these customized solutions use Moses as their SMT engine.
 
-For many users, decoding is the most time-critical part of the translation process. Making use of the multiple cores that are now ubiquitous in todays servers is a common strategy to ameliorate this issue. However, it has been noticed that the Moses decoder, amongst others, is unable to efficiently use multiple cores~\citep{mfernandez2016boosting}. That is, decoding speed does not substantially increase when more cores are used, in fact, it may actually \emph{decrease} when using more cores. There have been speculation on the causes of the inefficiency as well as potential remedies. 
+For many users, decoding is the most time-critical part of the translation process. Making use of the multiple cores that are now ubiquitous in today's servers is a common strategy to ameliorate this issue. However, it has been noticed that the Moses decoder, amongst others, is unable to efficiently use multiple cores~\citep{mfernandez2016boosting}. That is, decoding speed does not substantially increase when more cores are used, in fact, it may actually \emph{decrease} when using more cores. There has been speculation on the causes of the inefficiency as well as potential remedies. 
 
 This paper is the first we know of that focuses on improving decoding speed on multicore servers. We take a holistic approach to solving this issue, creating a decoder that is optimized for multi-core processing speed by concentrating on four main areas:
 \begin{enumerate}
@@ -74,7 +74,7 @@ The rest of the paper will be broken up into the following sections. The rest of
 
 Most prior work on increasing decoding speed look to optimizing specific components of the decoder or the decoding algorithm. 
 
-~\cite{Heafield-kenlm} and ~\cite{yasuhara-EtAl:2013:EMNLP} describes fast, efficient datastructures for language models. ~\cite{zens2007efficient} describes an implementation of a phrase-table for an SMT decoder that is loaded on demand, reducing the initial loading time and memory requirements. ~\cite{junczys_tsd_2012b} extends this by compressing the on-disk phrase table and lexicalized re-ordering model. 
+~\cite{Heafield-kenlm} and ~\cite{yasuhara-EtAl:2013:EMNLP} describe fast, efficient data structures for language models. ~\cite{zens2007efficient} describes an implementation of a phrase-table for an SMT decoder that is loaded on demand, reducing the initial loading time and memory requirements. ~\cite{junczys_tsd_2012b} extends this by compressing the on-disk phrase table and lexicalized re-ordering model. 
 
 ~\cite{Chiang:2007:cl} describes the cube-pruning and cube-growing algorithm which allows the tradeoff between speed and translation quality to the adjusted with a single parameter. ~\cite{wuebker2012fast} note that language model querying is amongst the most expensive operation in decoding. They sought to improved decoding speed by caching score computations early pruning of translation options. This work is similar to ~\cite{Heafield-mtplz} which group hypotheses with identical language model context and incrementally expand them, reducing LM querying.
 
@@ -88,7 +88,7 @@ The Moses, Joshua and Phrasal decoders implement multithreading, however, they a
 
 Jane and mtplz are single-threaded decoders, relying on external applications to parallelize operations. %This has the advantage it is easier to parallelize processing across multiple servers, not just multiple cores. As we shall see, this method does not scale beyond a small number of cores when attempting to scale to multiple cores within one server.
 
-This paper not only focuses on faster single-threaded decoding but also on overcoming the shortcomings of existing decoding implementations on multicore servers. Unlike ~\cite{mfernandez2016boosting}, we will optimize decoding speed by looking inside the black box. We will compare multicore performance the best-of-breed phrase-table described in ~\cite{junczys_tsd_2012b} with our own implementation. We will use the cube-pruning algorithm, however, the standard phrase-based decoding algorithm is also available and a framework exists to accommodate other decoding algorithms in future. We use KenLM~\citep{Heafield-kenlm} due to it's popularity and consistent performance, but as with Moses, other language model implementations can be added later.
+This paper not only focuses on faster single-threaded decoding but also on overcoming the shortcomings of existing decoding implementations on multicore servers. Unlike ~\cite{mfernandez2016boosting}, we will optimize decoding speed by looking inside the black box. We will compare multicore performance the best-of-breed phrase-table described in ~\cite{junczys_tsd_2012b} with our own implementation. We will use the cube-pruning algorithm, however, the standard phrase-based decoding algorithm is also available and a framework exists to accommodate other decoding algorithms in future. We use KenLM~\citep{Heafield-kenlm} due to its popularity and consistent performance, but as with Moses, other language model implementations can be added later.
 
 \subsection{Phrase-Based Model}
 
@@ -124,7 +124,7 @@ Of these feature functions, we will focus on optimizing the speed of the phrase-
 
 A translation of a source sentence is created by applying a series of translation rules which together translate each source word once, and only once. Each partial translation is known as a \emph{hypothesis}, which is created by applying a rule to an existing hypothesis. This \emph{hypothesis expansion} process starts with a hypothesis that has translated no source word and ends with completed hypotheses that has translated all source words. The highest-scoring completed hypothesis, according to the model score, is considered the best translation, $\hat{t} $.
 
-In the phrase-based model, each rule translates a contiguous sequence of source words. Successive applications of translation rules do not have to be adjacent on the source side, depending on the distortion limit. The target output is constructed strictly left-to-right from the target side from the series of translation rules. 
+In the phrase-based model, each rule translates a contiguous sequence of source words. Successive applications of translation rules do not have to be adjacent on the source side, depending on the distortion limit. The target output is constructed strictly left-to-right from the target side using this series of translation rules. 
 
 A beam search algorithm is used to create the completed hypothesis set efficiently. Hypotheses are grouped into stacks where each stack holds a number of comparable hypotheses. Most phrase-based implementations group hypotheses according to coverage cardinality. % in the same stack that have the same coverage cardinality $|C|$, where $C$ is  the coverage set, $C \subseteq \{1,2,... |s| \} $ of the number of  source words translated. 
 
@@ -143,7 +143,7 @@ A memory pool is a large block of memory that has been given to the application 
 
 To further increase memory management speed, objects in the memory pool are not deleted. Unused data structures accumulates in the pool until a reset event. The pool is assumed to be empty and simply reused after the event. We instantiate two memory pools per decoding thread, one which is never reset and another which is reset after the decoding of each sentence. Data structures are created in either pool according to their life cycle.
 
-Accumulating unused objects in the memory pools can result in unacceptably high memory usage so object queues are available for high-churn objects which allows the decoder to re-cycle unused objects before the reset event. This also increase speed as LIFO queues are used so that the most recently accessed memory are used, increasing CPU cache hits.
+Accumulating unused objects in the memory pools can result in unacceptably high memory usage so object queues are available for high-churn objects which allows the decoder to re-cycle unused objects before the reset event. This also increases speed as LIFO queues are used so that the most recently accessed memory are used, increasing CPU cache hits.
 
 %The speed of memory access is dependent on whether the data is in the CPU cache which is a constrained resource compared to memory size, typically 20MB in the latest processors. We shall seek to re-use recently accessed information to increase likelihood of the data being in the CPU cache. 
 
@@ -193,7 +193,7 @@ Secondly, the Probing phrase-table use a simple compression algorithm to compres
 
 Similar to the phrase-table, the lexicalized re-ordering model is trained on parallel data. A resultant model file is then queried during decoding. The need for random lookup during querying inevitably results in slower decoding speed. Previous work such as~\cite{junczys_tsd_2012b} improve querying speed with more compact data structures.
 
-However, the model's query keys are the source and target phrase of each translation rule. Rather than storing the lexicalized re-ordering model separately, we shall integrating it into the translation model, eliminating the need to query a separate file. However, the model remain the same under the log-linear framework, including having its own weights. %The search algorithm will produce identical results to the Moses baseline apart from edge case training configurations, for example, where the lexicalized reordering model is trained on a different dataset than the translation model.
+However, the model's query keys are the source and target phrase of each translation rule. Rather than storing the lexicalized re-ordering model separately, we shall integrating it into the translation model, eliminating the need to query a separate file. However, the model remains the same under the log-linear framework, including having its own weights. %The search algorithm will produce identical results to the Moses baseline apart from edge case training configurations, for example, where the lexicalized reordering model is trained on a different dataset than the translation model.
 
 This optimization has precedent in ~\cite{peitz2012jane} but the effect on decoding speed were not published. We will compare results with using a separate model in this paper.
 
@@ -251,7 +251,7 @@ For all experiments, we used a Dell PowerEdge R620 server with 16 cores, 32 hype
 
 %Each sentence is decoded from start to finish using one worker thread. %The CPU affinity of each thread is set to a specific core to minimize memory page faults as a result of threads switching cores.
 
-Over 24\% of the Moses decoder running time is spent on memory management, Table~\ref{tab:optimizing-memory}. This increases to 39\% when 32 threads are used, dampening the scalability of the decoder. By contrast, our decoder spends 11\% on memory management and does not significantly increase with more threads.
+Over 24\% of the Moses decoder running time is spent on memory management (Table~\ref{tab:optimizing-memory}). This increases to 39\% when 32 threads are used, dampening the scalability of the decoder. By contrast, our decoder spends 11\% on memory management and does not significantly increase with more threads.
 \begin{table}
 \begin{center}
 \small
@@ -341,7 +341,7 @@ By grouping hypotheses according to coverage \emph{and} end position, the distor
 However, stack pruning occurs on each hypothesis group independently, therefore, potentially affecting search errors and model scores. 
 
 %Table~\ref{tab:stack-configuration} and 
-Figure~\ref{fig:stack-configuration} present the tradeoff between decoding time and average model, created by varying the cube-pruning pop-limit. None of the different stack configurations significantly outperform the others in either quality or decoding speed. However, the coverage \& end position produces slightly higher model scores at higher pop-limits, therefore, we continue to use this configuration throughout the rest of this paper.
+Figure~\ref{fig:stack-configuration} presents the tradeoff between decoding time and average model scores, created by varying the cube-pruning pop-limit. None of the different stack configurations significantly outperform the others in either quality or decoding speed. However, the coverage \& end position produces slightly higher model scores at higher pop-limits, therefore, we continue to use this configuration throughout the rest of this paper.
 
 %The model scores for all stack configurations are identical for low pop-limits but grouping hypotheses into coverage \& end position produces higher model scores for higher pop-limits. It is also slower but the time/quality tradeoff is better overall with this stack configuration. Model scores for coverage and cardinality configurations are identical, which differs from the results in ~\cite{ortizmartinez-garciavarea-casacuberta:2006:WMT}. This may be due to differing test set characteristics, or interactions with cube-pruning algorithm we used.
 
@@ -514,7 +514,7 @@ Our decoder show no scalability issues when we tested with the same model and te
 \begin{tabular}{cc}
 {\includegraphics[scale=0.4]{more-cores.png}} 
 \end{tabular}
-\caption{Decoding speed with more cores}
+\caption{Decoding speed of our decoder with more cores}
 \label{fig:more-cores}
 \end{figure} 
 
@@ -540,7 +540,7 @@ It has been suggested that using a larger language model would overpower the imp
 
 \section{Conclusion}
 
-We have presented a new decoder that is compatible with Moses. By studying the shortcomings of the current implementation, we are able to optimize for speed, particularly for multicore operation. This resulted in double digit gains compared to Moses on the same hardware. Our implementation is also unaffected by scalability issues that has afflicted Moses. % and continue to scale well for all possible cores we have tested it on.
+We have presented a new decoder that is compatible with Moses. By studying the shortcomings of the current implementation, we are able to optimize for speed, particularly for multicore operation. This resulted in double digit gains compared to Moses on the same hardware. Our implementation is also unaffected by scalability issues that have afflicted Moses. % and continue to scale well for all possible cores we have tested it on.
 
 In future, we shall investigate other major components of the decoding algorithm, particularly the language model which has not been touched in this paper. We are also keen to explore the underlying reasons for the scalability issues in Moses to get a better understanding where potential performance issues can arise. 
 
