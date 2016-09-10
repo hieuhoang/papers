@@ -301,45 +301,43 @@ We investigated the effects of the following three stack configurations on model
   \item \vspace{-2 mm} coverage,
   \item \vspace{-2 mm} coverage and end position of most recently translated source word.
 \end{enumerate}
-Coverage cardinality is the same as that in Moses and Joshua. Coverage configuration uses one stack per unique coverage vector.
+Coverage cardinality is the same as that in Moses and Joshua. Coverage configuration uses one stack per unique coverage vector. \emph{Coverage and end position} of most recently translated source word extends the coverage configuration by separating hypotheses where the position of the last translate word are different, even if the coverages are identical. 
 
-\emph{Coverage and end position of most recently translated source word} extends the coverage configuration by separating hypotheses where the last translate word are different. This is an optimization to reduce the number of checks on the distortion limit, which is dependent on the last word position. 
+This is an optimization to reduce the number of checks on the distortion limit, which is dependent on the last word position. The check is a binary function $d(C_{h}, e_{hypo}, range_r)$, where $C_{h}$ is the coverage vector of hypothesis $h$, $e_{h}$ is the end position of most recent source word that has been translated, and $range_r$ is the coverage of the rule to be applied. %Figure~\ref{algo:Hypothesis Expansion with Unsorted Stack} shows the standard hypothesis expansion algorithm.
+%\begin{figure} [h]
+%\begin{algorithmic}
+%%\REQUIRE source sentence $s$, translation options
+%\FORALL{ $h$ in $stack_{|C|}$} 
+%  \FORALL{$r$ in translation rules}
+%      \IF {$d(C_{h}, e_{hypo}, range_r)$}
+%	\STATE expand $h$ with $r$ $\rightarrow$ $h'$
+%	\STATE add $h'$ to stack $stack_{C'}$
+%      \ENDIF
+%  \ENDFOR % { translation options}
+%\ENDFOR % { hypothesis in $stack_i$} 
+%\end{algorithmic}
+%\caption{Hypothesis Expansion with Cardinality Stacks}
+%\label{algo:Hypothesis Expansion with Unsorted Stack}
+%\end{figure}
 
-The check is a binary function $d(C_{h}, e_{hypo}, range_r)$, where $C_{h}$ is the coverage vector of hypothesis $h$, $e_{h}$ is the end position of most recent source word that has been translated, and $range_r$ is the coverage of the rule to be applied. Figure~\ref{algo:Hypothesis Expansion with Unsorted Stack} shows the standard hypothesis expansion algorithm.
-\begin{figure} [h]
-\begin{algorithmic}
-%\REQUIRE source sentence $s$, translation options
-\FORALL{ $h$ in $stack_{|C|}$} 
-  \FORALL{$r$ in translation rules}
-      \IF {$d(C_{h}, e_{hypo}, range_r)$}
-	\STATE expand $h$ with $r$ $\rightarrow$ $h'$
-	\STATE add $h'$ to stack $stack_{C'}$
-      \ENDIF
-  \ENDFOR % { translation options}
-\ENDFOR % { hypothesis in $stack_i$} 
-\end{algorithmic}
-\caption{Hypothesis Expansion with Cardinality Stacks}
-\label{algo:Hypothesis Expansion with Unsorted Stack}
-\end{figure}
-
-By grouping hypotheses according to coverage \emph{and} end position into groups we call \emph{'ministack'}, the distortion limit only needs to be checked for each group, Figure~\ref{algo:Hypothesis Expansion with Sorted Stack}. 
-\begin{figure} [h]
-\begin{algorithmic}
-%\REQUIRE source sentence $s$, translation options
-\FORALL{ $ministack_{C, e}$ in $stack_{|C|}$} 
-  \FORALL{$r$ in translation rules}
-    \IF {$d(C_{h}, e_{hypo}, range_r)$}
-      \FORALL{ $h$ in $ministack_{C, e}$} 
-	\STATE expand $h$ with $r$ $\rightarrow$ $h'$
-	\STATE add $h'$ to $ministack_{C',e'}$
-      \ENDFOR
-    \ENDIF
-  \ENDFOR % { translation options}
-\ENDFOR % { hypothesis in $stack_i$} 
-\end{algorithmic}
-\caption{Hypothesis Expansion with Coverage \& End Position Stacks}
-\label{algo:Hypothesis Expansion with Sorted Stack}
-\end{figure}
+By grouping hypotheses according to coverage \emph{and} end position, the distortion limit only needs to be checked for each group. %, Figure~\ref{algo:Hypothesis Expansion with Sorted Stack}. 
+%\begin{figure} [h]
+%\begin{algorithmic}
+%%\REQUIRE source sentence $s$, translation options
+%\FORALL{ $ministack_{C, e}$ in $stack_{|C|}$} 
+%  \FORALL{$r$ in translation rules}
+%    \IF {$d(C_{h}, e_{hypo}, range_r)$}
+%      \FORALL{ $h$ in $ministack_{C, e}$} 
+%	\STATE expand $h$ with $r$ $\rightarrow$ $h'$
+%	\STATE add $h'$ to $ministack_{C',e'}$
+%      \ENDFOR
+%    \ENDIF
+%  \ENDFOR % { translation options}
+%\ENDFOR % { hypothesis in $stack_i$} 
+%\end{algorithmic}
+%\caption{Hypothesis Expansion with Coverage \& End Position Stacks}
+%\label{algo:Hypothesis Expansion with Sorted Stack}
+%\end{figure}
 However, stack pruning occurs on each hypothesis group independently, therefore, potentially affecting search errors and model scores. 
 
 %Table~\ref{tab:stack-configuration} and 
