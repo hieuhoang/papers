@@ -25,7 +25,7 @@
 \begin{document}
 
 % \mtsummitHeader{x}{x}{xxx-xxx}{2016}{45-character paper description goes here}{Author(s) initials and last name go here}
-\title{\bf Fast Beam Search for Large Multiclass RNN}  
+\title{\bf Faster Beam Search for Neural Machine Translation}  
 
 \author{\name{\bf Hieu Hoang} \hfill  \addr{hieu@hoang.co.uk}\\ 
         \addr{}
@@ -43,7 +43,7 @@
 
 \begin{abstract}
 
-Recurrent neural networks (RNN) has been popular in machine translation and other tasks language generation tasks. However, there are two characterisitics of these applications which causes ineffieciencies, leading to slow inference speed. Firstly, the RNN is used to discriminate between a large number of classes corresponding to the output vocabulary. Secondly, the output sentence lengths are unpredictable, leading to ineffieciencies during batch processing. We provide solutions for each of these issues which, together, increase batched inference speed by up to ??? on modern GPUs without affecting model quality. For applications where the use of maxi-batching introduces unacceptable delays in response time, our work speed up inference speed by up to ???.
+Deep learning models are widely deployed for machine translation. In comparison on many other deep learning models, there are two characterisitics of machine translation which have not been adequately addressed, leading to slow inference speed. Firstly, as opposed to standard binary class models, machine translation models are used to discriminate between a large number of classes corresponding to the output vocabulary. Secondly, output sentence lengths are unpredictable, leading to ineffieciencies during batch processing. We provide solutions for these issues which, together, increase batched inference speed by up to ??? on modern GPUs without affecting model quality. For applications where the use of maxi-batching introduces unacceptable delays in response time, our work speed up inference speed by up to ???. Our work has application to other language generation tasks and beyond.
 
 \end{abstract}
 
