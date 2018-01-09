@@ -1,0 +1,91 @@
+\documentclass[]{article}
+\usepackage[letterpaper]{geometry}
+\usepackage{amta2016}
+\usepackage{times}
+\usepackage{url}
+\usepackage{latexsym}
+\usepackage{natbib}
+\usepackage{layout}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+
+\newcommand{\confname}{AMTA 2016}
+\newcommand{\website}{\protect\url{http://www.amtaweb.org/}}
+\newcommand{\contactname}{research track co-chair Lane Schwartz}
+\newcommand{\contactemail}{lanes@illinois.edu} 
+\newcommand{\conffilename}{amta2016}
+\newcommand{\downloadsite}{\protect\url{http://www.amtaweb.org/}}
+\newcommand{\paperlength}{$12$ (twelve)}
+\newcommand{\shortpaperlength}{$6$ (six)}
+
+%% do not add any other page- or text-size instruction here
+
+\parskip=0.00in
+
+\begin{document}
+
+% \mtsummitHeader{x}{x}{xxx-xxx}{2016}{45-character paper description goes here}{Author(s) initials and last name go here}
+\title{\bf Fast, Scalable Phrase-Based SMT Decoding}  
+
+\author{\name{\bf Hieu Hoang} \hfill  \addr{hieu@hoang.co.uk}\\ 
+        \addr{Moses Machine Translation CIC, UK}
+\AND
+       \name{\bf Nikolay Bogoychev} \hfill \addr{s1031254@sms.ed.ac.uk}\\
+       %\name{\bf Kenneth Heafield} \hfill \addr{kheafiel@inf.ed.ac.uk}\\
+        \addr{University of Edinburgh, Scotland}
+\AND
+       \name{\bf Lane Schwartz} \hfill \addr{lanes@illinois.edu}\\
+        \addr{University of Illinois, USA}
+\AND
+       \name{\bf Marcin Junczys-Dowmunt} \hfill \addr{junczys@amu.edu.pl}\\
+        \addr{Adam Mickiewicz University}
+}
+
+\maketitle
+\pagestyle{empty}
+
+\begin{abstract}
+The utilization of statistical machine translation (SMT) has grown enormously over the last decade, many using open-source software developed by the NLP community. As commercial use has increased, there is need for  software that is optimized for commercial requirements, in particular, fast phrase-based decoding and more efficient utilization of modern multicore servers.
+
+In this paper we re-examine the major components of phrase-based decoding and decoder implementation with particular emphasis on speed and scalability on multicore machines. The result is a drop-in replacement for the Moses decoder which is up to fifteen times faster and scales monotonically with the number of cores. 
+\end{abstract}
+
+\section{Introduction}
+
+\subsection{Prior Work}
+
+\subsection{Beam Search}
+
+\section{Proposed Improvements}
+\label{sec:Proposed Improvements}
+
+We will also concentrate on four main areas for optimization.
+
+
+\section{Experimental Setup}
+\label{sec:Experimental Setup}
+
+
+\section{Results}
+\label{sec:Results}
+
+
+
+\section{Conclusion}
+
+We have presented a new decoder that is compatible with Moses. By studying the shortcomings of the current implementation, we are able to optimize for speed, particularly for multicore operation. This resulted in double digit gains compared to Moses on the same hardware. Our implementation is also unaffected by scalability issues that have afflicted Moses. % and continue to scale well for all possible cores we have tested it on.
+
+In future, we shall investigate other major components of the decoding algorithm, particularly the language model which has not been touched in this paper. We are also keen to explore the underlying reasons for the scalability issues in Moses to get a better understanding where potential performance issues can arise. 
+
+
+ \section*{Acknowledgments}
+This work is sponsored by the Air Force Research Laboratory, prime contract FA8650-11-C-6160.  The views and conclusions contained in this document are those of the authors and should not be interpreted as representative of the official policies, either expressed or implied, of the Air Force Research Laboratory or the U.S. Government.
+
+Thanks to Kenneth Heafield for advice and code.
+\small
+
+\bibliographystyle{apalike}
+\bibliography{amta2016,mt,more}
+
+
+\end{document}
