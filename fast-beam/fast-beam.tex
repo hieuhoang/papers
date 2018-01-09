@@ -25,29 +25,26 @@
 \begin{document}
 
 % \mtsummitHeader{x}{x}{xxx-xxx}{2016}{45-character paper description goes here}{Author(s) initials and last name go here}
-\title{\bf Fast, Scalable Phrase-Based SMT Decoding}  
+\title{\bf Fast Beam Search for Large Multiclass RNN}  
 
 \author{\name{\bf Hieu Hoang} \hfill  \addr{hieu@hoang.co.uk}\\ 
-        \addr{Moses Machine Translation CIC, UK}
+        \addr{}
 \AND
-       \name{\bf Nikolay Bogoychev} \hfill \addr{s1031254@sms.ed.ac.uk}\\
+       \name{\bf Tomasz Dwojak} \hfill \addr{???}\\
+        \addr{Adam Mickiewicz University}
+\AND
+       \name{\bf Kenneth Heafield} \hfill \addr{???}\\
        %\name{\bf Kenneth Heafield} \hfill \addr{kheafiel@inf.ed.ac.uk}\\
         \addr{University of Edinburgh, Scotland}
-\AND
-       \name{\bf Lane Schwartz} \hfill \addr{lanes@illinois.edu}\\
-        \addr{University of Illinois, USA}
-\AND
-       \name{\bf Marcin Junczys-Dowmunt} \hfill \addr{junczys@amu.edu.pl}\\
-        \addr{Adam Mickiewicz University}
 }
 
 \maketitle
 \pagestyle{empty}
 
 \begin{abstract}
-The utilization of statistical machine translation (SMT) has grown enormously over the last decade, many using open-source software developed by the NLP community. As commercial use has increased, there is need for  software that is optimized for commercial requirements, in particular, fast phrase-based decoding and more efficient utilization of modern multicore servers.
 
-In this paper we re-examine the major components of phrase-based decoding and decoder implementation with particular emphasis on speed and scalability on multicore machines. The result is a drop-in replacement for the Moses decoder which is up to fifteen times faster and scales monotonically with the number of cores. 
+Recurrent neural networks (RNN) has been popular in machine translation and other tasks language generation tasks. However, there are two characterisitics of these applications which causes ineffieciencies, leading to slow inference speed. Firstly, the RNN is used to discriminate between a large number of classes corresponding to the output vocabulary. Secondly, the output sentence lengths are unpredictable, leading to ineffieciencies during batch processing. We provide solutions for each of these issues which, together, increase batched inference speed by up to ??? on modern GPUs without affecting model quality. For applications where the use of maxi-batching introduces unacceptable delays in response time, our work speed up inference speed by up to ???.
+
 \end{abstract}
 
 \section{Introduction}
@@ -73,9 +70,6 @@ We will also concentrate on four main areas for optimization.
 
 \section{Conclusion}
 
-We have presented a new decoder that is compatible with Moses. By studying the shortcomings of the current implementation, we are able to optimize for speed, particularly for multicore operation. This resulted in double digit gains compared to Moses on the same hardware. Our implementation is also unaffected by scalability issues that have afflicted Moses. % and continue to scale well for all possible cores we have tested it on.
-
-In future, we shall investigate other major components of the decoding algorithm, particularly the language model which has not been touched in this paper. We are also keen to explore the underlying reasons for the scalability issues in Moses to get a better understanding where potential performance issues can arise. 
 
 
  \section*{Acknowledgments}
