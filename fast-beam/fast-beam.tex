@@ -49,7 +49,11 @@ Deep learning models are widely deployed for machine translation. In comparison 
 
 \section{Introduction and Prior Work}
 
-Deep learning models have been successfully used on many machine learning task in recent years in areas as diverse as computer vision and natural language processing. This success have been followed by the rush to put these model into production. However, the computational resources required in order to run these models have ben chanllenging. One possible solution involves creating faster models that can approximate the original model (??? Student-Teacher model). Another solution is tackling specific computationally intensive functions by approximating them (??? softmax). (??? Cho) created the GRU that has the required properties of LSTM but is computationally cheaper. (??? Attention is all you need) and (??? course-to-fine) has been proposed as a fast alternatives to RNN-based models as it is possible to process more of the units in parallel.
+Deep learning models have been successfully used on many machine learning task in recent years in areas as diverse as computer vision and natural language processing. This success have been followed by the rush to put these model into production. However, the computational resources required in order to run these models have ben chanllenging. One possible solution involves creating faster models that can approximate the original model (??? Student-Teacher model). Another solution is tackling specific computationally intensive functions by approximating them (??? softmax). 
+
+Most current neural MT models follow an encoder-decoder architecture. The encoder calculates the word and sentence embeddings while the decoder generates the output sentence. The architecture within the encoder is still a subject of much research. (??? Kalshammer) used a convolution to encode the input and a recurrent neural network (RNN) for the decoder. RNNs was used for both encoding and decoding in (??? who used RNN 1st). (???) significantly improved translation quality by using LSTM was used in each RNN node. (??? Cho) used GRU that has the required properties of LSTM but is computationally cheaper. (??? Badhannau) added attention model which improved translation at a cost of slower speed.
+
+There has been recent attempts to move away from the sequence-to-sequence models of RNN encoder-decoder. Some justify their architecture on faster inference as well as better translation results. (??? Attention is all you need) and (??? course-to-fine) has been proposed as a fast alternatives to RNN-based models as it is possible to process more of the units in parallel.
 
 It has been noticed that half precision arithmetic can be used for deep learning model without significan loss of model quality (???). Other solutions include specialized hardware, the most popular being graphical processing units (GPU) but other hardware such as custom processors (??? TPU), FPGA (??? Intel) have been used. 
 
@@ -58,12 +62,19 @@ Many of these optimization are general purpose improvements for deep learning mo
 \section{Proposal}
 \label{sec:Proposal}
 
-We choose to focus on the use of GPU, rather than CPU as pursued in (??? Devlin).
+We based our model on the sequence-to-sequence model of (??? Cho) for machine translation models, but unlike (??? Devlin), we avoid solutions for the specific model. Therefore, our solution should be applicable to other models, architectures and task which have the similar characteristics. We envisage that our solutions would be of value to models used in text summarization, chatbot or image captioning.
 
+We also choose to focus on the use of GPU, rather than CPU as pursued in (??? Devlin).
 
-We based our proposal by reasoning what are the relevant differences between machine translation models and those for other tasks that deep learning has been used. But unlike (??? Devlin), we have avoided proposing improvements for a specific model. Therefore, our solution should be applicable to other task which have the similar characteristics such as text summarization, chatbot or image captioning.
+\subsection{Softmax and Beam Search Fusion}
 
+The output layer of most deep learning models consist of
+   1. activation - multiplication of the input with the weight matrix for that layer
+   2. addition of a bias term to the resulting scores
+   3. activation function - in the output layers, this is commonly a softmax or a variant, eg. log-softmax.
+   4. a search for the argmax output class and probability.
 
+   
 \section{Experimental Setup}
 \label{sec:Experimental Setup}
 
@@ -85,3 +96,4 @@ This work is sponsored by the Air Force Research Laboratory, prime contract FA86
 
 
 \end{document}
+\grid
