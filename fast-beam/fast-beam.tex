@@ -43,18 +43,25 @@
 
 \begin{abstract}
 
-Deep learning models are widely deployed for machine translation. In comparison on many other deep learning models, there are two characterisitics of machine translation which have not been adequately addressed, leading to slow inference speed. Firstly, as opposed to standard binary class models, machine translation models are used to discriminate between a large number of classes corresponding to the output vocabulary. Secondly, output sentence lengths are unpredictable, leading to ineffieciencies during batch processing. We provide solutions for these issues which, together, increase batched inference speed by up to ??? on modern GPUs without affecting model quality. For applications where the use of maxi-batching introduces unacceptable delays in response time, our work speed up inference speed by up to ???. Our work has application to other language generation tasks and beyond.
+Deep learning models are widely deployed for machine translation. In comparison on many other deep learning models, there are two characterisitics of machine translation which have not been adequately addressed by most software implementations, leading to slow inference speed. Firstly, as opposed to standard binary class models, machine translation models are used to discriminate between a large number of classes corresponding to the output vocabulary. Secondly, rather than a single label, the output from machine translation models is a sequence of class labels that makes up the words in the target sentence. The sentence lengths are unpredictable, leading to inefficiencies during batch processing. We provide solutions for these issues which together, increase batched inference speed by up to ??? on modern GPUs without affecting model quality. For applications where the use of maxi-batching introduces unacceptable delays in response time, our work speed up inference speed by up to ???. Our work is applicable to other language generation tasks and beyond.
 
 \end{abstract}
 
-\section{Introduction}
+\section{Introduction and Prior Work}
 
-\subsection{Prior Work}
+Deep learning models have been successfully used on many machine learning task in recent years in areas as diverse as computer vision and natural language processing. This success have been followed by the rush to put these model into production. However, the computational resources required in order to run these models have ben chanllenging. One possible solution involves creating faster models that can approximate the original model (??? Student-Teacher model). Another solution is tackling specific computationally intensive functions by approximating them (??? softmax). (??? Cho) created the GRU that has the required properties of LSTM but is computationally cheaper. (??? Attention is all you need) and (??? course-to-fine) has been proposed as a fast alternatives to RNN-based models as it is possible to process more of the units in parallel.
 
-\subsection{Beam Search}
+It has been noticed that half precision arithmetic can be used for deep learning model without significan loss of model quality (???). Other solutions include specialized hardware, the most popular being graphical processing units (GPU) but other hardware such as custom processors (??? TPU), FPGA (??? Intel) have been used. 
 
-\section{Proposed Improvements}
-\label{sec:Proposed Improvements}
+Many of these optimization are general purpose improvements for deep learning models, regardless of the task it is being used in. (??? Devlin) is a noticeable machhine translation-specific optimization which describe the speed improvements that can be obtained by techniques such as the use of half-precision, model changes and pre-computation.
+
+\section{Proposal}
+\label{sec:Proposal}
+
+We choose to focus on the use of GPU, rather than CPU as pursued in (??? Devlin).
+
+
+We based our proposal by reasoning what are the relevant differences between machine translation models and those for other tasks that deep learning has been used. But unlike (??? Devlin), we have avoided proposing improvements for a specific model. Therefore, our solution should be applicable to other task which have the similar characteristics such as text summarization, chatbot or image captioning.
 
 
 \section{Experimental Setup}
