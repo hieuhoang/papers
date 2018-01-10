@@ -68,13 +68,24 @@ We also choose to focus on the use of GPU, rather than CPU as pursued in (??? De
 
 \subsection{Softmax and Beam Search Fusion}
 
-The output layer of most deep learning models consist of
-   1. activation - multiplication of the input with the weight matrix for that layer
-   2. addition of a bias term to the resulting scores
-   3. activation function - in the output layers, this is commonly a softmax or a variant, eg. log-softmax.
-   4. a search for the argmax output class and probability.
+The output layer of most deep learning models consist of the following steps
+\begin{enumerate}
+   \item \vspace{-2 mm} activation - multiplication of the input with the weight matrix for that layer
+   \item \vspace{-2 mm} addition of a bias term to the resulting scores
+   \item \vspace{-2 mm} activation function - in the output layers, this is commonly softmax or a variant, eg. log-softmax.
+   \item \vspace{-2 mm} a search for the argmax output class, and probability is necessary.
+\end{enumerate}
 
-   
+In models with a small number of classes such as binary classification, the calculation of softmax and argmax is trivial and fast. The activation and bias term steps are also fast unless the dimensionality is large.
+
+However, the output layer of most machine translation models frequently contains tens of thousand, if not hundred of thousands, classes corresponding to the vocabulary of the output language. For example, the best German-English system for WMT 2014 (??? Rico) contains 85,000 subword units in the target vocabulary. In these scenarios, the trivial procedure used to calculate the output layer takes up a significant amount of time. Table ???? shows the percentage of the total translationt time each step takes in our baseline system (described in Section ???).
+
+??? Table of percentage each step takes
+
+In addition, models with large number of classes frequently desire a list of the n-best classes rather than just the argmax, further complicating problem.
+
+However, there are algorithmic similarites between each step.
+
 \section{Experimental Setup}
 \label{sec:Experimental Setup}
 
