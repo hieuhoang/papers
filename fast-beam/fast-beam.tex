@@ -96,6 +96,62 @@ The algorithm was extended from argmax to beam search for n-best classes.
 
 \subsection{Top-up Batching}
 
+The standard mini-batching algorithm is outlined in Figure~\ref{algo:Mini-batching}.
+
+\begin{figure} [h]
+\begin{algorithmic}
+%\REQUIRE source sentence $s$, translation options
+\WHILE{more input} 
+  \STATE Create batch
+  \STATE Encode
+  \WHILE{batch is not empty} 
+    \STATE Decode batch
+    \FOR{each sentence in batch}
+      \IF{translation is complete}
+        \STATE Remove sentence from batch
+      \ENDIF
+    \ENDFOR
+  \ENDWHILE
+\ENDWHILE 
+\end{algorithmic}
+\caption{Mini-batching}
+\label{algo:Mini-batching}
+\end{figure}
+
+This algorithm encode the sentences for a batch, followed by decoding the batch. The decoding stop once all sentences in the batch are completed. This is a potential inefficiency as the number of remaining sentences may not be optimal.
+
+We will focus on decoding as this is the more compute-intensive step, and issues with differing sentence sizes in encoding can partly be ameriorated by maxi-batching.
+
+Our proposed top-up batching algorithm encode and decode asynchronously. The encoding step, Figure~\ref{algo:Encoding for top-up batching}, is similar to the main loop of the standard algorithm but the results are added to a queue to be consumed by the decoding step later.
+
+\begin{figure} [h]
+\begin{algorithmic}
+%\REQUIRE source sentence $s$, translation options
+\WHILE{more input} 
+  \STATE Create encoding batch
+  \STATE Encode
+  \STATE Add to queue
+\ENDWHILE 
+\end{algorithmic}
+\caption{Encoding for top-up batching}
+\label{algo:Encoding for top-up batching}
+\end{figure}
+
+Rather than decoding the same batch until all sentences in the batch are completed, the decoding step processing the same batch continuously. New sentences are added to the batch as old sentences completes, Figure~\ref{algo:Decoding for top-up batching}.
+
+\begin{figure} [h]
+\begin{algorithmic}
+%\REQUIRE source sentence $s$, translation options
+\STATE create decoding batch $b$ from queue
+\WHILE{$b$ is not empty}
+  \STATE Decode $b$
+  \STATE Replace completed sentences with new sentence from queue
+\ENDWHILE 
+\end{algorithmic}
+\caption{Decoding for top-up batching}
+\label{algo:Decoding for top-up batching}
+\end{figure}
+
 
 \section{Experimental Setup}
 \label{sec:Experimental Setup}
