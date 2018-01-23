@@ -82,8 +82,13 @@ The output layer of most deep learning models consist of the following steps
 
 In models with a small number of classes such as binary classification, the computational effort required is trivial and fast. However, this is not the case for large number of classes such as those found in NMT models.
 
-We shall leave the matrix multiplication for the next proposal and future work, and concentrate on the last three steps, the outline of which are shown in ???.
+We shall leave the matrix multiplication for the next proposal and future work, and concentrate on the last three steps, the outline of which are shown in ???. As can be seen, the operations iterate over the matrix p five times - once to add the bias, three times to calculate the softmax, and once to search for the best class. We shall fused the three functions and combine the matrix access into two iterations, reducing memory bandwidth. Kernel fusion is a well practised optimization technique (???).
 
+Secondly, we make use of the fact that softmax and exp are monotonic functions therefore we can avoid the search for the argmax in ??? as it will be the same as that in ???.
+
+Thirdly, we are only interested in the probability of the best class. Since we have precalculated the best class in ???, we shall only calculate softmax for this one class, avoiding the computational and memory bandwith of computing the probability for all classes.
+
+In fact, we are only interested in the argmax class during inference, not the probability. Therefore, by using the argmax calculated in ??? rather than ???, we can avoid computing the softmax altogether. The outline of the our function, combining the work of ???-??? is shown in ???.
 
 
 \section{Experimental Setup}
