@@ -102,10 +102,30 @@ We shall leave the matrix multiplication for the next proposal and future work, 
 \begin{algorithmic}
 \REQUIRE activation vector $p$
 
+\COMMENT{calculate max for softmax stability}
+
 \STATE $max \gets \infty$ 
 \FORALL{$p_i$ in $p$}
-  \STATE $p_i \gets p_i + b_i$
+  \IF{$p_i > max$}
+    \STATE $max \gets p_i$
+  \ENDIF
 \ENDFOR 
+
+\COMMENT{calculate denominator}
+
+\STATE $sum \gets 0$ 
+\FORALL{$p_i$ in $p$}
+  \STATE $sum \gets sum + e^{p_i}$
+\ENDFOR 
+
+\COMMENT{calculate softmax}
+
+\FORALL{$p_i$ in $p$}
+  \STATE $softmax_i \gets \frac{e^{p_i}}{sum} $
+\ENDFOR 
+
+\RETURN $softmax$
+
 \end{algorithmic}
 \caption{Calculate softmax}
 \label{algo:Calculate softmax}
