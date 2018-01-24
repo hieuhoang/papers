@@ -7,6 +7,7 @@
 \usepackage{natbib}
 \usepackage{layout}
 \usepackage{algorithmic}
+\usepackage{algorithm}
 \usepackage{graphicx}
 
 \newcommand{\confname}{AMTA 2016}
@@ -89,7 +90,7 @@ We shall leave the matrix multiplication for the next proposal and future work, 
 \begin{figure} [h]
 \begin{algorithmic}
 \REQUIRE activation vector $p$, bias vector $b$
-\FORALL{$p_i$i in $p$}
+\FORALL{$p_i$ in $p$}
   \STATE $p_i \gets p_i + b_i$
 \ENDFOR 
 \end{algorithmic}
@@ -99,9 +100,12 @@ We shall leave the matrix multiplication for the next proposal and future work, 
 
 \begin{figure} [h]
 \begin{algorithmic}
-\WHILE{more input} 
-  \STATE Create encoding batch
-\ENDWHILE 
+\REQUIRE activation vector $p$
+
+\STATE $max \gets \infty$ 
+\FORALL{$p_i$ in $p$}
+  \STATE $p_i \gets p_i + b_i$
+\ENDFOR 
 \end{algorithmic}
 \caption{Calculate softmax}
 \label{algo:Calculate softmax}
