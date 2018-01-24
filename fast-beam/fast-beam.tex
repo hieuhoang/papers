@@ -104,7 +104,7 @@ We shall leave the matrix multiplication for the next proposal and future work, 
 
 \COMMENT{calculate max for softmax stability}
 
-\STATE $max \gets \infty$ 
+\STATE $max \gets - \infty$ 
 \FORALL{$p_i$ in $p$}
   \IF{$p_i > max$}
     \STATE $max \gets p_i$
@@ -155,15 +155,37 @@ As can be seen, the operations iterate over the matrix p five times - once to ad
 
 Secondly, we make use of the fact that softmax and exp are monotonic functions therefore we can avoid the search for the argmax in Figure~\ref{algo:Find best} as it will be the same as that in Figure~\ref{algo:Calculate softmax}.
 
-Thirdly, we are only interested in the probability of the best class. Since we have precalculated the best class in Figure~\ref{algo:Calculate softmax}, we shall only calculate softmax for this one class, avoiding the computational and memory bandwith of computing the probability for all classes.
+Thirdly, we are only interested in the probability of the best class. Since we have precalculated the best class in Figure~\ref{algo:Calculate softmax}, we shall only calculate softmax for this one class, avoiding the computational and memory bandwith of computing the probability for all classes. The outline of the our function is shown in Figure~\ref{algo:Fused Kernel}.
 
-In fact, we are usually only interested in the argmax class during inference, not the probability. Therefore, by using the argmax calculated in Figure~\ref{algo:Calculate softmax}, we can avoid computing the softmax altogether. The outline of the our function is shown in Figure~\ref{algo:Fused Kernel}.
+In fact, we are usually only interested in the argmax class during inference, not the probability. Therefore, we can skip the second iteration over $p$ in Figure~\ref{algo:Fused Kernel} and avoid computing the softmax altogether.
 
 \begin{figure} [h]
 \begin{algorithmic}
-\WHILE{more input} 
-  \STATE Create encoding batch
-\ENDWHILE 
+\REQUIRE activation vector $p$, bias vector $b$
+
+\COMMENT{add bias, calculate $max$ \& $argmax$}
+
+\STATE $max \gets - \infty$ 
+\FORALL{$p_i$ in $p$}
+  \IF{$p_i + b_i > max$}
+    \STATE $max \gets p_i + b_i$
+    \STATE $argmax \gets i$
+  \ENDIF
+\ENDFOR 
+
+\COMMENT{calculate denominator}
+
+\STATE $sum \gets 0$ 
+\FORALL{$p_i$ in $p$}
+  \IF{$p_i > max$}
+    \STATE $sum \gets sum + e^{p_i - max}$
+  \ENDIF
+\ENDFOR 
+
+\COMMENT{calculate softmax($p_i$)}
+\RETURN $\frac{e^{max}}{sum}$, $argmax$ 
+
+
 \end{algorithmic}
 \caption{Fused Kernel}
 \label{algo:Fused Kernel}
