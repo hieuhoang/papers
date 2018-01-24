@@ -255,9 +255,11 @@ Rather than decoding the same batch until all sentences in the batch are complet
 \section{Experimental Setup}
 \label{sec:Experimental Setup}
 
-We trained a sequence-to-sequence, encoder-decoder NMT system similar to that described in (Rico ???). This uses recurrent neural network with gated recurrent units. The input and output vocabulary size were both set to 85,000 subwords using BPE ??? to adjust the vocabulary to the desired size. The hidden layer dimensions were kept at the default of 512. We used the Marian toolkit to train our models.
+We trained a sequence-to-sequence, encoder-decoder NMT system similar to that described in (Rico ???). This uses recurrent neural networks with gated recurrent units. The input and output vocabulary size were both set to 85,000 subwords using BPE ??? to adjust the vocabulary to the desired size. The hidden layer dimensions were kept at the default of 512. %We used the Marian toolkit to train our models.
 
-For inference, we used and extended Amun (???), the current fastest open-source inference engine for the RNN/GRU model we aware of. All experiments was performed on an Nvidia GTX 1060 GPU. The host contains 8 Intel cores running at 2.8Ghz, 16GB RAM and SSD hard drive.
+For inference, we used and extend Amun (???), the fastest open-source inference engine we are aware of for RNN/GRU model used in this paper. Mini-batch was set to 128 sentences, unless explicitly stated, and a maxi-batch was ten times that of mini-batch.
+
+All experiments was performed on an Nvidia GTX 1060 GPU. The host contains 8 Intel hypercores running at 2.8Ghz, 16GB RAM and SSD hard drive.
 
 Our training data consisted of the German-English parallel sentences from the Europarl corpus (???). To test inference speed, we used two test sets with differing characteristics:
 \begin{enumerate}
