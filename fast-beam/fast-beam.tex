@@ -84,13 +84,56 @@ The output layer of most deep learning models consist of the following steps
 
 In models with a small number of classes such as binary classification, the computational effort required is trivial and fast. However, this is not the case for large number of classes such as those found in NMT models.
 
-We shall leave the matrix multiplication for the next proposal and future work, and concentrate on the last three steps, the outline of which are shown in ???. As can be seen, the operations iterate over the matrix p five times - once to add the bias, three times to calculate the softmax, and once to search for the best class. We shall fused the three functions and combine the matrix access into two iterations, reducing memory bandwidth. Kernel fusion is a well practised optimization technique (???).
+We shall leave the matrix multiplication for the next proposal and future work, and concentrate on the last three steps, the outline of which are shown in Figures~\ref{algo:Add Bias Term} to ~\ref{algo:Find best}.
 
-Secondly, we make use of the fact that softmax and exp are monotonic functions therefore we can avoid the search for the argmax in ??? as it will be the same as that in ???.
+\begin{figure} [h]
+\begin{algorithmic}
+\WHILE{more input} 
+  \STATE Create encoding batch
+\ENDWHILE 
+\end{algorithmic}
+\caption{Add Bias Term}
+\label{algo:Add Bias Term}
+\end{figure}
 
-Thirdly, we are only interested in the probability of the best class. Since we have precalculated the best class in ???, we shall only calculate softmax for this one class, avoiding the computational and memory bandwith of computing the probability for all classes.
+\begin{figure} [h]
+\begin{algorithmic}
+\WHILE{more input} 
+  \STATE Create encoding batch
+\ENDWHILE 
+\end{algorithmic}
+\caption{Calculate softmax}
+\label{algo:Calculate softmax}
+\end{figure}
 
-In fact, we are usually only interested in the argmax class during inference, not the probability. Therefore, by using the argmax calculated in ??? rather than ???, we can avoid computing the softmax altogether. The outline of the our function, combining the work of ???-??? is shown in ???.
+\begin{figure} [h]
+\begin{algorithmic}
+\WHILE{more input} 
+  \STATE Create encoding batch
+\ENDWHILE 
+\end{algorithmic}
+\caption{Find best}
+\label{algo:Find best}
+\end{figure}
+
+
+As can be seen, the operations iterate over the matrix p five times - once to add the bias, three times to calculate the softmax, and once to search for the best class. We shall fused the three functions and combine the matrix access into two iterations, reducing memory bandwidth. Kernel fusion is a well practised optimization technique (???).
+
+Secondly, we make use of the fact that softmax and exp are monotonic functions therefore we can avoid the search for the argmax in Figure~\ref{algo:Find best} as it will be the same as that in Figure~\ref{algo:Calculate softmax}.
+
+Thirdly, we are only interested in the probability of the best class. Since we have precalculated the best class in Figure~\ref{algo:Calculate softmax}, we shall only calculate softmax for this one class, avoiding the computational and memory bandwith of computing the probability for all classes.
+
+In fact, we are usually only interested in the argmax class during inference, not the probability. Therefore, by using the argmax calculated in Figure~\ref{algo:Calculate softmax}, we can avoid computing the softmax altogether. The outline of the our function is shown in Figure~\ref{algo:Fused Kernel}.
+
+\begin{figure} [h]
+\begin{algorithmic}
+\WHILE{more input} 
+  \STATE Create encoding batch
+\ENDWHILE 
+\end{algorithmic}
+\caption{Fused Kernel}
+\label{algo:Fused Kernel}
+\end{figure}
 
 The algorithm was extended from argmax to beam search for n-best classes.
 
