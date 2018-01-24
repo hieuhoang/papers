@@ -255,32 +255,25 @@ Rather than decoding the same batch until all sentences in the batch are complet
 \section{Experimental Setup}
 \label{sec:Experimental Setup}
 
-We trained a sequence-to-sequence, encoder-decoder NMT system similar to that described in (Rico ???). This uses recurrent neural network with gated recurrent units. The input and output vocabulary size were both set to 85,000 using BPE ??? to adjust the vocabulary to the desired size. The hidden layer dimensions were kept at the default of 512. We used the Marian toolkit to train our models.
+We trained a sequence-to-sequence, encoder-decoder NMT system similar to that described in (Rico ???). This uses recurrent neural network with gated recurrent units. The input and output vocabulary size were both set to 85,000 subwords using BPE ??? to adjust the vocabulary to the desired size. The hidden layer dimensions were kept at the default of 512. We used the Marian toolkit to train our models.
 
-For inference, we used Amun (???), the current fastest open-source inference engine for the RNN/GRU model we aware of.
+For inference, we used and extended Amun (???), the current fastest open-source inference engine for the RNN/GRU model we aware of. All experiments was performed on an Nvidia GTX 1060 GPU. The host contains 8 Intel cores running at 2.8Ghz, 16GB RAM and SSD hard drive.
 
-Our training data consisted of the German-English parallel sentences from the Europarl corpus (???). To test inference speed, we used two test set with differing characteristics:
+Our training data consisted of the German-English parallel sentences from the Europarl corpus (???). To test inference speed, we used two test sets with differing characteristics:
 \begin{enumerate}
    \item \vspace{-2 mm} a subset of the training data, which contains mostly long sentences, and is, of course, in the same domain as the training data
    \item \vspace{-2 mm} a subset of the German-English data from the Open-Subtitles corpus, consisting of mostly short, out-of-domain sentences.
 \end{enumerate}
-Table~\ref{tab:corpora} gives details of the training and test corpora.
+Table~\ref{tab:corpora} gives further details of the test sets.
 
 \begin{table}
 \begin{center}
 \small
 \begin{tabular}{|l|r|r|} \hline
-		& ar-en		& fr-en \\ \hline
-\multicolumn{3}{|l|}{For speed testing} \\ \hline
-Set name	& \multicolumn{2}{|c|}{Subset of training data} \\
+		& Subset of training data		& OpenSubtitles \\ \hline
 \# sentences  	& 800k 		& 200k \\
-\# words 	& 5.8m 		& 5.9m \\ 
-Avg words/sent	& 7.3		& 29.7 \\ \hline
-\multicolumn{3}{|l|}{For model score testing} \\ \hline
-Set name	& OpenSubtitles	& newstest2011 \\
-\# sentences  	& 2000 		& 3003 \\
-\# words 	& 14,620 	& 86,162 \\ 
-Avg words/sent	& 7.3		& 28.7 \\ \hline
+\# subwords 	& 5.8m 		& 5.9m \\ 
+Avg subwords/sent	& 7.3		& 29.7 \\ \hline
 \end{tabular}
 \end{center}
 \caption{Corpora}
