@@ -121,10 +121,10 @@ We shall leave the matrix multiplication for the next proposal and future work, 
 \COMMENT{calculate softmax}
 
 \FORALL{$p_i$ in $p$}
-  \STATE $softmax_i \gets \frac{e^{p_i}}{sum} $
+  \STATE $p_i \gets \frac{e^{p_i}}{sum} $
 \ENDFOR 
 
-\RETURN $softmax$
+\RETURN $p$
 
 \end{algorithmic}
 \caption{Calculate softmax}
@@ -133,9 +133,18 @@ We shall leave the matrix multiplication for the next proposal and future work, 
 
 \begin{figure} [h]
 \begin{algorithmic}
-\WHILE{more input} 
-  \STATE Create encoding batch
-\ENDWHILE 
+\REQUIRE softmax vector $p$
+
+\STATE $max \gets - \infty$ 
+\FORALL{$p_i$ in $p$}
+  \IF{$p_i > max$}
+    \STATE $max \gets p_i$
+    \STATE $argmax \gets i$
+  \ENDIF
+\ENDFOR 
+
+\RETURN $max$, $argmax$
+
 \end{algorithmic}
 \caption{Find best}
 \label{algo:Find best}
