@@ -115,13 +115,13 @@ We shall leave the matrix multiplication for the next proposal and future work, 
 
 \STATE $sum \gets 0$ 
 \FORALL{$p_i$ in $p$}
-  \STATE $sum \gets sum + e^{p_i}$
+  \STATE $sum \gets sum + e^{p_i - max}$
 \ENDFOR 
 
 \COMMENT{calculate softmax}
 
 \FORALL{$p_i$ in $p$}
-  \STATE $p_i \gets \frac{e^{p_i}}{sum} $
+  \STATE $p_i \gets \frac{e^{p_i} - max}{sum} $
 \ENDFOR 
 
 \RETURN $p$
@@ -183,11 +183,11 @@ In fact, we are usually only interested in the argmax class during inference, no
 \ENDFOR 
 
 \COMMENT{calculate softmax($p_i$)}
-\RETURN $\frac{e^{max}}{sum}$, $argmax$ 
+\RETURN $\frac{1}{sum}$, $argmax$ 
 
 
 \end{algorithmic}
-\caption{Fused Kernel}
+\caption{Combined softmax and argmax}
 \label{algo:Fused Kernel}
 \end{figure}
 
@@ -257,9 +257,9 @@ Rather than decoding the same batch until all sentences in the batch are complet
 
 We trained a sequence-to-sequence, encoder-decoder NMT system similar to that described in (Rico ???). This uses recurrent neural networks with gated recurrent units. The input and output vocabulary size were both set to 85,000 subwords using BPE ??? to adjust the vocabulary to the desired size. The hidden layer dimensions were kept at the default of 512. %We used the Marian toolkit to train our models.
 
-For inference, we used and extend Amun (???), the fastest open-source inference engine we are aware of for RNN/GRU model used in this paper. Mini-batch was set to 128 sentences, unless explicitly stated, and a maxi-batch was ten times that of mini-batch.
+For inference, we used and extend Amun (???), the fastest open-source inference engine we are aware of for the model used in this paper. We uused a mini-batch of 128 sentences and maxi-batch of 1280 sentences, unless otherwise stated.
 
-All experiments was performed on an Nvidia GTX 1060 GPU. The host contains 8 Intel hypercores running at 2.8Ghz, 16GB RAM and SSD hard drive.
+The hardware used in all experiments was an Nvidia GTX 1060 GPU on a host containing 8 Intel hypercores running at 2.8Ghz, 16GB RAM and SSD hard drive.
 
 Our training data consisted of the German-English parallel sentences from the Europarl corpus (???). To test inference speed, we used two test sets with differing characteristics:
 \begin{enumerate}
