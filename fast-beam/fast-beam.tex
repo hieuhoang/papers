@@ -52,23 +52,23 @@ Deep learning models are widely deployed for machine translation. In comparison 
 
 We will look at two areas that are critical to fast NMT inference where the models in NMT differ significantly from those in other applications. These areas have been overlooked by the general deep-learning community, we aim to improve their efficient for NMT-specific tasks.
 
-Firstly, the number of classes in many deep-learning applications is small. However, the number of classes in NMT models is typically in the tens or hundreds of thousands, corresponding to the vocabulary size of the output language. For example, the best German-English NMT model at WMT14 contains 85,000 classes (Rico ???). This makes the output layer of NMT models very computationally expensive. ??? shows the breakdown of amount of time during translation using RNN model similar to (Rico ???); over 40\% of the time is involved in calculating the activation, softmax and the beam search. We will look at optimizations which explicitly target the output layer.
+Firstly, the number of classes in many deep-learning applications is small. However, the number of classes in NMT models is typically in the tens or hundreds of thousands, corresponding to the vocabulary size of the output language. For example, ~\cite{sennrich-haddow-birch:2016:P16-12} experimented with target vocabulary size of 60,000 and 90,000 subword units. This makes the output layer of NMT models very computationally expensive. ??? shows the breakdown of amount of time during translation our NMT system; over 40\% of the time is involved in calculating the activation, softmax and the beam search. We will look at optimizations which explicitly target the output layer.
 
 Secondly, mini-batching is often used to increase the speed of deep-learning applications, including NMT systems. (??? graph of batch v. speed) shows using batching can increase speed by 17 times. However, mini-batching does not take into acccount the variable length of NMT inputs and outputs, creating computational issues and efficiency challenges. The computational issues are often solved by masking unwanted calculations. Translation speed can often be improved by employing max-batching whereby the input set is pre-sorted by sentence length before mini-batching, creating mini-batches with similar length input sentences. However, the target sentence lengths will still differ even for similar length inputs but the standard mini-batchin algorithm must continue to process the batch until all target sentences have been completed. (??? batchsize size v. iterations) shows the number of sentences still being processed for each decoding iteration, for a specific batch. The number of sentences still to be processed decreases, reducing the effectiveness of mini-batching. We will propose an alternative to the mini-batching algorithm.
 
-We based our model on the sequence-to-sequence model of (??? Cho) for machine translation models, but unlike (??? Devlin), we avoid solutions for the specific model. Therefore, our solution should be applicable to other models, architectures and task which have the similar characteristics. We envisage that our solutions would be of value to models used in text summarization, chatbot or image captioning. We also choose to focus on the use of GPU, rather than CPU as pursued in (??? Devlin).
+We based our model on the sequence-to-sequence model of ~\cite{D14-1179} for machine translation models, but unlike ~\cite{DBLP:conf/emnlp/Devlin17}, we avoid solutions for the specific model. Therefore, our solution should be applicable to other models, architectures and task which have the similar characteristics. We envisage that our solutions would be of value to models used in text summarization, chatbot or image captioning. We also choose to focus on the use of GPU, rather than CPU as pursued in ~\cite{DBLP:conf/emnlp/Devlin17}.
 
 \section{Prior Work}
 
-Deep learning models have been successfully used on many machine learning task in recent years in areas as diverse as computer vision and natural language processing. This success have been followed by the rush to put these model into production. However, the computational resources required in order to run these models have ben chanllenging. One possible solution involves creating faster models that can approximate the original model (??? Student-Teacher model). Another solution is tackling specific computationally intensive functions by approximating them (??? softmax). 
+Deep learning models have been successfully used on many machine learning task in recent years in areas as diverse as computer vision and natural language processing. This success have been followed by the rush to put these model into production. However, the computational resources required in order to run these models have ben chanllenging. One possible solution involves creating faster models that can approximate the original model~\citep{DBLP:conf/emnlp/KimR16}. Another solution is tackling specific computationally intensive functions by approximating them (??? softmax). 
 
-Most current neural MT models follow an encoder-decoder architecture. The encoder calculates the word and sentence embeddings while the decoder generates the output sentence. The architecture within the encoder is still a subject of much research. (??? Kalshammer) used a convolution to encode the input and a recurrent neural network (RNN) for the decoder. RNNs was used for both encoding and decoding in (??? who used RNN 1st). (???) significantly improved translation quality by using LSTM was used in each RNN node. (??? Cho) used GRU that has the required properties of LSTM but is computationally cheaper. (??? Badhannau) added attention model which improved translation at a cost of slower speed.
+Most current neural MT models follow an encoder-decoder architecture. The encoder calculates the word and sentence embeddings while the decoder generates the output sentence. The architecture within the encoder is still a subject of much research. ~\cite{kalchbrenner13emnlp} used a convolution to encode the input and a recurrent neural network (RNN) for the decoder. RNNs was used for both encoding and decoding in (??? who used RNN 1st). (???) significantly improved translation quality by using LSTM was used in each RNN node. ~\cite{D14-1179} used GRU that has the required properties of LSTM but is computationally cheaper. ~\cite{DBLP:journals/corr/BahdanauCB14} added attention model which improved translation at a cost of slower speed.
 
 There has been recent attempts to move away from the sequence-to-sequence models of RNN encoder-decoder. Some justify their architecture on faster inference as well as better translation results. (??? Attention is all you need) and (??? course-to-fine) has been proposed as a fast alternatives to RNN-based models as it is possible to process more of the units in parallel.
 
-It has been noticed that half precision arithmetic can be used for deep learning model without significan loss of model quality (???). Other solutions include specialized hardware, the most popular being graphical processing units (GPU) but other hardware such as custom processors (??? TPU), FPGA (??? Intel) have been used. 
+It has been noticed that half precision arithmetic can be used for deep learning model without significan loss of model quality~\citep{DBLP:journals/corr/abs-1710-03740}. Other solutions include specialized hardware, the most popular being graphical processing units (GPU) but other hardware such as custom processors TPU~\citep{DBLP:journals/corr/JouppiYPPABBBBB17}, FPGA~\citep{DBLP:journals/corr/LaceyTA16} have been used. 
 
-Many of these optimization are general purpose improvements for deep learning models, regardless of the task it is being used in. (??? Devlin) is a noticeable machhine translation-specific optimization which describe the speed improvements that can be obtained by techniques such as the use of half-precision, model changes and pre-computation.
+Many of these optimization are general purpose improvements for deep learning models, regardless of the task it is being used in. ~\cite{DBLP:conf/emnlp/Devlin17} is a noticeable machhine translation-specific optimization which describe the speed improvements that can be obtained by techniques such as the use of half-precision, model changes and pre-computation.
 
 \section{Proposal}
 \label{sec:Proposal}
@@ -151,7 +151,7 @@ We shall leave the matrix multiplication for the next proposal and future work, 
 \end{figure}
 
 
-As can be seen, the operations iterate over the matrix p five times - once to add the bias, three times to calculate the softmax, and once to search for the best class. We shall fused the three functions and combine the matrix access into two iterations, reducing memory bandwidth. Kernel fusion is a well practised optimization technique (???).
+As can be seen, the operations iterate over the matrix p five times - once to add the bias, three times to calculate the softmax, and once to search for the best class. We shall fused the three functions and combine the matrix access into two iterations, reducing memory bandwidth. Kernel fusion~\citep{Guevara2009EnablingTP} is a well practised optimization technique.
 
 Secondly, we make use of the fact that softmax and exp are monotonic functions therefore we can avoid the search for the argmax in Figure~\ref{algo:Find best} as it will be the same as that in Figure~\ref{algo:Calculate softmax}.
 
@@ -212,7 +212,7 @@ In fact, we are usually only interested in the argmax class during inference, no
 % \label{algo:Argmax only}
 % \end{figure}
 
-It has been shown ??? that using the n-best number of classes, rather than just the best class, improves translation quality. This is a simple extension to the algorithm of Figure~\ref{algo:Fused Kernel}. Unlike the 1-best case, however, the softmax calculation cannot be skipped as the denominator differs for each input.
+It has been shown ~\citep{koehn-knowles:2017:NMT} that using beam search to use the n-best number of classes, rather than just the best class, improves translation quality. This is a simple extension to the algorithm of Figure~\ref{algo:Fused Kernel}. Unlike the 1-best case, however, the softmax calculation cannot be skipped as the denominator differs for each input.
 
 
 \subsection{Top-up Batching}
@@ -277,13 +277,13 @@ Rather than decoding the same batch until all sentences in the batch are complet
 \section{Experimental Setup}
 \label{sec:Experimental Setup}
 
-We trained a sequence-to-sequence, encoder-decoder NMT system similar to that described in (Rico ???). This uses recurrent neural networks with gated recurrent units. The input and output vocabulary size were both set to 85,000 subwords using BPE ??? to adjust the vocabulary to the desired size. The hidden layer dimensions were kept at the default of 512. %We used the Marian toolkit to train our models.
+We trained a sequence-to-sequence, encoder-decoder NMT system similar to that described in ~\cite{sennrich-haddow-birch:2016:P16-12}. This uses recurrent neural networks with gated recurrent units. The input and output vocabulary size were both set to 85,000 subwords using byte-pair encoding (BPE) to adjust the vocabulary to the desired size. The hidden layer dimensions was set to 512. %We used the Marian toolkit to train our models.
 
-For inference, we used and extend Amun (???), the fastest open-source inference engine we are aware of for the model used in this paper. We uused a mini-batch of 128 sentences and maxi-batch of 1280 sentences, unless otherwise stated.
+For inference, we used and extend Amun~\citep{junczys2016neural}, the fastest open-source inference engine we are aware of for the model used in this paper. We uused a mini-batch of 128 sentences and maxi-batch of 1280 sentences, unless otherwise stated.
 
 The hardware used in all experiments was an Nvidia GTX 1060 GPU on a host containing 8 Intel hypercores running at 2.8Ghz, 16GB RAM and SSD hard drive.
 
-Our training data consisted of the German-English parallel sentences from the Europarl corpus (???). To test inference speed, we used two test sets with differing characteristics:
+Our training data consisted of the German-English parallel sentences from the Europarl corpus~\citep{Koehn:2005:MTS}. To test inference speed, we used two test sets with differing characteristics:
 \begin{enumerate}
    \item \vspace{-2 mm} a subset of the training data, which contains mostly long sentences, and is, of course, in the same domain as the training data
    \item \vspace{-2 mm} a subset of the German-English data from the Open-Subtitles corpus, consisting of mostly short, out-of-domain sentences.
