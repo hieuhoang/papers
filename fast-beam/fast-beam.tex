@@ -159,7 +159,7 @@ As can be seen, the operations iterate over the matrix p five times - once to ad
 
 Secondly, we make use of the fact that softmax and exp are monotonic functions therefore we can avoid the search for the argmax in Figure~\ref{algo:Find best} as it will be the same as that in Figure~\ref{algo:Calculate softmax}.
 
-Thirdly, we are only interested in the probability of the best class. Since we have precalculated the best class in Figure~\ref{algo:Calculate softmax}, we shall only calculate softmax for this one class, avoiding the computational and memory bandwith of computing the probability for all classes. The outline of the our function is shown in Figure~\ref{algo:Fused Kernel}.
+Thirdly, we are only interested in the best class. Since the best class is known, we can avoid calculating softmax for all classes. The outline of the our function is shown in Figure~\ref{algo:Fused Kernel}.
 
 \begin{figure} [h]
 \begin{algorithmic}
@@ -184,7 +184,6 @@ Thirdly, we are only interested in the probability of the best class. Since we h
   \ENDIF
 \ENDFOR 
 
-\COMMENT{calculate softmax($p_i$)}
 \RETURN $\frac{1}{sum}$, $best$ 
 
 
@@ -194,7 +193,7 @@ Thirdly, we are only interested in the probability of the best class. Since we h
 \end{figure}
 
 
-In fact, we are usually only interested in the argmax class during inference, not the probability. Therefore, we can skip the second iteration over $p$ and avoid computing the softmax altogether. %, Figure~\ref{algo:Argmax only}.
+In fact, we are usually only interested in the best class during inference, not the probability. Therefore, we can skip the second iteration over $p$ in Figure~\ref{algo:Fused Kernel} and avoid computing the softmax altogether. %, Figure~\ref{algo:Argmax only}.
 
 % \begin{figure} [h]
 % \begin{algorithmic}
