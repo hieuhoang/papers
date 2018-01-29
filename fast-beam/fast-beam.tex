@@ -62,7 +62,7 @@ Firstly, the number of classes in many deep-learning applications is small. Howe
 \begin{tabular}{cc}
 {\includegraphics[scale=0.3]{pie-time-europarl.png}} 
 \end{tabular}
-\caption{Time spent during translation (beam size 5)}
+\caption{Time spent during translation (beam size 5, Europarl test set)}
 \label{fig:pie-time}
 \end{figure} 
 
@@ -346,9 +346,11 @@ Fusing the softmax and beam search increase the speed of the output layer by 43\
 \begin{tabular}{cc}
 {\includegraphics[scale=0.3]{pie-time-opensubtitles.png}} 
 \end{tabular}
-\caption{Time spent during translation (beam size 5)}
+\caption{Time spent during translation (beam size 5, Opensubtitles test set)}
 \label{fig:pie-time-opensubtitles}
 \end{figure} 
+
+\subsection{Top-up Batching}
 
 \section{Conclusion}
 
