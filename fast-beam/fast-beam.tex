@@ -296,7 +296,7 @@ The hardware used in all experiments was an Nvidia GTX 1060 GPU on a host contai
 
 Our training data consisted of the German-English parallel sentences from the Europarl corpus~\citep{Koehn:2005:MTS}. To test inference speed, we used two test sets with differing characteristics:
 \begin{enumerate}
-   \item \vspace{-2 mm} a subset of the training data, which contains mostly long sentences, and is, of course, in the same domain as the training data
+   \item \vspace{-2 mm} a subset of the Europarl training data, which contains mostly long sentences, and is, of course, in the same domain as the training data
    \item \vspace{-2 mm} a subset of the German-English data from the Open-Subtitles corpus, consisting of mostly short, out-of-domain sentences.
 \end{enumerate}
 Table~\ref{tab:corpora} gives further details of the test sets.
@@ -305,13 +305,13 @@ Table~\ref{tab:corpora} gives further details of the test sets.
 \begin{center}
 \small
 \begin{tabular}{|l|r|r|} \hline
-		& Subset of training data		& OpenSubtitles \\ \hline
-\# sentences  	& 800k 		& 200k \\
-\# subwords 	& 5.8m 		& 5.9m \\ 
-Avg subwords/sent	& 7.3		& 29.7 \\ \hline
+		  & Europarl		& OpenSubtitles \\ \hline
+\# sentences  	  & 30,000 		& 50,000 \\
+\# subwords 	  & 787,908 		& 467,654 \\ 
+Avg subwords/sent & 26.3		& 9.4 \\ \hline
 \end{tabular}
 \end{center}
-\caption{Corpora}
+\caption{Test sets}
 \label{tab:corpora}
 \end{table}
 
@@ -319,6 +319,16 @@ Avg subwords/sent	& 7.3		& 29.7 \\ \hline
 \section{Results}
 \label{sec:Results}
 
+Fusing the softmax and beam search increase the speed of the output layer by 43\% for beam size 1, decreasing to 25\% for a beam of 10 when translating the Europarl dataset. This led to an overall increase in translation speed of up to 23\%, Figure~\ref{fig:europarl-beam}.
+
+\begin{figure}
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.5]{europarl-beam.png}} 
+\end{tabular}
+\caption{Translation speed for Europarl dataset}
+\label{fig:europarl-beam}
+\end{figure} 
 
 
 \section{Conclusion}
