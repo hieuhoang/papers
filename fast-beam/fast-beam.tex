@@ -319,7 +319,7 @@ Avg subwords/sent & 26.3		& 9.4 \\ \hline
 \section{Results}
 \label{sec:Results}
 
-Fusing the softmax and beam search increase the speed of the output layer by 43\% for beam size 1, decreasing to 25\% for a beam of 10 when translating the Europarl dataset. This led to an overall increase in translation speed of up to 23\%, Figure~\ref{fig:beam-europarl}. Translation speed improved by up to 41\% when translating the Opensubtitles datset, Figure~\ref{fig:beam-opensubtitles}.
+Fusing the softmax and beam search increase the speed of the output layer by 43\% for beam size 1, decreasing to 25\% for a beam of 10 when translating the Europarl dataset. This led to an overall increase in translation speed of up to 23\%, Figure~\ref{fig:beam-europarl}. Translation speed improved by up to 41\% when translating the Opensubtitles datset, Figure~\ref{fig:beam-opensubtitles}. The amount of time taken to calculate the output layer dominates trannslation time for the short OpenSubtitles test set, Figure~\ref{fig:pie-time-opensubtitles}.
 
 \begin{figure}
 \centering
@@ -337,6 +337,15 @@ Fusing the softmax and beam search increase the speed of the output layer by 43\
 \end{tabular}
 \caption{Translation speed for Opensubtitles test set}
 \label{fig:beam-opensubtitles}
+\end{figure} 
+
+\begin{figure}
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.3]{pie-time-opensubtitles.png}} 
+\end{tabular}
+\caption{Time spent during translation (beam size 5)}
+\label{fig:pie-time-opensubtitles}
 \end{figure} 
 
 \section{Conclusion}
