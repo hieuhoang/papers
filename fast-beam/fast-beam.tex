@@ -54,7 +54,7 @@ Deep learning models are widely deployed for machine translation. In comparison 
 
 \section{Introduction}
 
-We will look at two areas that are critical to fast NMT inference where the models in NMT differ significantly from those in other applications. These areas have been overlooked by the general deep-learning community, we aim to improve their efficient for NMT-specific tasks.
+We will examine two areas that are critical to fast NMT inference where the models differ significantly from other deep-learning models. We believe the optimizations of these models have been overlooked by the general deep-learning community.
 
 Firstly, the number of classes in many deep-learning applications is small. However, the number of classes in NMT models is typically in the tens or hundreds of thousands, corresponding to the vocabulary size of the output language. For example, ~\cite{sennrich-haddow-birch:2016:P16-12} experimented with target vocabulary sizes of 60,000 and 90,000 subword units. This makes the output layer of NMT models very computationally expensive. Figure~\ref{fig:pie-time} shows the breakdown of amount of time during translation our NMT system; nearly 70\% of the time is involved in the output layer. We will look at optimizations which explicitly target the output layer.
 \begin{figure}
@@ -66,7 +66,7 @@ Firstly, the number of classes in many deep-learning applications is small. Howe
 \label{fig:pie-time}
 \end{figure} 
 
-Secondly, the use of mini-batching is critical for fast model inference. However, mini-batching does not take into acccount variable sentence lengths which decrease the actual number of input or output sentences that are processed in parallel, negating the benefit of mini-batching. This can be partially reduced in the encoding with \emph{maxi-batching}, i.e. pre-sorting sentences by length before creating mini-batches with similar length source sentences. However, target sentence lengths will still differ even for similar length inputs, compromising decoding performance. Figure~\ref{fig:batch-size} shows the actual batch size during decoding with a maximum batch size of 128; in only 42\% of decoding iteration was batch full.
+Secondly, the use of mini-batching is critical for fast model inference. However, mini-batching does not take into acccount variable sentence lengths which decrease the actual number of input or output sentences that are processed in parallel, negating the benefit of mini-batching. This can be partially reduced in the encoding with \emph{maxi-batching}, i.e. pre-sorting sentences by length before creating mini-batches with similar length source sentences. However, target sentence lengths will still differ even for similar length inputs, compromising decoding performance. Figure~\ref{fig:batch-size} shows the actual batch size during decoding with a maximum batch size of 128; the batch was full in only 42\% of decoding iterations.
 
 \begin{figure}
 \centering
@@ -79,9 +79,11 @@ Secondly, the use of mini-batching is critical for fast model inference. However
 
 We will propose an alternative batching algorithm to increase the actual batch size during decoding.
 
-We base our model on the sequence-to-sequence model of ~\cite{D14-1179} for machine translation models and also choose to focus on the using GPUs rather than CPUs as pursued by ~\cite{DBLP:conf/emnlp/Devlin17}.
+We base our work on the sequence-to-sequence model of ~\cite{D14-1179}. We also choose to focus on the using NMT inference on GPUs. % rather than CPUs as pursued by ~\cite{DBLP:conf/emnlp/Devlin17}.
 
 \section{Prior Work}
+
+REDO
 
 Deep learning models have been successfully used on many machine learning task in recent years in areas as diverse as computer vision and natural language processing. This success have been followed by the rush to put these model into production. However, the computational resources required in order to run these models have ben chanllenging. One possible solution involves creating faster models that can approximate the original model~\citep{DBLP:conf/emnlp/KimR16}. Another solution is tackling specific computationally intensive functions by approximating them (??? softmax). 
 
