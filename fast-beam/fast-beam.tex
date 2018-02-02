@@ -369,7 +369,7 @@ Fusing the softmax and beam search increase the speed of the output layer by 43\
 
 \subsection{Top-up Batching}
 
-After some experimentation, we decided to fully fill the decoding batch only when it is at least half empty, rather than whenever a sentence has completed.
+After some experimentation, we decided to top-up the decoding batch only when it is at least half empty, rather than whenever a sentence has completed.
 
 The top-up batching and maxi-batching have similar goals of maximizing efficiency when translating batches of different lengths. Therefore, using both methods together gives limited gains, in fact, using top-up batching with maxi-batch slows of between 2\% to 18\% when translating the Europarl test set due to the overhead of using the algorithm, Figure~\ref{fig:topup-europarl}. When maxi-batching is inappropriate, using top-up batching alone matches the performance of maxi-batching, even being slightly faster when a small beam is used.
 
@@ -405,9 +405,15 @@ The gain from top-up batching is partially dependent on how much time the standa
 \end{figure} 
 
 
-\section{Conclusion}
+\section{Conclusion and Future Work}
 
+We have presented two methods for faster deep-learning inference, targeted at neural machine translation. 
 
+The first method focused on output layer of the neural network which accounts for a large part of the running time of the NMT model. By fusing the output layer with the beam search, we are able to increase translation speed by up to 41\%.
+
+The second method replaces the mini-batching algorithm with one that avoids decoding with a small number of sentences, maximizing the parallel processing potential of GPUs. For certain scenarios, this increases translating  speed by up to 12\%.
+
+For future work, we would like to apply our optimization for other NLP and deep-learning tasks. We are also interested in further optimization of the output layer in NMT, specifically the matrix multiplication which currrently take up ??? of the translation time.
 
 %\section*{Acknowledgments}
 %This work is sponsored by the Air Force Research Laboratory, prime contract FA8650-11-C-6160.  The views and conclusions contained in this document are those of the authors and should not be interpreted as representative of the official policies, either expressed or implied, of the Air Force Research Laboratory or the U.S. Government.
