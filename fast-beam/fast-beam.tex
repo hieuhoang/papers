@@ -382,7 +382,7 @@ The top-up batching and maxi-batching have similar goals of maximizing efficienc
 \label{fig:topup-europarl}
 \end{figure} 
 
-The results are better when translating the OpenSubtitles test set, Figure~\ref{fig:topup-opensubtitles}. The top-up batching does not harm performance when used with maxi-batching, even helping a little for small beams. However, it increases translation speed by up to 12\% when used alone.
+The results are better when translating the OpenSubtitles test set, Figure~\ref{fig:topup-opensubtitles}. The top-up batching does not harm performance when used with maxi-batching, even helping a little for small beams. However, top-up batching increases translation speed by up to 12\% when used alone.
 
 \begin{figure}
 \centering
@@ -392,6 +392,18 @@ The results are better when translating the OpenSubtitles test set, Figure~\ref{
 \caption{Translation speed for OpenSubtitles test set using top-up batching}
 \label{fig:topup-opensubtitles}
 \end{figure} 
+
+The gain from top-up batching is partially dependent on how much time the standard mini-batching algorithm spend decoding with a very small number of sentences as this is does not fully utilize the GPU cores. From Figure~\ref{fig:batch-size-small}, 20\% of the decoding iterations have less than 8 sentences remaining in the batch when translating the Europarl test test with maxi-batching. This figure is 50\% for the OpenSubtitles test set with no maxi-batching. The OpenSubtitles test set has a higher variance of sentence lengths relative to its average sentence length, which forces the mini-batch algorithm to continue decoding with a small number of sentences while the other sentences have already completed.
+
+\begin{figure}
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.3]{batch-size-small.png}} 
+\end{tabular}
+\caption{Actual batchsize during decoding}
+\label{fig:batch-size-small}
+\end{figure} 
+
 
 \section{Conclusion}
 
