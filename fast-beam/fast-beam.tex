@@ -94,7 +94,7 @@ Simpler, faster models have been created that are as good, or almost as good, as
 
 The speed of the softmax layer when used with large vocabularies have been looked at in~\citep{DBLP:journals/corr/GraveJCGJ16} but there have been many other attempts at faster softmax, for example~\cite{DBLP:journals/corr/abs-1301-3781}, ~\cite{Zoph-2016}.
 
-There has been little work on batching algorithms, which is surprising considering its critical importance for fast model inference. ~\cite{Neubig-autobatching} describe an novel batching algorithm, however, its aim is to alleviate the burden on developers in batching of new models, not faster batching.
+There has been surprisingly little work on batching algorithms, considering its critical importance for efficient deep-learning training and inference. ~\cite{Neubig-autobatching} describe an novel batching algorithm, however, its aim is to alleviate the burden on developers in batching of new models, not faster batching.
 
 Our paper follows most closely on from ~\cite{DBLP:conf/emnlp/Devlin17} which achieved faster NMT inference mainly by novel implementation of an existing model. However, we differ by focusing on GPU implementation, and the output layer and batching algorithm which were not touched on by the previous work.
 
