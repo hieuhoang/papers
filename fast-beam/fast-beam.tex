@@ -53,17 +53,18 @@ Deep learning models are widely deployed for machine translation. In comparison 
 \end{abstract}
 
 \section{Introduction}
+\label{sec:Introduction}
 
 We will examine two areas that are critical to fast NMT inference where the models differ significantly from other deep-learning models. We believe the optimizations of these models have been overlooked by the general deep-learning community.
 
-Firstly, the number of classes in many deep-learning applications is small. However, the number of classes in NMT models is typically in the tens or hundreds of thousands, corresponding to the vocabulary size of the output language. For example, ~\cite{sennrich-haddow-birch:2016:P16-12} experimented with target vocabulary sizes of 60,000 and 90,000 subword units. This makes the output layer of NMT models very computationally expensive. Figure~\ref{fig:pie-time} shows the breakdown of amount of time during translation our NMT system; nearly 70\% of the time is involved in the output layer. We will look at optimizations which explicitly target the output layer.
+Firstly, the number of classes in many deep-learning applications is small. However, the number of classes in NMT models is typically in the tens or hundreds of thousands, corresponding to the vocabulary size of the output language. For example, ~\cite{sennrich-haddow-birch:2016:P16-12} experimented with target vocabulary sizes of 60,000 and 90,000 subword units. This makes the output layer of NMT models very computationally expensive. Figure~\ref{fig:pie-time-europarl} shows the breakdown of amount of time during translation our NMT system; nearly 70\% of the time is involved in the output layer. We will look at optimizations which explicitly target the output layer.
 \begin{figure}
 \centering
 \begin{tabular}{cc}
 {\includegraphics[scale=0.3]{pie-time-europarl.png}} 
 \end{tabular}
-\caption{Time spent during translation (beam size 5, Europarl test set)}
-\label{fig:pie-time}
+\caption{Proportion of time spent during translation (beam size 5, Europarl test set)}
+\label{fig:pie-time-europarl}
 \end{figure} 
 
 Secondly, the use of mini-batching is critical for fast model inference. However, mini-batching does not take into acccount variable sentence lengths which decrease the actual number of input or output sentences that are processed in parallel, negating the benefit of mini-batching. This can be partially reduced in the encoding with \emph{maxi-batching}, i.e. pre-sorting sentences by length before creating mini-batches with similar length source sentences. However, maxi-batching can introduce unacceptable delay in response for online applications as the input are not processed in the order they came. It is also not appropriate for applications where only the output lengths varies, for example, image captioning.
@@ -305,7 +306,7 @@ Rather than decoding the same batch until all sentences in the batch are complet
 
 We trained a sequence-to-sequence, encoder-decoder NMT system similar to that described in ~\cite{sennrich-haddow-birch:2016:P16-12}. This uses recurrent neural networks with gated recurrent units. The input and output vocabulary size were both set to 85,000 subwords using byte-pair encoding (BPE) to adjust the vocabulary to the desired size. The hidden layer dimensions was set to 512. %We used the Marian toolkit to train our models.
 
-For inference, we used and extend Amun~\citep{junczys2016neural}, the fastest open-source inference engine we are aware of for the model used in this paper. We uused a mini-batch of 128 sentences and maxi-batch of 1280 sentences, unless otherwise stated.
+For inference, we used and extend Amun~\citep{junczys2016neural}, the fastest open-source inference engine we are aware of for the model used in this paper. We uused a mini-batch of 128 sentences and maxi-batch 10 times the size of the mini-batch, unless otherwise stated.
 
 The hardware used in all experiments was an Nvidia GTX 1060 GPU on a host containing 8 Intel hypercores running at 2.8Ghz, 16GB RAM and SSD hard drive.
 
@@ -336,14 +337,14 @@ Avg subwords/sent & 26.3		& 9.4 \\ \hline
 
 \subsection{Softmax and Beam Search Fusion}
 
-Fusing the softmax and beam search increase the speed of the output layer by 43\% for beam size 1, decreasing to 25\% for a beam of 10 when translating the Europarl dataset. This led to an overall increase in translation speed of up to 23\%, Figure~\ref{fig:beam-europarl}. Translation speed improved by up to 41\% when translating the Opensubtitles datset, Figure~\ref{fig:beam-opensubtitles}. The amount of time taken to calculate the output layer dominates trannslation time for the short OpenSubtitles test set, Figure~\ref{fig:pie-time-opensubtitles}.
+Fusing the softmax and beam search increase the speed of the output layer by 43\% for beam size 1, decreasing to 25\% for a beam of 10 when translating the Europarl dataset. This led to an overall increase in translation speed of up to 23\%, Figure~\ref{fig:beam-europarl}. Translation speed improved by up to 41\% when translating the Opensubtitles datset, Figure~\ref{fig:beam-opensubtitles}. Compared to translating the Europarl test st, Figure~\ref{fig:pie-time-europarl} in Section~\ref{sec:Introduction}, the amount of time taken by the output layer dominates translation time for the OpenSubtitles test set, Figure~\ref{fig:pie-time-opensubtitles}.
 
 \begin{figure}
 \centering
 \begin{tabular}{cc}
 {\includegraphics[scale=0.5]{beam-europarl.png}} 
 \end{tabular}
-\caption{Translation speed for Europarl test set}
+\caption{Translation speed for Europarl test set when using the fused kernel}
 \label{fig:beam-europarl}
 \end{figure} 
 
@@ -352,7 +353,7 @@ Fusing the softmax and beam search increase the speed of the output layer by 43\
 \begin{tabular}{cc}
 {\includegraphics[scale=0.5]{beam-opensubtitles.png}} 
 \end{tabular}
-\caption{Translation speed for Opensubtitles test set}
+\caption{Translation speed for Opensubtitles test set when using the fused kernel}
 \label{fig:beam-opensubtitles}
 \end{figure} 
 
@@ -361,11 +362,35 @@ Fusing the softmax and beam search increase the speed of the output layer by 43\
 \begin{tabular}{cc}
 {\includegraphics[scale=0.3]{pie-time-opensubtitles.png}} 
 \end{tabular}
-\caption{Time spent during translation (beam size 5, Opensubtitles test set)}
+\caption{Proportion of time spent during translation (beam size 5, Opensubtitles test set)}
 \label{fig:pie-time-opensubtitles}
 \end{figure} 
 
 \subsection{Top-up Batching}
+
+After some experimentation, we decided fully fill the decoding batch only when it is at least half empty, rather than whenever a sentence has completed.
+
+The top-up batching and maxi-batching have similar goals of maximizing efficiency when translating batches of different lengths. Therefore, using both methods together gives limited gains, in fact, using top-up batching with maxi-batch slows of between 2\% to 18\% when translating the Europarl test set due to the overhead of using the algorithm, Figure~\ref{fig:topup-europarl}. When maxi-batching is inappropriate, using top-up batching alone matches the performance of maxi-batching, even being slightly faster when a small beam is used.
+
+\begin{figure}
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.3]{topup-europarl.png}} 
+\end{tabular}
+\caption{Translation speed for Europarl test set using top-up batching)}
+\label{fig:topup-europarl}
+\end{figure} 
+
+The results are better when translating the OpenSubtitles test set, Figure~\ref{fig:topup-opensubtitles}. The top-up batching does not harm performance when used with maxi-batching, even helping a little for small beams. However, it increases translation speed by up to 12\% when used alone.
+
+\begin{figure}
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.3]{topup-opensubtitles.png}} 
+\end{tabular}
+\caption{Translation speed for OpenSubtitles test set using top-up batching)}
+\label{fig:topup-opensubtitles}
+\end{figure} 
 
 \section{Conclusion}
 
