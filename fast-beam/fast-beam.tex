@@ -48,7 +48,7 @@
 
 \begin{abstract}
 
-As neural machine translation (NMT) models have become the new state-of-the-art, the challenge is to make their deployment efficient and economical. We have identified two areas where typical NMT models differ significantly from other deep-learning models that impact on their inference speed. Firstly, NMT models usualy contains a large number of output classes, corresponding to the output vocabulary. Secondly, rather than a single label, the output from machine translation models is a sequence of class labels that makes up the words or subwords in the target sentence. The sentence lengths are unpredictable, leading to inefficiencies during batch processing. We provide solutions for each of these issues which can increase batched inference speed by up to 41\% on modern GPUs without affecting model quality.
+As neural machine translation (NMT) models have become the new state-of-the-art, the challenge is to make their deployment efficient and economical. We have identified two areas where typical NMT models differ significantly from other deep-learning models that impact on their inference speed. Firstly, NMT models usually contains a large number of output classes, corresponding to the output vocabulary. Secondly, rather than a single label, the output from machine translation models is a sequence of class labels that makes up the words or sub-words in the target sentence. The sentence lengths are unpredictable, leading to inefficiencies during batch processing. We provide solutions for each of these issues which can increase batched inference speed by up to 41\% on modern GPUs without affecting model quality.
 
 \end{abstract}
 
@@ -57,7 +57,7 @@ As neural machine translation (NMT) models have become the new state-of-the-art,
 
 We will examine two areas that are critical to fast NMT inference where the models differ significantly from other deep-learning models. We believe the optimizations of these models have been overlooked by the general deep-learning community.
 
-Firstly, the number of classes in many deep-learning applications is small. However, the number of classes in NMT models is typically in the tens or hundreds of thousands, corresponding to the vocabulary size of the output language. For example, ~\cite{sennrich-haddow-birch:2016:P16-12} experimented with target vocabulary sizes of 60,000 and 90,000 subword units. This makes the output layer of NMT models very computationally expensive. Figure~\ref{fig:pie-time-europarl} shows the breakdown of amount of time during translation our NMT system; nearly 70\% of the time is involved in the output layer. We will look at optimizations which explicitly target the output layer.
+Firstly, the number of classes in many deep-learning applications is small. However, the number of classes in NMT models is typically in the tens or hundreds of thousands, corresponding to the vocabulary size of the output language. For example, ~\cite{sennrich-haddow-birch:2016:P16-12} experimented with target vocabulary sizes of 60,000 and 90,000 sub-word units. This makes the output layer of NMT models very computationally expensive. Figure~\ref{fig:pie-time-europarl} shows the breakdown of amount of time during translation our NMT system; nearly 70\% of the time is involved in the output layer. We will look at optimizations which explicitly target the output layer.
 \begin{figure}
 \centering
 \begin{tabular}{cc}
@@ -67,7 +67,7 @@ Firstly, the number of classes in many deep-learning applications is small. Howe
 \label{fig:pie-time-europarl}
 \end{figure} 
 
-Secondly, the use of mini-batching is critical for fast model inference. However, mini-batching does not take into acccount variable sentence lengths which decrease the actual number of input or output sentences that are processed in parallel, negating the benefit of mini-batching. This can be partially reduced in the encoding with \emph{maxi-batching}, i.e. pre-sorting sentences by length before creating mini-batches with similar length source sentences. However, maxi-batching can introduce unacceptable delay in response for online applications as the input are not processed in the order they came. It is also not appropriate for applications where only the output lengths varies, for example, image captioning.
+Secondly, the use of mini-batching is critical for fast model inference. However, mini-batching does not take into account variable sentence lengths which decrease the actual number of input or output sentences that are processed in parallel, negating the benefit of mini-batching. This can be partially reduced in the encoding with \emph{maxi-batching}, i.e. pre-sorting sentences by length before creating mini-batches with similar length source sentences. However, maxi-batching can introduce unacceptable delay in response for online applications as the input are not processed in the order they came. It is also not appropriate for applications where only the output lengths varies, for example, image captioning.
 
 Even with sequence-to-sequence NMT models, target sentence lengths will still differ even for similar length inputs, compromising decoding performance. Figure~\ref{fig:batch-size} shows the actual batch size during decoding with a maximum batch size of 128; the batch was full in only 42\% of decoding iterations.
 
@@ -76,7 +76,7 @@ Even with sequence-to-sequence NMT models, target sentence lengths will still di
 \begin{tabular}{cc}
 {\includegraphics[scale=0.3]{batch-size.png}} 
 \end{tabular}
-\caption{Actual batchsize during decoding (Europarl test set)}
+\caption{Actual batch size during decoding (Europarl test set)}
 \label{fig:batch-size}
 \end{figure} 
 
@@ -94,7 +94,7 @@ Simpler, faster models have been created that are as good, or almost as good, as
 
 The speed of the softmax layer when used with large vocabularies have been looked at in~\citep{DBLP:journals/corr/GraveJCGJ16} but there have been many other attempts at faster softmax, for example~\cite{DBLP:journals/corr/abs-1301-3781}, ~\cite{Zoph-2016}.
 
-There has been little work on batching algorithms, which is suprising considering its critical importance for fast model inference. ~\cite{Neubig-autobatching} describe an novel batching algorithm, however, its aim is to alleviate the burden on developers in batching of new models, not faster batching.
+There has been little work on batching algorithms, which is surprising considering its critical importance for fast model inference. ~\cite{Neubig-autobatching} describe an novel batching algorithm, however, its aim is to alleviate the burden on developers in batching of new models, not faster batching.
 
 Our paper follows most closely on from ~\cite{DBLP:conf/emnlp/Devlin17} which achieved faster NMT inference mainly by novel implementation of an existing model. However, we differ by focusing on GPU implementation, and the output layer and batching algorithm which were not touched on by the previous work.
 
@@ -268,7 +268,7 @@ The standard mini-batching algorithm is outlined in Figure~\ref{algo:Mini-batchi
 
 This algorithm encode the sentences for a batch, followed by decoding the batch. The decoding stop once all sentences in the batch are completed. This is a potential inefficiency as the number of remaining sentences may not be optimal.
 
-We will focus on decoding as this is the more compute-intensive step, and issues with differing sentence sizes in encoding can partly be ameriorated by maxi-batching.
+We will focus on decoding as this is the more compute-intensive step, and issues with differing sentence sizes in encoding can partly be ameliorated by maxi-batching.
 
 Our proposed top-up batching algorithm encode and decode asynchronously. The encoding step, Figure~\ref{algo:Encoding for top-up batching}, is similar to the main loop of the standard algorithm but the results are added to a queue to be consumed by the decoding step later.
 
@@ -304,7 +304,7 @@ Rather than decoding the same batch until all sentences in the batch are complet
 \section{Experimental Setup}
 \label{sec:Experimental Setup}
 
-We trained a sequence-to-sequence, encoder-decoder NMT system similar to that described in ~\cite{sennrich-haddow-birch:2016:P16-12}. This uses recurrent neural networks with gated recurrent units. The input and output vocabulary size were both set to 85,000 subwords using byte-pair encoding (BPE) to adjust the vocabulary to the desired size. The hidden layer dimensions was set to 512. %We used the Marian toolkit to train our models.
+We trained a sequence-to-sequence, encoder-decoder NMT system similar to that described in ~\cite{sennrich-haddow-birch:2016:P16-12}. This uses recurrent neural networks with gated recurrent units. The input and output vocabulary size were both set to 85,000 sub-words using byte-pair encoding (BPE) to adjust the vocabulary to the desired size. The hidden layer dimensions was set to 512. %We used the Marian toolkit to train our models.
 
 For inference, we used and extend Amun~\citep{junczys2016neural}, the fastest open-source inference engine we are aware of for the model used in this paper. We used a beam size of 5, mini-batch of 128 sentences and maxi-batch 1280, unless otherwise stated.
 
@@ -323,8 +323,8 @@ Table~\ref{tab:corpora} gives further details of the test sets.
 \begin{tabular}{|l|r|r|} \hline
 		  & Europarl		& OpenSubtitles \\ \hline
 \# sentences  	  & 30,000 		& 50,000 \\
-\# subwords 	  & 787,908 		& 467,654 \\ 
-Avg subwords/sent & 26.3		& 9.4 \\
+\# sub-words 	  & 787,908 		& 467,654 \\ 
+Avg sub-words/sent & 26.3		& 9.4 \\
 Std dev subwords/sent & 14.9		& 6.1 \\ \hline
 \end{tabular}
 \end{center}
@@ -338,7 +338,7 @@ Std dev subwords/sent & 14.9		& 6.1 \\ \hline
 
 \subsection{Softmax and Beam Search Fusion}
 
-Fusing the softmax and beam search increase the speed of the output layer by 43\% for beam size 1, decreasing to 25\% for a beam of 10 when translating the Europarl dataset. This led to an overall increase in translation speed of up to 23\%, Figure~\ref{fig:beam-europarl}. Translation speed improved by up to 41\% when translating the Opensubtitles datset, Figure~\ref{fig:beam-opensubtitles}. Compared to translating the Europarl test st, Figure~\ref{fig:pie-time-europarl} in Section~\ref{sec:Introduction}, the amount of time taken by the output layer dominates translation time for the OpenSubtitles test set, Figure~\ref{fig:pie-time-opensubtitles}.
+Fusing the softmax and beam search increase the speed of the output layer by 43\% for beam size 1, decreasing to 25\% for a beam of 10 when translating the Europarl dataset. This led to an overall increase in translation speed of up to 23\%, Figure~\ref{fig:beam-europarl}. Translation speed improved by up to 41\% when translating the Opensubtitles dataset, Figure~\ref{fig:beam-opensubtitles}. Compared to translating the Europarl test st, Figure~\ref{fig:pie-time-europarl} in Section~\ref{sec:Introduction}, the amount of time taken by the output layer dominates translation time for the OpenSubtitles test set, Figure~\ref{fig:pie-time-opensubtitles}.
 
 \begin{figure}
 \centering
@@ -400,7 +400,7 @@ The gain from top-up batching is partially dependent on how much time the standa
 \begin{tabular}{cc}
 {\includegraphics[scale=0.3]{batch-size-small.png}} 
 \end{tabular}
-\caption{Actual batchsize during decoding}
+\caption{Actual batch size during decoding}
 \label{fig:batch-size-small}
 \end{figure} 
 
