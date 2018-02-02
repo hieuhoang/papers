@@ -63,7 +63,7 @@ Firstly, the number of classes in many deep-learning applications is small. Howe
 \begin{tabular}{cc}
 {\includegraphics[scale=0.3]{pie-time-europarl.png}} 
 \end{tabular}
-\caption{Proportion of time spent during translation (beam size 5, Europarl test set)}
+\caption{Proportion of time spent during translation (Europarl test set)}
 \label{fig:pie-time-europarl}
 \end{figure} 
 
@@ -76,7 +76,7 @@ Even with sequence-to-sequence NMT models, target sentence lengths will still di
 \begin{tabular}{cc}
 {\includegraphics[scale=0.3]{batch-size.png}} 
 \end{tabular}
-\caption{Actual batchsize during decoding (max batchsize 128, beam size 5, Europarl test set)}
+\caption{Actual batchsize during decoding (Europarl test set)}
 \label{fig:batch-size}
 \end{figure} 
 
@@ -306,7 +306,7 @@ Rather than decoding the same batch until all sentences in the batch are complet
 
 We trained a sequence-to-sequence, encoder-decoder NMT system similar to that described in ~\cite{sennrich-haddow-birch:2016:P16-12}. This uses recurrent neural networks with gated recurrent units. The input and output vocabulary size were both set to 85,000 subwords using byte-pair encoding (BPE) to adjust the vocabulary to the desired size. The hidden layer dimensions was set to 512. %We used the Marian toolkit to train our models.
 
-For inference, we used and extend Amun~\citep{junczys2016neural}, the fastest open-source inference engine we are aware of for the model used in this paper. We uused a mini-batch of 128 sentences and maxi-batch 10 times the size of the mini-batch, unless otherwise stated.
+For inference, we used and extend Amun~\citep{junczys2016neural}, the fastest open-source inference engine we are aware of for the model used in this paper. We used a beam size of 5, mini-batch of 128 sentences and maxi-batch 1280, unless otherwise stated.
 
 The hardware used in all experiments was an Nvidia GTX 1060 GPU on a host containing 8 Intel hypercores running at 2.8Ghz, 16GB RAM and SSD hard drive.
 
@@ -362,13 +362,13 @@ Fusing the softmax and beam search increase the speed of the output layer by 43\
 \begin{tabular}{cc}
 {\includegraphics[scale=0.3]{pie-time-opensubtitles.png}} 
 \end{tabular}
-\caption{Proportion of time spent during translation (beam size 5, Opensubtitles test set)}
+\caption{Proportion of time spent during translation (Opensubtitles test set)}
 \label{fig:pie-time-opensubtitles}
 \end{figure} 
 
 \subsection{Top-up Batching}
 
-After some experimentation, we decided fully fill the decoding batch only when it is at least half empty, rather than whenever a sentence has completed.
+After some experimentation, we decided to fully fill the decoding batch only when it is at least half empty, rather than whenever a sentence has completed.
 
 The top-up batching and maxi-batching have similar goals of maximizing efficiency when translating batches of different lengths. Therefore, using both methods together gives limited gains, in fact, using top-up batching with maxi-batch slows of between 2\% to 18\% when translating the Europarl test set due to the overhead of using the algorithm, Figure~\ref{fig:topup-europarl}. When maxi-batching is inappropriate, using top-up batching alone matches the performance of maxi-batching, even being slightly faster when a small beam is used.
 
@@ -377,7 +377,7 @@ The top-up batching and maxi-batching have similar goals of maximizing efficienc
 \begin{tabular}{cc}
 {\includegraphics[scale=0.3]{topup-europarl.png}} 
 \end{tabular}
-\caption{Translation speed for Europarl test set using top-up batching)}
+\caption{Translation speed for Europarl test set using top-up batching}
 \label{fig:topup-europarl}
 \end{figure} 
 
@@ -388,7 +388,7 @@ The results are better when translating the OpenSubtitles test set, Figure~\ref{
 \begin{tabular}{cc}
 {\includegraphics[scale=0.3]{topup-opensubtitles.png}} 
 \end{tabular}
-\caption{Translation speed for OpenSubtitles test set using top-up batching)}
+\caption{Translation speed for OpenSubtitles test set using top-up batching}
 \label{fig:topup-opensubtitles}
 \end{figure} 
 
