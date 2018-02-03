@@ -48,7 +48,7 @@
 
 \begin{abstract}
 
-As neural machine translation (NMT) models have become the new state-of-the-art, the challenge is to make their deployment efficient and economical. We have identified two areas where typical NMT models differ significantly from other deep-learning models that impact on their inference speed. Firstly, NMT models usually contains a large number of output classes, corresponding to the output vocabulary. Secondly, rather than a single label, the output from machine translation models is a sequence of class labels that makes up the words or sub-words in the target sentence. The sentence lengths are unpredictable, leading to inefficiencies during batch processing. We provide solutions for each of these issues which can increase batched inference speed by up to 41\% on modern GPUs without affecting model quality.
+As neural machine translation (NMT) models have become the new state-of-the-art, the challenge is to make their deployment efficient and economical. We have identified two areas where typical NMT models differ significantly from other deep-learning models that impact on their inference speed. Firstly, NMT models usually contains a large number of output classes, corresponding to the output vocabulary. Secondly, rather than a single label, the output from machine translation models is a sequence of class labels that makes up the words or sub-words in the target sentence. The sentence lengths are unpredictable, leading to inefficiencies during batch processing. We provide solutions for each of these issues which can increase batched inference speed by up to 57\% on modern GPUs without affecting model quality.
 
 \end{abstract}
 
@@ -345,7 +345,7 @@ Fusing the softmax and beam search increase the speed of the output layer by 43\
 \begin{tabular}{cc}
 {\includegraphics[scale=0.5]{beam-europarl.png}} 
 \end{tabular}
-\caption{Translation speed for Europarl test set when using the fused kernel}
+\caption{Speed using the fused kernel (Europarl)}
 \label{fig:beam-europarl}
 \end{figure} 
 
@@ -354,7 +354,7 @@ Fusing the softmax and beam search increase the speed of the output layer by 43\
 \begin{tabular}{cc}
 {\includegraphics[scale=0.5]{beam-opensubtitles.png}} 
 \end{tabular}
-\caption{Translation speed for Opensubtitles test set when using the fused kernel}
+\caption{Speed using the fused kernel (Opensubtitles)}
 \label{fig:beam-opensubtitles}
 \end{figure} 
 
@@ -363,7 +363,7 @@ Fusing the softmax and beam search increase the speed of the output layer by 43\
 \begin{tabular}{cc}
 {\includegraphics[scale=0.3]{pie-time-opensubtitles.png}} 
 \end{tabular}
-\caption{Proportion of time spent during translation (Opensubtitles test set)}
+\caption{Proportion of time spent during translation (Opensubtitles)}
 \label{fig:pie-time-opensubtitles}
 \end{figure} 
 
@@ -378,7 +378,7 @@ The top-up batching and maxi-batching have similar goals of maximizing efficienc
 \begin{tabular}{cc}
 {\includegraphics[scale=0.3]{topup-europarl.png}} 
 \end{tabular}
-\caption{Translation speed for Europarl test set using top-up batching}
+\caption{Speed using top-up batching (Europarl)}
 \label{fig:topup-europarl}
 \end{figure} 
 
@@ -389,7 +389,7 @@ The results are better when translating the OpenSubtitles test set, Figure~\ref{
 \begin{tabular}{cc}
 {\includegraphics[scale=0.3]{topup-opensubtitles.png}} 
 \end{tabular}
-\caption{Translation speed for OpenSubtitles test set using top-up batching}
+\caption{Speed using top-up batching (OpenSubtitles)}
 \label{fig:topup-opensubtitles}
 \end{figure} 
 
@@ -404,6 +404,9 @@ The gain from top-up batching is partially dependent on how much time the standa
 \label{fig:batch-size-small}
 \end{figure} 
 
+\subsection{Cummulative Results}
+
+Using both the fused kernel and top-up batching to translate 
 
 \section{Conclusion and Future Work}
 
