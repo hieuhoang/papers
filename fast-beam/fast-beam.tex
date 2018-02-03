@@ -338,7 +338,7 @@ Std dev subwords/sent & 14.9		& 6.1 \\ \hline
 
 \subsection{Softmax and Beam Search Fusion}
 
-Fusing the softmax and beam search increase the speed of the output layer by 43\% for beam size 1, decreasing to 25\% for a beam of 10 when translating the Europarl dataset. This led to an overall increase in translation speed of up to 23\%, Figure~\ref{fig:beam-europarl}. Translation speed improved by up to 41\% when translating the Opensubtitles dataset, Figure~\ref{fig:beam-opensubtitles}. Compared to translating the Europarl test st, Figure~\ref{fig:pie-time-europarl} in Section~\ref{sec:Introduction}, the amount of time taken by the output layer dominates translation time for the OpenSubtitles test set, Figure~\ref{fig:pie-time-opensubtitles}.
+Fusing the softmax and beam search increase the speed of the output layer by 43\% for beam size 1, decreasing to 25\% for a beam of 10 when translating the Europarl dataset. This led to an overall increase in translation speed of up to 23\%, Figure~\ref{fig:beam-europarl}. Translation speed improved by up to 41\% when translating the OpenSubtitles dataset, Figure~\ref{fig:beam-opensubtitles}. Compared to translating the Europarl test st, Figure~\ref{fig:pie-time-europarl} in Section~\ref{sec:Introduction}, the amount of time taken by the output layer dominates translation time for the OpenSubtitles test set, Figure~\ref{fig:pie-time-opensubtitles}.
 
 \begin{figure}
 \centering
@@ -354,7 +354,7 @@ Fusing the softmax and beam search increase the speed of the output layer by 43\
 \begin{tabular}{cc}
 {\includegraphics[scale=0.5]{beam-opensubtitles.png}} 
 \end{tabular}
-\caption{Speed using the fused kernel (Opensubtitles)}
+\caption{Speed using the fused kernel (OpenSubtitles)}
 \label{fig:beam-opensubtitles}
 \end{figure} 
 
@@ -363,7 +363,7 @@ Fusing the softmax and beam search increase the speed of the output layer by 43\
 \begin{tabular}{cc}
 {\includegraphics[scale=0.3]{pie-time-opensubtitles.png}} 
 \end{tabular}
-\caption{Proportion of time spent during translation (Opensubtitles)}
+\caption{Proportion of time spent during translation (OpenSubtitles)}
 \label{fig:pie-time-opensubtitles}
 \end{figure} 
 
