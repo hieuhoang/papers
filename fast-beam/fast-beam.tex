@@ -248,9 +248,9 @@ The standard mini-batching algorithm is outlined in Algorithm~\ref{algo:Mini-bat
   \State Encode($b$)
   \While{batch is not empty} 
     \State Decode($b$)
-    \For{each sentence in $b$}
+    \ForAll{sentence $s$ in $b$}
       \If{translation is complete}
-        \State Remove sentence from $b$
+        \State Remove $s$ from $b$
       \EndIf
     \EndFor
   \EndWhile
@@ -276,7 +276,7 @@ Our proposed top-up batching algorithm encode and decode asynchronously. The enc
 \While{more input} 
   \State Create encoding batch $b$
   \State Encode($b$)
-  \State Add $b$ to queue
+  \State Add $b$ to queue $q$
 \EndWhile 
 
 \EndProcedure
@@ -293,10 +293,14 @@ Rather than decoding the same batch until all sentences in the batch are complet
 
 \Procedure{Decode}{}
 
-\State create batch $b$ from queue
+\State create batch $b$ from queue $q$
 \While{$b$ is not empty}
   \State Decode($b$)
-  \State Replace completed sentences with new sentence from queue
+  \ForAll{sentence $s$ in $b$}
+    \If{translation is complete}
+      \State Replace $s$ with $s'$ from $q$
+    \EndIf
+  \EndFor
 \EndWhile
 
 \EndProcedure
