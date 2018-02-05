@@ -239,25 +239,25 @@ It has been shown ~\citep{koehn-knowles:2017:NMT} that using beam search to use 
 
 The standard mini-batching algorithm is outlined in Figure~\ref{algo:Mini-batching}.
 
-% \begin{figure} [h]
-% \begin{algorithmic}
-% %\REQUIRE source sentence $s$, translation options
-% \WHILE{more input} 
-%   \STATE Create batch
-%   \STATE Encode
-%   \WHILE{batch is not empty} 
-%     \STATE Decode batch
-%     \FOR{each sentence in batch}
-%       \IF{translation is complete}
-%         \STATE Remove sentence from batch
-%       \ENDIF
-%     \ENDFOR
-%   \ENDWHILE
-% \ENDWHILE 
-% \end{algorithmic}
-% \caption{Mini-batching}
-% \label{algo:Mini-batching}
-% \end{figure}
+\begin{figure} [h]
+\begin{algorithmic}
+%\REQUIRE source sentence $s$, translation options
+\While{more input} 
+  \State Create batch
+  \State Encode
+  \While{batch is not empty} 
+    \State Decode batch
+    \For{each sentence in batch}
+      \If{translation is complete}
+        \State Remove sentence from batch
+      \EndIf
+    \EndFor
+  \EndWhile
+\EndWhile
+\end{algorithmic}
+\caption{Mini-batching}
+\label{algo:Mini-batching}
+\end{figure}
 
 This algorithm encode the sentences for a batch, followed by decoding the batch. The decoding stop once all sentences in the batch are completed. This is a potential inefficiency as the number of remaining sentences may not be optimal.
 
