@@ -177,37 +177,37 @@ Secondly, we make use of the fact that softmax and $\exp$ are monotonic function
 
 Thirdly, we are only interested in the best class. Since the best class is known, we can avoid calculating softmax for all classes. The outline of the our function is shown in Figure~\ref{algo:Fused Kernel}.
 
-% \begin{figure} [h]
-% \begin{algorithmic}
-% \REQUIRE vector $p$, bias vector $b$
-% 
-% \COMMENT{add bias, calculate $max$ \& $argmax$}
-% 
-% \STATE $max \gets - \infty$ 
-% \FORALL{$p_i$ in $p$}
-%   \IF{$p_i + b_i > max$}
-%     \STATE $max \gets p_i + b_i$
-%     \STATE $best \gets i$
-%   \ENDIF
-% \ENDFOR 
-% 
-% \COMMENT{calculate denominator}
-% 
-% \STATE $sum \gets 0$ 
-% \FORALL{$p_i$ in $p$}
-%   \IF{$p_i > max$}
-%     \STATE $sum \gets sum + \exp(p_i - max)$
-%   \ENDIF
-% \ENDFOR 
-% 
-% \RETURN $\frac{1}{sum}$, $best$ 
-% 
-% 
-% \end{algorithmic}
-% \caption{Fused softmax and argmax}
-% \label{algo:Fused Kernel}
-% \end{figure}
+\begin{figure} [h]
+\begin{algorithmic}
+\Procedure{Fused Kernel}{vector $p$, bias vector $b$}
 
+\Comment{add bias, calculate $max$ \& $argmax$}
+
+\State $max \gets - \infty$ 
+\ForAll{$p_i$ in $p$}
+  \If{$p_i + b_i > max$}
+    \State $max \gets p_i + b_i$
+    \State $best \gets i$
+  \EndIf
+\EndFor
+
+\Comment{calculate denominator}
+
+\State $sum \gets 0$ 
+\ForAll{$p_i$ in $p$}
+  \If{$p_i > max$}
+    \State $sum \gets sum + \exp(p_i - max)$
+  \EndIf
+\EndFor
+
+\Return $\frac{1}{sum}$, $best$ 
+
+\EndProcedure
+\end{algorithmic}
+
+\caption{Fused softmax and argmax}
+\label{algo:Fused Kernel}
+\end{figure}
 
 In fact, we are usually only interested in the best class during inference, not the probability. Therefore, we can skip the second iteration over $p$ in Figure~\ref{algo:Fused Kernel} and avoid computing the softmax altogether. %, Figure~\ref{algo:Argmax only}.
 
