@@ -274,9 +274,9 @@ Our proposed top-up batching algorithm encode and decode asynchronously. The enc
 
 \Procedure{Encode}{}
 \While{more input} 
-  \State Create encoding batch
-  \State Encode
-  \State Add to queue
+  \State Create encoding batch $b$
+  \State Encode($b$)
+  \State Add $b$ to queue
 \EndWhile 
 
 \EndProcedure
@@ -288,18 +288,23 @@ Our proposed top-up batching algorithm encode and decode asynchronously. The enc
 
 Rather than decoding the same batch until all sentences in the batch are completed, the decoding step processing the same batch continuously. New sentences are added to the batch as old sentences completes, Figure~\ref{algo:Decoding for top-up batching}.
 
-% \begin{figure} [h]
-% \begin{algorithmic}
-% %\REQUIRE source sentence $s$, translation options
-% \STATE create decoding batch $b$ from queue
-% \WHILE{$b$ is not empty}
-%   \STATE Decode $b$
-%   \STATE Replace completed sentences with new sentence from queue
-% \ENDWHILE 
-% \end{algorithmic}
-% \caption{Decoding for top-up batching}
-% \label{algo:Decoding for top-up batching}
-% \end{figure}
+\begin{figure} [h]
+\begin{algorithmic}
+
+\Procedure{Decode}{}
+
+\State create batch $b$ from queue
+\While{$b$ is not empty}
+  \State Decode($b$)
+  \State Replace completed sentences with new sentence from queue
+\EndWhile
+
+\EndProcedure
+
+\end{algorithmic}
+\caption{Decoding for top-up batching}
+\label{algo:Decoding for top-up batching}
+\end{figure}
 
 
 \section{Experimental Setup}
