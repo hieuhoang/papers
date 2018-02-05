@@ -244,13 +244,13 @@ The standard mini-batching algorithm is outlined in Algorithm~\ref{algo:Mini-bat
 \Procedure{Mini-Batching}{}
 %\REQUIRE source sentence $s$, translation options
 \While{more input} 
-  \State Create batch
-  \State Encode(batch)
+  \State Create batch $b$
+  \State Encode($b$)
   \While{batch is not empty} 
-    \State Decode(batch)
-    \For{each sentence in batch}
+    \State Decode($b$)
+    \For{each sentence in $b$}
       \If{translation is complete}
-        \State Remove sentence %from batch
+        \State Remove sentence from $b$
       \EndIf
     \EndFor
   \EndWhile
