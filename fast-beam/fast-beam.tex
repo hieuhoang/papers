@@ -211,25 +211,26 @@ Thirdly, we are only interested in the best class. Since the best class is known
 
 In fact, we are usually only interested in the best class during inference, not the probability. Therefore, we can skip the second iteration over $p$ in Figure~\ref{algo:Fused Kernel} and avoid computing the softmax altogether. %, Figure~\ref{algo:Argmax only}.
 
-% \begin{figure} [h]
-% \begin{algorithmic}
-% \REQUIRE activation vector $p$, bias vector $b$
-% 
-% \COMMENT{add bias, calculate $argmax$}t
-% \FORALL{$p_i$ in $p$}
-%   \IF{$p_i + b_i > max$}
-%     \STATE $max \gets p_i + b_i$
-%     \STATE $argmax \gets i$
-%   \ENDIF
-% \ENDFOR 
-% 
-% 
-% \RETURN $argmax$ 
-% 
-% \end{algorithmic}
-% \caption{Argmax only}
-% \label{algo:Argmax only}
-% \end{figure}
+\begin{figure} [h]
+\begin{algorithmic}
+\Procedure{Find-1-Best}{activation vector $p$, bias vector $b$}
+
+\State $max \gets - \infty$ 
+\ForAll{$p_i$ in $p$}
+  \If{$p_i + b_i > max$}
+    \State $max \gets p_i + b_i$
+    \State $best \gets i$
+  \EndIf
+\EndFor
+
+\Return $best$ 
+
+\EndProcedure
+
+\end{algorithmic}
+\caption{Find 1 best}
+\label{algo:Argmax only}
+\end{figure}
 
 It has been shown ~\citep{koehn-knowles:2017:NMT} that using beam search to use the n-best number of classes, rather than just the best class, improves translation quality. This is a simple extension to the algorithm of Figure~\ref{algo:Fused Kernel}. Unlike the 1-best case, however, the softmax calculation cannot be skipped as the denominator differs for each input.
 
