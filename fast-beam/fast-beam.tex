@@ -241,19 +241,23 @@ The standard mini-batching algorithm is outlined in Figure~\ref{algo:Mini-batchi
 
 \begin{figure} [h]
 \begin{algorithmic}
+\Procedure{Mini-Batching}{}
 %\REQUIRE source sentence $s$, translation options
 \While{more input} 
   \State Create batch
-  \State Encode
+  \State Encode(batch)
   \While{batch is not empty} 
-    \State Decode batch
+    \State Decode(batch)
     \For{each sentence in batch}
       \If{translation is complete}
-        \State Remove sentence from batch
+        \State Remove sentence %from batch
       \EndIf
     \EndFor
   \EndWhile
 \EndWhile
+
+\EndProcedure
+
 \end{algorithmic}
 \caption{Mini-batching}
 \label{algo:Mini-batching}
@@ -264,7 +268,7 @@ This algorithm encode the sentences for a batch, followed by decoding the batch.
 We will focus on decoding as this is the more compute-intensive step, and issues with differing sentence sizes in encoding can partly be ameliorated by maxi-batching.
 
 Our proposed top-up batching algorithm encode and decode asynchronously. The encoding step, Figure~\ref{algo:Encoding for top-up batching}, is similar to the main loop of the standard algorithm but the results are added to a queue to be consumed by the decoding step later.
-
+% 
 % \begin{figure} [h]
 % \begin{algorithmic}
 % %\REQUIRE source sentence $s$, translation options
