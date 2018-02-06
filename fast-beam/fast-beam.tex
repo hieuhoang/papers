@@ -110,7 +110,7 @@ The output layer of most deep learning models consist of the following steps
    \item \vspace{-2 mm} multiplication of the input with the weight vector $p = w x$
    \item \vspace{-2 mm} addition of a bias term to the resulting scores $p = p + b$
    \item \vspace{-2 mm} applying the activation function, most commonly softmax $ p_i = \exp(p_i) / \sum \exp(p_i) $
-   \item \vspace{-2 mm} a search for the best output class, and probability if necessary $\argmax_i p_i$
+   \item \vspace{-2 mm} a beam search for the best (or n-best) output classes $\argmax_i p_i$
 \end{enumerate}
 
 In models with a small number of classes such as binary classification, the computational effort required is trivial and fast. However, this is not the case for large number of classes such as those found in NMT models.
@@ -376,6 +376,27 @@ Fusing the softmax and beam search increase the speed of the output layer by 43\
 \caption{Proportion of time spent during translation (OpenSubtitles)}
 \label{fig:pie-time-opensubtitles}
 \end{figure} 
+
+\begin{table}
+\begin{center}
+\small
+\begin{tabular}{|l|r|r|} \hline
+		& Baseline	& Fused \\ \hline
+\multicolumn{3}{|c|}{\emph{Beam size 1}}	\\ \hline	
+Multiplication 	& 25.62 	& 26.47 (+3.3\%) \\ \hline
+Add bias 	& 4.98		&  \\ 
+Softmax 	& 12.81		& 7.94 (-76.9\%)\\
+Beam search	& 16.64		&  \\ \hline
+\multicolumn{3}{|c|}{\emph{Beam size 5}}	\\ \hline	
+Multiplication 	& 112.9 	& 115.04 (+1.9\%) \\ \hline
+Add bias 	& 23.66		&  \\ 
+Softmax 	& 56.61		& 67.58 (-56.5\%)\\
+Beam search	& 75.12		&  \\ \hline
+\end{tabular}
+\end{center}
+\caption{Time taken in sec (Europarl)}
+\label{tab:fused-breakdown}
+\end{table}
 
 \subsection{Top-up Batching}
 
