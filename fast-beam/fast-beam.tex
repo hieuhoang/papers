@@ -115,7 +115,7 @@ The output layer of most deep learning models consist of the following steps
 
 In models with a small number of classes such as binary classification, the computational effort required is trivial and fast. However, this is not the case for large number of classes such as those found in NMT models.
 
-We shall leave step 1 for future work and focus on the last three steps, the outline for which are shown in Algorithm~\ref{algo:original-softmax-beamsearch}.
+We shall leave step 1 for future work and focus on the last three steps, the outline for which are shown in Algorithm~\ref{algo:original-softmax-beamsearch}. For brevity, we show the algorithm for 1-best, a beam search of the n-best is a simple extension of this.
 
 \begin{algorithm} 
 \begin{algorithmic}
@@ -166,7 +166,7 @@ We shall leave step 1 for future work and focus on the last three steps, the out
 \EndProcedure
 
 \end{algorithmic}
-\caption{Original Softmax and Beam Search Algorithm}
+\caption{Original softmax and beam Search Algorithm}
 \label{algo:original-softmax-beamsearch}
 \end{algorithm}
 
@@ -205,7 +205,7 @@ Thirdly, we are only interested in the probabilities of the best classes. Since 
 \EndProcedure
 \end{algorithmic}
 
-\caption{Fused softmax and argmax}
+\caption{Fused softmax and beam search}
 \label{algo:Fused Kernel}
 \end{algorithm}
 
