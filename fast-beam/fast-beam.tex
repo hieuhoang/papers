@@ -348,7 +348,7 @@ Std dev subwords/sent & 14.9		& 6.1 \\ \hline
 
 \subsection{Softmax and Beam Search Fusion}
 
-Fusing the last 3 steps led to a substantial reduction in the time taken, especially for beam size of 1 where the softmax does not actually have to calculated, Table~\ref{tab:fused-breakdown-europarl} and ~\ref{tab:fused-breakdown-opensubtitles}. This led to an overall increase in translation speed of up to 23\% for the Europarl test set, Figure~\ref{fig:beam-europarl}, and up to 41\% for the OpenSubtitles test set, Figure~\ref{fig:beam-opensubtitles}. 
+Fusing the last 3 steps led to a substantial reduction in the time taken, especially for beam size of 1 where the softmax probability does not actually have to calculated, Table~\ref{tab:fused-breakdown-europarl} and ~\ref{tab:fused-breakdown-opensubtitles}. This led to an overall increase in translation speed of up to 23\% for the Europarl test set, Figure~\ref{fig:beam-europarl}, and up to 41\% for the OpenSubtitles test set, Figure~\ref{fig:beam-opensubtitles}. 
 
 The amount of time taken by the output layer dominates translation time for the OpenSubtitles test set, Figure~\ref{fig:pie-time-opensubtitles}, explaining the bigger overall translation speed with the fused kernel.
 
