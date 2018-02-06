@@ -232,7 +232,7 @@ In fact, we are usually only interested in the best class during inference, not 
 \label{algo:Argmax only}
 \end{algorithm}
 
-It has been shown ~\citep{koehn-knowles:2017:NMT} that using beam search to use the n-best number of classes, rather than just the best class, improves translation quality. This is a simple extension to the algorithm of Algorithm~\ref{algo:Fused Kernel}. Unlike the 1-best case, however, the softmax calculation cannot be skipped as the denominator differs for each input.
+It has been shown ~\citep{koehn-knowles:2017:NMT} that using beam search to use the n-best number of classes, rather than just the best class, improves translation quality, up to a point. Unlike the 1-best case, however, the softmax calculation cannot be skipped as the denominator differs for each input.
 
 
 \subsection{Top-up Batching}
