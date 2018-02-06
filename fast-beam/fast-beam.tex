@@ -395,7 +395,28 @@ Beam search	& 75.12		&  \\ \hline
 \end{tabular}
 \end{center}
 \caption{Time taken in sec (Europarl)}
-\label{tab:fused-breakdown}
+\label{tab:fused-breakdown-europarl}
+\end{table}
+
+\begin{table}
+\begin{center}
+\small
+\begin{tabular}{|l|r|r|} \hline
+		& Baseline	& Fused \\ \hline
+\multicolumn{3}{|c|}{\emph{Beam size 1}}	\\ \hline	
+Multiplication 	& 21.47 	& 21.94 (+2.2\%) \\ \hline
+Add bias 	& 33.59		&  \\ 
+Softmax 	& 8.83		& 5.70 (-89.9\%)\\
+Beam search	& 13.91		&  \\ \hline
+\multicolumn{3}{|c|}{\emph{Beam size 5}}	\\ \hline	
+Multiplication 	& 79.66 	& 80.01 (+4.4\%) \\ \hline
+Add bias 	& 14.95		&  \\ 
+Softmax 	& 36.86		& 42.91 (-64.4\%)\\
+Beam search	& 68.80		&  \\ \hline
+\end{tabular}
+\end{center}
+\caption{Time taken in sec (OpenSubtitles)}
+\label{tab:fused-breakdown-opensubtitles}
 \end{table}
 
 \subsection{Top-up Batching}
