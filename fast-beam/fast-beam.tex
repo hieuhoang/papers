@@ -171,7 +171,7 @@ We shall leave step 1 for future work and focus on the last three steps, the out
 \end{algorithm}
 
 
-As can be seen, the operations iterate over the matrix p five times - once to add the bias, three times to calculate the softmax, and once to search for the best class. We shall use a popular method, kernel fusion~\citep{Guevara2009EnablingTP}, to optimize the output layer.
+As can be seen, the operations iterate over the matrix p five times - once to add the bias, three times to calculate the softmax, and once to search for the best class. We fuse the three operation into one kernel, a popular optimization technique~\citep{Guevara2009EnablingTP}.
 
 Secondly, we make use of the fact that softmax and $\exp$ are monotonic functions therefore we can move the search for the best class from FIND-BEST to SOFTMAX.
 
