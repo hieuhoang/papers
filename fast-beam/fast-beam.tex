@@ -107,7 +107,7 @@ Our paper follows most closely on from ~\cite{DBLP:conf/emnlp/Devlin17} which ac
 
 The output layer of most deep learning models consist of the following steps
 \begin{enumerate}
-   \item \vspace{-2 mm} multiplication of the input with the weight vector $p = w x$
+   \item \vspace{-2 mm} multiplication of the weight matrix with the input vector $p = w x$
    \item \vspace{-2 mm} addition of a bias term to the resulting scores $p = p + b$
    \item \vspace{-2 mm} applying the activation function, most commonly softmax $ p_i = \exp(p_i) / \sum \exp(p_i) $
    \item \vspace{-2 mm} a beam search for the best (or n-best) output classes $\argmax_i p_i$
