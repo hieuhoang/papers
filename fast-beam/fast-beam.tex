@@ -246,7 +246,7 @@ The standard mini-batching algorithm is outlined in Algorithm~\ref{algo:Mini-bat
   \While{batch is not empty} 
     \State Decode($b$)
     \ForAll{sentence $s$ in $b$}
-      \If{translation is complete}
+      \If{trans($s$) is complete}
         \State Remove $s$ from $b$
       \EndIf
     \EndFor
@@ -294,7 +294,7 @@ Rather than decoding the same batch until all sentences in the batch are complet
 \While{$b$ is not empty}
   \State Decode($b$)
   \ForAll{sentence $s$ in $b$}
-    \If{translation is complete}
+    \If{trans($s$) is complete}
       \State Replace $s$ with $s'$ from $q$
     \EndIf
   \EndFor
