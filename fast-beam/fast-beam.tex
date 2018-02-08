@@ -98,7 +98,7 @@ The speed of the softmax layer when used with large vocabularies have been looke
 
 There has been surprisingly little work on batching algorithms, considering its critical importance for efficient deep-learning training and inference. ~\cite{Neubig-autobatching} describe an novel batching algorithm, however, its aim is to alleviate the burden on developers in batching of new models, not faster batching.
 
-Our paper follows most closely on from ~\cite{DBLP:conf/emnlp/Devlin17} which achieved faster NMT inference mainly by novel implementation of an existing model. However, we differ by focusing on GPU implementation, and the output layer and batching algorithm which were not touched on by the previous work.
+Our paper follows most closely on from ~\cite{DBLP:conf/emnlp/Devlin17} which achieved faster NMT inference mainly by novel implementation of an existing model. However, we differ by focusing on GPU implementation, specifically the output layer, and the batching algorithm which were not touched on by the previous work.
 
 \section{Proposal}
 \label{sec:Proposal}
@@ -209,7 +209,7 @@ Thirdly, we are only interested in the probabilities of the best classes. Since 
 \label{algo:Fused Kernel}
 \end{algorithm}
 
-In fact, we are usually only interested in the best class during inference, not the probability. Therefore, we can skip the second iteration over $p$ in Algorithm~\ref{algo:Fused Kernel} and avoid computing the softmax altogether, Algorithm~\ref{algo:Argmax only}.
+In fact, we are usually only interested in the best class during inference, not the probability. Since we now calculate the best class before the softmax, we can skip softmax altogether, Algorithm~\ref{algo:Argmax only}. However, is this only possible for beam size 1; the comparison between softmax probobilities is required for larger beam sizes as the denominator is different in different beams.
 
 \begin{algorithm}
 \begin{algorithmic}
@@ -231,8 +231,6 @@ In fact, we are usually only interested in the best class during inference, not 
 \caption{Find 1-best only}
 \label{algo:Argmax only}
 \end{algorithm}
-
-It has been noted by ~\citep{koehn-knowles:2017:NMT} and others that using n-best number of classes, rather than just the best class, improves translation quality. Unlike the 1-best case, however, the softmax calculation cannot be skipped as the denominator differs for each input.
 
 
 \subsection{Top-up Batching}
