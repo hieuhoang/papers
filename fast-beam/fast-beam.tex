@@ -153,7 +153,7 @@ We leave step 1 for future work and focus on the last three steps, the outline f
 
 \State
 
-\Procedure{Find-Best}{softmax vector $p$}
+\Procedure{Find-Best}{vector $p$}
 
 \State $max \gets - \infty$ 
 \ForAll{$p_i$ in $p$}
@@ -173,11 +173,11 @@ We leave step 1 for future work and focus on the last three steps, the outline f
 \end{algorithm}
 
 
-As can be seen, the operations iterate over the matrix p five times - once to add the bias, three times to calculate the softmax, and once to search for the best class. We fuse the three operation into one kernel, a popular optimization technique~\citep{Guevara2009EnablingTP}.
+As can be seen, the matrix p is iterated over five times - once to add the bias, three times to calculate the softmax, and once to search for the best class. We fuse the three functions into one kernel, a popular optimization technique~\citep{Guevara2009EnablingTP}, making use of the following observations.
 
-Secondly, we make use of the fact that softmax and $\exp$ are monotonic functions therefore we can move the search for the best class from FIND-BEST to SOFTMAX.
+Firstly, softmax and $\exp$ are monotonic functions, therefore, we can move the search for the best class from FIND-BEST to SOFTMAX, at the start of the kernel.
 
-Thirdly, we are only interested in the probabilities of the best classes. Since these classes are known, we can avoid calculating softmax for all classes. The outline of the our function is shown in Algorithm~\ref{algo:Fused Kernel}.
+Secondly, we are only interested in the probabilities of the best classes. Since they are now known at the start of the kernel, we compute softmax only for those classes. The outline of the our function is shown in Algorithm~\ref{algo:Fused Kernel}.
 
 \begin{algorithm}
 \begin{algorithmic}
