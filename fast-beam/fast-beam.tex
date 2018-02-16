@@ -146,7 +146,7 @@ We leave step 1 for future work and focus on the last three steps, the outline f
 
 \Comment{calculate softmax}
 \ForAll{$p_i$ in $p$}
-  \State $p_i \gets \frac{\exp(p_i) - max}{sum} $
+  \State $p_i \gets \frac{\exp(p_i - max)}{sum} $
 \EndFor 
 
 \EndProcedure
@@ -162,6 +162,8 @@ We leave step 1 for future work and focus on the last three steps, the outline f
     \State $best \gets i$
   \EndIf
 \EndFor 
+
+\Return $max$, $best$
 
 \EndProcedure
 
