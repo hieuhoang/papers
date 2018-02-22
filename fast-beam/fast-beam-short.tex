@@ -58,7 +58,7 @@ We present two optimizations in areas where typical NMT models differ significan
 \label{sec:Introduction}
 
 The number of classes in NMT models is typically in the tens or hundreds of thousands, for example, ~\citet{sennrich-haddow-birch:2016:P16-12} experimented with target vocabulary sizes of 60,000 and 90,000 sub-word units. This makes the output layer of NMT models computationally expensive. Figure~\ref{fig:pie-time-opensubtitles} shows the breakdown of amount of time during translation our NMT system; 73\% of the time is involved in the output layer or beam search. Our first proposal will explicitly target this computation.
-\begin{figure}
+\begin{figure}[h]
 \centering
 \begin{tabular}{cc}
 {\includegraphics[scale=0.3]{pie-time-opensubtitles.png}} 
@@ -69,9 +69,9 @@ The number of classes in NMT models is typically in the tens or hundreds of thou
 
 Secondly, the use of mini-batching is critical for fast model inference. However, mini-batching does not take into account variable sentence lengths which decrease the actual number of input or output sentences that are processed in parallel, negating the benefit of mini-batching. This can be partially reduced in the encoding with \emph{maxi-batching}, i.e. pre-sorting sentences by length before creating mini-batches with similar length source sentences. However, maxi-batching can introduce unacceptable delays in response time as inputs are not processed in the order they came, a particular concern for online applications. 
 
-Even with sequence-to-sequence NMT models, target sentence lengths will still differ even for similar length inputs. Figure~\ref{fig:batch-size} shows the actual batch size during decoding with a maximum batch size of 128; the batch was full in only 42\% of decoding iterations. We will propose an alternative batching algorithm to increase the actual batch size during decoding without the problems associated with mini-batching and maxi-batching.
+Even with maxi-batching, target sentence lengths will still differ even for similar length inputs. Figure~\ref{fig:batch-size} shows the actual batch size during decoding with a maximum batch size of 128; the batch was full in only 42\% of decoding iterations. We will propose an alternative batching algorithm to increase the actual batch size during decoding without the problems associated with mini-batching and maxi-batching.
 
-\begin{figure}
+\begin{figure}[h]
 \centering
 \begin{tabular}{cc}
 {\includegraphics[scale=0.3]{batch-size.png}} 
@@ -102,17 +102,16 @@ Even with sequence-to-sequence NMT models, target sentence lengths will still di
 
 The output layer of most deep learning models consist of the following steps
 \begin{enumerate}
-   \item \vspace{-2 mm} multiplication of the weight matrix with the input vector $p = w x$
-   \item \vspace{-2 mm} addition of a bias term to the resulting scores $p = p + b$
-   \item \vspace{-2 mm} applying the activation function, most commonly softmax $ p_i = \exp(p_i) / \sum \exp(p_i) $
-   \item \vspace{-2 mm} a beam search for the best (or n-best) output classes $\argmax_i p_i$
+   \item \vspace{-3 mm} multiplication of the weight matrix with the input vector $p = w x$
+   \item \vspace{-3 mm} addition of a bias term to the resulting scores $p = p + b$
+   \item \vspace{-3 mm} applying the activation function, most commonly softmax $ p_i = \exp(p_i) / \sum \exp(p_i) $
+   \item \vspace{-3 mm} a beam search for the best (or n-best) output classes $\argmax_i p_i$
 \end{enumerate}
-
 In models with a small number of classes such as binary classification, the computational effort required is trivial and fast but this is not the case for the large number of classes found in typical NMT models.
 
 We focus on the last three steps, the outline for which are shown in Algorithm~\ref{algo:original-softmax-beamsearch}. For brevity, we show the algorithm for 1-best, a beam search of the n-bests is a simple extension of this.
 
-\begin{algorithm} 
+\begin{algorithm}
 \begin{algorithmic}
 
 \Procedure{AddBias}{vector $p$, bias vector $b$}
