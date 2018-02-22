@@ -57,7 +57,7 @@ As neural machine translation (NMT) models have become the new state-of-the-art,
 \section{Introduction}
 \label{sec:Introduction}
 
-We will examine two areas that are critical to fast NMT inference where the models differ significantly from other deep-learning models. We believe the optimizations of these models have been overlooked by the general deep-learning community.
+We examine two areas that are critical to fast NMT inference where the models differ significantly from other deep-learning models. We believe the optimizations of these models have been overlooked by the general deep-learning community.
 
 Firstly, the number of classes in many deep-learning applications is small. However, the number of classes in NMT models is typically in the tens or hundreds of thousands, corresponding to the vocabulary size of the output language. For example, ~\citet{sennrich-haddow-birch:2016:P16-12} experimented with target vocabulary sizes of 60,000 and 90,000 sub-word units. This makes the output layer of NMT models very computationally expensive. Figure~\ref{fig:pie-time-europarl} shows the breakdown of amount of time during translation our NMT system; nearly 70\% of the time is involved in the output layer. We will look at optimizations which explicitly target the output layer.
 \begin{figure}
@@ -84,8 +84,6 @@ Even with sequence-to-sequence NMT models, target sentence lengths will still di
 
 We will propose an alternative batching algorithm to increase the actual batch size during decoding without the problems associated with mini-batching and maxi-batching.
 
-We base our work on the sequence-to-sequence model of ~\citet{D14-1179}. We also choose to focus on the using NMT inference on GPUs. % rather than CPUs as pursued by ~\cite{DBLP:conf/emnlp/Devlin17}.
-
 \section{Prior Work}
 
 Deep-learning models has been successfully used on many machine learning task in recent years in areas as diverse as computer vision and natural language processing. This success have been followed by the rush to put these model into production. The computational resources required in order to run these models has been challenging but, fortunately, there has been a lot work to meet this challenge.
@@ -98,7 +96,8 @@ The speed of the softmax layer when used with large vocabularies have been looke
 
 There has been surprisingly little work on batching algorithms, considering its critical importance for efficient deep-learning training and inference. ~\citet{Neubig-autobatching} describe an novel batching algorithm, however, its aim is to alleviate the burden on developers of batching models rather than faster batching.
 
-Our paper follows most closely on from ~\citet{DBLP:conf/emnlp/Devlin17} which achieved faster NMT inference mainly by novel implementation of an existing model. However, we differ by focusing on GPU implementation, specifically the output layer, and the batching algorithm which were not touched on by the previous work.
+Our paper follows most closely on from ~\citet{DBLP:conf/emnlp/Devlin17} which achieved faster NMT inference mainly by novel implementation of an existing model. However, we differ by focusing on GPU implementation, specifically the output layer, and the batching algorithm which was not touched on by the previous work. Our model is based on that of ~\citet{D14-1179} but our work is applicable to other models and applications. % rather than CPUs as pursued by ~\cite{DBLP:conf/emnlp/Devlin17}.
+
 
 \section{Proposal}
 \label{sec:Proposal}
@@ -113,7 +112,7 @@ The output layer of most deep learning models consist of the following steps
    \item \vspace{-2 mm} a beam search for the best (or n-best) output classes $\argmax_i p_i$
 \end{enumerate}
 
-In models with a small number of classes such as binary classification, the computational effort required is trivial and fast. However, this is not the case for large number of classes such as those found in NMT models.
+In models with a small number of classes such as binary classification, the computational effort required is trivial and fast but this is not the case for the large number of classes found in typical NMT models.
 
 We leave step 1 for future work and focus on the last three steps, the outline for which are shown in Algorithm~\ref{algo:original-softmax-beamsearch}. For brevity, we show the algorithm for 1-best, a beam search of the n-bests is a simple extension of this.
 
