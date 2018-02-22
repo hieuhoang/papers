@@ -76,7 +76,7 @@ Even with maxi-batching, target sentence lengths will still differ even for simi
 \begin{tabular}{cc}
 {\includegraphics[scale=0.3]{batch-size.png}} 
 \end{tabular}
-\caption{Actual batch size during decoding (Europarl test set)}
+\caption{Actual batch size during decoding}
 \label{fig:batch-size}
 \end{figure} 
 
@@ -107,12 +107,16 @@ The output layer of most deep learning models consist of the following steps
    \item \vspace{-3 mm} applying the activation function, most commonly softmax $ p_i = \exp(p_i) / \sum \exp(p_i) $
    \item \vspace{-3 mm} a beam search for the best (or n-best) output classes $\argmax_i p_i$
 \end{enumerate}
-In models with a small number of classes such as binary classification, the computational effort required is trivial and fast but this is not the case for the large number of classes found in typical NMT models.
 
 We focus on the last three steps, the outline for which are shown in Algorithm~\ref{algo:original-softmax-beamsearch}. For brevity, we show the algorithm for 1-best, a beam search of the n-bests is a simple extension of this.
 
+As can be seen, the matrix p is iterated over five times - once to add the bias, three times to calculate the softmax, and once to search for the best classes. We propose fusing the three functions into one kernel, a popular optimization technique~\citep{Guevara2009EnablingTP}, making use of the following observations.
+
+Firstly, softmax and $\exp$ are monotonic functions, therefore, we can move the search for the best class from FIND-BEST to SOFTMAX, at the start of the kernel.
+
 \begin{algorithm}
 \begin{algorithmic}
+\small
 
 \Procedure{AddBias}{vector $p$, bias vector $b$}
 \ForAll{$p_i$ in $p$}
@@ -166,15 +170,12 @@ We focus on the last three steps, the outline for which are shown in Algorithm~\
 \label{algo:original-softmax-beamsearch}
 \end{algorithm}
 
-
-As can be seen, the matrix p is iterated over five times - once to add the bias, three times to calculate the softmax, and once to search for the best classes. We propose fusing the three functions into one kernel, a popular optimization technique~\citep{Guevara2009EnablingTP}, making use of the following observations.
-
-Firstly, softmax and $\exp$ are monotonic functions, therefore, we can move the search for the best class from FIND-BEST to SOFTMAX, at the start of the kernel.
-
-Secondly, we are only interested in the probabilities of the best classes. Since they are now known at the start of the kernel, we compute softmax only for those classes. The outline of the our function is shown in Algorithm~\ref{algo:Fused Kernel}.
+Secondly, we are only interested in the probabilities of the best classes. Since they are now known at the start of the kernel, we compute softmax only for those classes. The outline of the our kernel is shown in Algorithm~\ref{algo:Fused Kernel}.
 
 \begin{algorithm}
 \begin{algorithmic}
+\small
+
 \Procedure{Fused-Kernel}{vector $p$, bias vector $b$}
 
 \Comment{add bias, calculate $max$ \& $argmax$}
@@ -209,35 +210,11 @@ In fact, we are usually only interested in the best class during inference, not 
 
 \subsection{Top-up Batching}
 
-The standard mini-batching algorithm, Algorithm~\ref{algo:Mini-batching}, encode the sentences for a batch, followed by decoding the batch. Decoding stop only once all sentences in the batch are completed.
+The standard mini-batching algorithm encode the sentences for a batch, followed by decoding the batch. Decoding stop only once all sentences in the batch are completed.
 
 \begin{algorithm}
 \begin{algorithmic}
-\Procedure{Mini-Batching}{}
-\While{more input} 
-  \State Create batch $b$
-  \State Encode($b$)
-  \While{batch is not empty} 
-    \State Decode($b$)
-    \ForAll{sentence $s$ in $b$}
-      \If{trans($s$) is complete}
-        \State Remove $s$ from $b$
-      \EndIf
-    \EndFor
-  \EndWhile
-\EndWhile
-
-\EndProcedure
-
-\end{algorithmic}
-\caption{Mini-batching}
-\label{algo:Mini-batching}
-\end{algorithm}
-
-Our proposal focuses on decoding as this is the more compute-intensive task, encoding and decoding asynchronously. The encoding step, Algorithm~\ref{algo:Encoding for top-up batching}, is similar to the main loop of the standard algorithm but the results are added to a queue to be consumed by the decoding step.
-
-\begin{algorithm}
-\begin{algorithmic}
+\small
 
 \Procedure{Encode}{}
 \While{more input} 
@@ -253,10 +230,13 @@ Our proposal focuses on decoding as this is the more compute-intensive task, enc
 \label{algo:Encoding for top-up batching}
 \end{algorithm}
 
-Rather than decoding a batch until completion, new sentences are added to the batch as old sentences completes, Algorithm~\ref{algo:Decoding for top-up batching}.
+Our proposal focuses on decoding as this is the more compute-intensive task, encoding and decoding asynchronously. The encoding step, Algorithm~\ref{algo:Encoding for top-up batching}, is similar to that in mini-batching except that the results are added to a queue.
+
+The decoding continuously process the same batch, adding new sentences as old sentences completes, Algorithm~\ref{algo:Decoding for top-up batching}.
 
 \begin{algorithm}
 \begin{algorithmic}
+\small
 
 \Procedure{Decode}{}
 
@@ -283,27 +263,11 @@ Rather than decoding a batch until completion, new sentences are added to the ba
 
 We train a sequence-to-sequence, encoder-decoder NMT system similar to that described in ~\citet{sennrich-haddow-birch:2016:P16-12}. This uses recurrent neural networks with gated recurrent units. The input and output vocabulary size are both set to 85,000 sub-words using byte-pair encoding (BPE), the hidden layer dimensions is 512. %We used the Marian toolkit to train our models.
 
-For inference, we used and extend Amun~\citep{junczys2016neural}, the fastest open-source inference engine we are aware of for the model used in this paper. We used a beam size of 5, mini-batch of 128 sentences and maxi-batch 1280, unless otherwise stated.
+For inference, we used and extend Amun~\citep{junczys2016neural}. We used a beam size of 5, mini-batch of 128 sentences and maxi-batch 1280, unless otherwise stated.
 
 The hardware used in all experiments was an Nvidia GTX 1060 GPU on a host containing 8 Intel hypercores running at 2.8Ghz, 16GB RAM and SSD hard drive.
 
-We trained a German-English with data from the Europarl corpus~\citep{Koehn:2005:MTS}, our test set consisted of a subset of the Open-Subtitles corpus, Table~\ref{tab:corpora}.
-
-\begin{table}
-\begin{center}
-\small
-\begin{tabular}{|l|r|r|} \hline
-		 & OpenSubtitles \\ \hline
-\# sentences  	 & 50,000 \\
-\# sub-words 	 & 467,654 \\ 
-Avg sub-words/sent & 9.4 \\
-Std dev subwords/sent & 6.1 \\ \hline
-\end{tabular}
-\end{center}
-\caption{Test sets}
-\label{tab:corpora}
-\end{table}
-
+The German-English version of the Europarl corpus~\citep{Koehn:2005:MTS} was used to train the model, our test set consisted of the first 50,000 sentences of the Open-Subtitles corpus~\citep{TIEDEMANN12.463}.
 
 \section{Results}
 \label{sec:Results}
@@ -369,16 +333,6 @@ Using both the fused kernel and top-up batching to translate led to a cummalativ
 \caption{Cummulative results}
 \label{fig:cummulative-opensubtitles}
 \end{figure} 
-
-\section{Conclusion and Future Work}
-
-We have presented two methods for faster deep-learning inference, targeted at neural machine translation. 
-
-The first method focused on output layer of the neural network which accounts for a large part of the running time of the NMT model. By fusing the output layer with the beam search, we are able to increase translation speed by up to 41\%.
-
-The second method replaces the mini-batching algorithm with one that avoids decoding with a small number of sentences, maximizing the parallel processing potential of GPUs. For certain scenarios, this increases translating  speed by up to 12\%.
-
-For future work, we would like to apply our optimization for other NLP and deep-learning tasks. We are also interested in further optimization of the output layer in NMT, specifically the matrix multiplication which still takes up a significant proportion of the translation time.
 
 %\section*{Acknowledgments}
 %This work is sponsored by the Air Force Research Laboratory, prime contract FA8650-11-C-6160.  The views and conclusions contained in this document are those of the authors and should not be interpreted as representative of the official policies, either expressed or implied, of the Air Force Research Laboratory or the U.S. Government.
