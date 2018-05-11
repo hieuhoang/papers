@@ -210,7 +210,15 @@ Secondly, we are only interested in the probabilities of the best classes. Since
 \label{algo:Fused Kernel}
 \end{algorithm}
 
-In fact, we are usually only interested in the best class during inference, not the probability. Since we now compute the best class before the softmax, we can skip softmax altogether, Algorithm~\ref{algo:Argmax only}. This is only possible for beam size 1; the comparison between softmax probabilities is required for larger beam sizes as the denominators are different for different hypotheses.
+Thirdly, calculation of $max$ and $sum$ can be done in one loop by adjusting the sum whenever a higher $max$ is found, Equation~`.
+\begin{eqnarray*}
+sum & = & e^{a - max_b} + e^{b - max_b} \\
+    & = & e^{a - max_a + \Delta} + e^{b - max_b} \\
+    & = & e^{\Delta} e^{a - max_a} + e^{b - max_b}
+\end{eqnarray*}
+where $\Delta = max_b - max_a$ and $max_b > max_a$.
+
+In fact, a well known optimization is to skip the softmax operation altogether and calculate the argmax over the input vector, Algorithm~\ref{algo:Argmax only}. This is only possible for beam size 1 and when we are not interested in returning the softmax probabilities.
 
 \begin{algorithm}
 \begin{algorithmic}
