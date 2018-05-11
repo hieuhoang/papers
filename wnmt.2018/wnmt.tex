@@ -64,9 +64,13 @@ As neural machine translation (NMT) models have become the new state-of-the-art,
 
 It is tempting to use a general deep-learning toolkit such as Tensorflow or Pytorch to train and do the the inference. Faster translation could be obtained by tuning parameters within the toolkit, and choosing fast models. We believe this is the approach most other submissions have taken.
 
-Our inference engine, Amun, is developed on the premise that fast neural network inference is an issue that deserves dedicated tools which are not hobbled by other objectives such as training or support for multiple models. A dedicated tool that can deliver on the useful goal of fast inference, but also serves as a test bed for research into neural network inference without having to be concerned with maintaining a more complete toolkit. Amun is also useful as a means to explore the upper limit of what is possible for a particular model and hardware.
+Our inference engine, Amun, is developed on the premise that fast neural network inference is an issue that deserves dedicated tools which are not hobbled by other objectives such as training or support for multiple models. A tool that can deliver on the useful goal of fast inference, but also serves as a test bed for research into neural network inference without having to be concerned with maintaining a more complete toolkit. A tool that is also useful as a means to explore the upper limit of the possible speed for a particular model and hardware.
 
-In summary, Amun is an inference-only engine that only supports a limited number of NMT models and put fast inference on modern GPU above all other priorities. The consequence of this focused approach can be seen in the result of the shared task.
+In summary, Amun is an inference-only engine that supports a limited number of NMT models and put fast inference on modern GPU above all other priorities. The consequence of this focused approach can be seen in the result of the shared task.
+
+We submitted three systems to this years shared task. Our first submission was tailored to be as fast as possible while being above the baseline BLEU score. Our second submission trade some of the speed of first submission to return good quality translation. Both of these systems were trained with standard training regimes.
+
+Our last submission uses model distillation to improve translation quality and increase speed.
 
 
 //////////////////////////////////////////////
