@@ -176,7 +176,7 @@ As can be seen, the matrix p is iterated over five times - once to add the bias,
 
 Firstly, softmax and $\exp$ are monotonic functions, therefore, we can move the search for the best class from FIND-BEST to SOFTMAX, at the start of the kernel.
 
-Secondly, we are only interested in the probabilities of the best classes. Since they are now known at the start of the kernel, we compute softmax only for those classes. The outline of the our function is shown in Algorithm~\ref{algo:Fused Kernel}.
+Secondly, we are only interested in the probabilities of the best classes. Since they are now known at the start of the kernel, we compute softmax only for those classes.
 
 \begin{algorithm}
 \begin{algorithmic}
@@ -185,19 +185,17 @@ Secondly, we are only interested in the probabilities of the best classes. Since
 \Comment{add bias, calculate $max$ \& $argmax$}
 
 \State $max \gets - \infty$ 
-\ForAll{$p_i$ in $p$}
-  \If{$p_i + b_i > max$}
-    \State $max \gets p_i + b_i$
-    \State $best \gets i$
-  \EndIf
-\EndFor
-
-\Comment{calculate denominator}
-
 \State $sum \gets 0$ 
+
 \ForAll{$p_i$ in $p$}
-  \If{$p_i > max$}
-    \State $sum \gets sum + \exp(p_i - max)$
+  \State $p_i' \gets p_i + b_i$  
+  \If{$p_i' > max$}
+    \State $\Delta \gets max - p_i'$
+    \State $sum \gets \Delta \times sum + 1 $
+    \State $max \gets p_i'$
+    \State $best \gets i$
+  \Else
+    \State $sum \gets sum + \exp(p_i' - max)$
   \EndIf
 \EndFor
 
@@ -210,13 +208,13 @@ Secondly, we are only interested in the probabilities of the best classes. Since
 \label{algo:Fused Kernel}
 \end{algorithm}
 
-Thirdly, calculation of $max$ and $sum$ can be done in one loop by adjusting the sum whenever a higher $max$ is found, Equation~`.
+Thirdly, the calculation of $max$ and $sum$ can be done in one loop by adjusting the sum whenever a higher $max$ is found, Equation~`.
 \begin{eqnarray*}
 sum & = & e^{a - max_b} + e^{b - max_b} \\
     & = & e^{a - max_a + \Delta} + e^{b - max_b} \\
     & = & e^{\Delta} e^{a - max_a} + e^{b - max_b}
 \end{eqnarray*}
-where $\Delta = max_b - max_a$ and $max_b > max_a$.
+where $\Delta = max_a - max_b$ and $max_b > max_a$. The outline of the our function is shown in Algorithm~\ref{algo:Fused Kernel}.
 
 In fact, a well known optimization is to skip the softmax operation altogether and calculate the argmax over the input vector, Algorithm~\ref{algo:Argmax only}. This is only possible for beam size 1 and when we are not interested in returning the softmax probabilities.
 
