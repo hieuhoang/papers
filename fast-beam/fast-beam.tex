@@ -208,15 +208,15 @@ Secondly, we are only interested in the probabilities of the best classes. Since
 \label{algo:Fused Kernel}
 \end{algorithm}
 
-Thirdly, the calculation of $max$ and $sum$ can be done in one loop by adjusting $sum$ whenever a higher $max$ is found, Equation~`.
+Thirdly, the calculation of $max$ and $sum$ can be done in one loop by adjusting $sum$ whenever a higher $max$ is found:
 \begin{eqnarray*}
 sum & = & e^{a - max_b} + e^{b - max_b} \\
     & = & e^{a - max_a + \Delta} + e^{b - max_b} \\
     & = & e^{\Delta} e^{a - max_a} + e^{b - max_b}
 \end{eqnarray*}
-where $\Delta = max_a - max_b$ and $max_b > max_a$. The outline of the our function is shown in Algorithm~\ref{algo:Fused Kernel}.
+where $\Delta = max_a - max_b$ and $max_b > max_a$. The outline of our function is shown in Algorithm~\ref{algo:Fused Kernel}.
 
-In fact, a well known optimization is to skip the softmax operation altogether and calculate the argmax over the input vector, Algorithm~\ref{algo:Argmax only}. This is only possible for beam size 1 and when we are not interested in returning the softmax probabilities.
+In fact, a well known optimization is to skip softmax altogether and calculate the argmax over the input vector, Algorithm~\ref{algo:Argmax only}. This is only possible for beam size 1 and when we are not interested in returning the softmax probabilities.
 
 \begin{algorithm}
 \begin{algorithmic}
@@ -239,7 +239,7 @@ In fact, a well known optimization is to skip the softmax operation altogether a
 \label{algo:Argmax only}
 \end{algorithm}
 
-This changes does not reduce the asymtotic runtime of our algorithm which remains at $\mathcal{O}(|p|)$, it brings the number of iterations over $p$ down from 5 to 1. In practise, this has a significant affect on inference speed.
+These changes do not reduce the asymtotic runtime of our algorithm, which remains at $\mathcal{O}(|p|)$, but it does bring the number of iterations over $p$ down from 5 to 1. In practise, this has a significant affect on inference speed.
 
 \subsection{Top-up Batching}
 
