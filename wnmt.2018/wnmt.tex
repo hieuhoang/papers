@@ -50,12 +50,28 @@
 
 \begin{abstract}
 
-As neural machine translation (NMT) models have become the new state-of-the-art, the challenge is to make their deployment efficient and economical. We have identified two areas where typical NMT models differ significantly from other deep-learning models that impact on their inference speed. Firstly, NMT models usually contains a large number of output classes, corresponding to the output vocabulary. Secondly, rather than a single label, the output from machine translation models is a sequence of class labels that makes up the words or sub-words in the target sentence. Target sentence lengths are unpredictable, leading to inefficiencies during batch processing. We provide solutions for each of these issues which together increase batched inference speed by up to 57\% on modern GPUs without affecting model quality.
+This paper describe the submissions based on Amun, the fast inference engine for neural machine translation. Through efficient implementation, novel changes to the algorithms, our fastest submission is by far the fastest in the shared task. By using more complex models and with model distillation, our other submissions combine the inherent speed of our inference engine with better quality translation.
+
+
+%The team is composed of members from the University of Edinburgh, Adam Mickiewicz University, Microsoft, Tilde, and the Internation Maritime Organization.
 
 \end{abstract}
 
 \section{Introduction}
 \label{sec:Introduction}
+
+As neural machine translation (NMT) models have become the new state-of-the-art, the challenge is to make their deployment efficient and economical. This is the challenge that this shared task is shining a spotlight on.
+
+It is tempting to use a general deep-learning toolkit such as Tensorflow or Pytorch to train and do the the inference. Faster translation could be obtained by tuning parameters within the toolkit, and choosing fast models. We believe this is the approach most other submissions have taken.
+
+Our inference engine, Amun, is developed on the premise that fast neural network inference is an issue that deserves dedicated tools which are not hobbled by other objectives such as training or support for multiple models. A dedicated tool that can deliver on the useful goal of fast inference, but also serves as a test bed for research into neural network inference without having to be concerned with maintaining a more complete toolkit. Amun is also useful as a means to explore the upper limit of what is possible for a particular model and hardware.
+
+In summary, Amun is an inference-only engine that only supports a limited number of NMT models and put fast inference on modern GPU above all other priorities. The consequence of this focused approach can be seen in the result of the shared task.
+
+
+//////////////////////////////////////////////
+
+We have identified two areas where typical NMT models differ significantly from other deep-learning models that impact on their inference speed. Firstly, NMT models usually contains a large number of output classes, corresponding to the output vocabulary. Secondly, rather than a single label, the output from machine translation models is a sequence of class labels that makes up the words or sub-words in the target sentence. Target sentence lengths are unpredictable, leading to inefficiencies during batch processing. We provide solutions for each of these issues which together increase batched inference speed by up to 57\% on modern GPUs without affecting model quality.
 
 We examine two areas that are critical to fast NMT inference where the models differ significantly from other deep-learning models. We believe the optimizations of these models have been overlooked by the general deep-learning community.
 
