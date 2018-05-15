@@ -50,12 +50,8 @@
 
 \begin{abstract}
 
-This paper describe the submissions by members of the University of Edinburgh, Adam Mickiewicz University, Tilde and University of Alicante. We submit two systems based on Amun, the fast inference engine for neural machine translation. We partipated
+This paper describe the submissions to the efficiency track for GPUs by members of the University of Edinburgh, Adam Mickiewicz University, Tilde and University of Alicante. We focus on efficient implementation of the recurrent deep-learning model as implemented in Amun, the fast inference engine for neural machine translation. We improve the performance with an efficient mini-batching and maxi-batching algorithm. Translation speed was also reduced by fusing the softmax operation with the beam seach algorithm.
 
-Through efficient implementation and novel enhancements to the algorithms, our fastest submission is by far the fastest in the shared task. By using more complex models and with model distillation, our other submissions combine the inherent speed of our inference engine with better quality translation.
-
-
-%The team is composed of members from the University of Edinburgh, Adam Mickiewicz University, Microsoft, Tilde, and the Internation Maritime Organization.
 
 \end{abstract}
 
@@ -75,58 +71,13 @@ We submitted two systems to this year's shared task for the efficient translatio
 We will describe below our experimental setup as well as the enhancements to Amun that we feel enabled it to achieve its outstanding speed.
 
 
-Exper
+\section{Improvements}
 
-//////////////////////////////////////////////
+We desribe the main enhancements to Amun since the original public in 2016.
 
-We have identified two areas where typical NMT models differ significantly from other deep-learning models that impact on their inference speed. Firstly, NMT models usually contains a large number of output classes, corresponding to the output vocabulary. Secondly, rather than a single label, the output from machine translation models is a sequence of class labels that makes up the words or sub-words in the target sentence. Target sentence lengths are unpredictable, leading to inefficiencies during batch processing. We provide solutions for each of these issues which together increase batched inference speed by up to 57\% on modern GPUs without affecting model quality.
+\subsection{Batching}
 
-We examine two areas that are critical to fast NMT inference where the models differ significantly from other deep-learning models. We believe the optimizations of these models have been overlooked by the general deep-learning community.
-
-Firstly, the number of classes in many deep-learning applications is small. However, the number of classes in NMT models is typically in the tens or hundreds of thousands, corresponding to the vocabulary size of the output language. For example, ~\citet{sennrich-haddow-birch:2016:P16-12} experimented with target vocabulary sizes of 60,000 and 90,000 sub-word units. This makes the output layer of NMT models very computationally expensive. Figure~\ref{fig:pie-time-europarl} shows the breakdown of amount of time during translation our NMT system; nearly 70\% of the time is involved in the output layer. We will look at optimizations which explicitly target the output layer.
-\begin{figure}
-\centering
-\begin{tabular}{cc}
-{\includegraphics[scale=0.3]{pie-time-europarl.png}} 
-\end{tabular}
-\caption{Proportion of time spent during translation (Europarl test set)}
-\label{fig:pie-time-europarl}
-\end{figure} 
-
-Secondly, the use of mini-batching is critical for fast model inference. However, mini-batching does not take into account variable sentence lengths which decrease the actual number of input or output sentences that are processed in parallel, negating the benefit of mini-batching. This can be partially reduced in the encoding with \emph{maxi-batching}, i.e. pre-sorting sentences by length before creating mini-batches with similar length source sentences. However, maxi-batching can introduce unacceptable delay in response for online applications as the input are not processed in the order they came. It is also not appropriate for applications where only the output lengths varies, for example, image captioning.
-
-Even with sequence-to-sequence NMT models, target sentence lengths will still differ even for similar length inputs, compromising decoding performance. Figure~\ref{fig:batch-size} shows the actual batch size during decoding with a maximum batch size of 128; the batch was full in only 42\% of decoding iterations.
-
-\begin{figure}
-\centering
-\begin{tabular}{cc}
-{\includegraphics[scale=0.3]{batch-size.png}} 
-\end{tabular}
-\caption{Actual batch size during decoding (Europarl test set)}
-\label{fig:batch-size}
-\end{figure} 
-
-We will propose an alternative batching algorithm to increase the actual batch size during decoding without the problems associated with mini-batching and maxi-batching.
-
-\section{Prior Work}
-
-Deep-learning models has been successfully used on many machine learning task in recent years in areas as diverse as computer vision and natural language processing. This success have been followed by the rush to put these model into production. The computational resources required in order to run these models has been challenging but, fortunately, there has been a lot work to meet this challenge.
-
-Hardware accelerators such as GPUs are very popular but other specialized hardware such as custom processors~\citep{DBLP:journals/corr/JouppiYPPABBBBB17} and FPGA~\citep{DBLP:journals/corr/LaceyTA16} have been used. Hardware-supported reduced precision is also an ideal way to speed up model inference~\citep{DBLP:journals/corr/abs-1710-03740}.
-
-Simpler, faster models have been created that are as good, or almost as good, as more slower, more complex models~\citep{DBLP:journals/corr/BahdanauCB14}. Research have also gone into smaller, faster models that can approximate slower, bigger models~\citep{DBLP:conf/emnlp/KimR16}. Some models have been justified as more suited for the parallel architecture of GPUs~\cite{DBLP:journals/corr/VaswaniSPUJGKP17}~\cite{gehring2017convs2s}.
-
-The speed of the softmax layer when used with large vocabularies have been looked at in~\citet{DBLP:journals/corr/GraveJCGJ16} but there have been many other attempts at faster softmax, for example~\citet{DBLP:journals/corr/abs-1301-3781}, ~\citet{Zoph-2016}.
-
-There has been surprisingly little work on batching algorithms, considering its critical importance for efficient deep-learning training and inference. ~\citet{Neubig-autobatching} describe an novel batching algorithm, however, its aim is to alleviate the burden on developers of batching models rather than faster batching.
-
-Our paper follows most closely on from ~\citet{DBLP:conf/emnlp/Devlin17} which achieved faster NMT inference mainly by novel implementation of an existing model. However, we differ by focusing on GPU implementation, specifically the output layer, and the batching algorithm which was not touched on by the previous work. Our model is based on that of ~\citet{D14-1179} and ~\citet{sennrich-haddow-birch:2016:P16-12} but our work is applicable to other models and applications. % rather than CPUs as pursued by ~\cite{DBLP:conf/emnlp/Devlin17}.
-
-
-\section{Proposal}
-\label{sec:Proposal}
-
-\subsection{Softmax and Beam Search Fusion}
+\subsection{Softmax and Beam Search Kernel Fusion}
 
 The output layer of most deep learning models consist of the following steps
 \begin{enumerate}
@@ -264,6 +215,62 @@ In fact, a well known optimization is to skip softmax altogether and calculate t
 \end{algorithm}
 
 These changes do not reduce the asymptotic runtime of our algorithm, which remains at $\mathcal{O}(|p|)$, but it does bring the number of iterations over $p$ down from 5 to 1. In practise, this has a significant affect on inference speed.
+
+\subsection{Half-Precision}
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+
+We have identified two areas where typical NMT models differ significantly from other deep-learning models that impact on their inference speed. Firstly, NMT models usually contains a large number of output classes, corresponding to the output vocabulary. Secondly, rather than a single label, the output from machine translation models is a sequence of class labels that makes up the words or sub-words in the target sentence. Target sentence lengths are unpredictable, leading to inefficiencies during batch processing. We provide solutions for each of these issues which together increase batched inference speed by up to 57\% on modern GPUs without affecting model quality.
+
+We examine two areas that are critical to fast NMT inference where the models differ significantly from other deep-learning models. We believe the optimizations of these models have been overlooked by the general deep-learning community.
+
+Firstly, the number of classes in many deep-learning applications is small. However, the number of classes in NMT models is typically in the tens or hundreds of thousands, corresponding to the vocabulary size of the output language. For example, ~\citet{sennrich-haddow-birch:2016:P16-12} experimented with target vocabulary sizes of 60,000 and 90,000 sub-word units. This makes the output layer of NMT models very computationally expensive. Figure~\ref{fig:pie-time-europarl} shows the breakdown of amount of time during translation our NMT system; nearly 70\% of the time is involved in the output layer. We will look at optimizations which explicitly target the output layer.
+\begin{figure}
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.3]{pie-time-europarl.png}} 
+\end{tabular}
+\caption{Proportion of time spent during translation (Europarl test set)}
+\label{fig:pie-time-europarl}
+\end{figure} 
+
+Secondly, the use of mini-batching is critical for fast model inference. However, mini-batching does not take into account variable sentence lengths which decrease the actual number of input or output sentences that are processed in parallel, negating the benefit of mini-batching. This can be partially reduced in the encoding with \emph{maxi-batching}, i.e. pre-sorting sentences by length before creating mini-batches with similar length source sentences. However, maxi-batching can introduce unacceptable delay in response for online applications as the input are not processed in the order they came. It is also not appropriate for applications where only the output lengths varies, for example, image captioning.
+
+Even with sequence-to-sequence NMT models, target sentence lengths will still differ even for similar length inputs, compromising decoding performance. Figure~\ref{fig:batch-size} shows the actual batch size during decoding with a maximum batch size of 128; the batch was full in only 42\% of decoding iterations.
+
+\begin{figure}
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.3]{batch-size.png}} 
+\end{tabular}
+\caption{Actual batch size during decoding (Europarl test set)}
+\label{fig:batch-size}
+\end{figure} 
+
+We will propose an alternative batching algorithm to increase the actual batch size during decoding without the problems associated with mini-batching and maxi-batching.
+
+\section{Prior Work}
+
+Deep-learning models has been successfully used on many machine learning task in recent years in areas as diverse as computer vision and natural language processing. This success have been followed by the rush to put these model into production. The computational resources required in order to run these models has been challenging but, fortunately, there has been a lot work to meet this challenge.
+
+Hardware accelerators such as GPUs are very popular but other specialized hardware such as custom processors~\citep{DBLP:journals/corr/JouppiYPPABBBBB17} and FPGA~\citep{DBLP:journals/corr/LaceyTA16} have been used. Hardware-supported reduced precision is also an ideal way to speed up model inference~\citep{DBLP:journals/corr/abs-1710-03740}.
+
+Simpler, faster models have been created that are as good, or almost as good, as more slower, more complex models~\citep{DBLP:journals/corr/BahdanauCB14}. Research have also gone into smaller, faster models that can approximate slower, bigger models~\citep{DBLP:conf/emnlp/KimR16}. Some models have been justified as more suited for the parallel architecture of GPUs~\cite{DBLP:journals/corr/VaswaniSPUJGKP17}~\cite{gehring2017convs2s}.
+
+The speed of the softmax layer when used with large vocabularies have been looked at in~\citet{DBLP:journals/corr/GraveJCGJ16} but there have been many other attempts at faster softmax, for example~\citet{DBLP:journals/corr/abs-1301-3781}, ~\citet{Zoph-2016}.
+
+There has been surprisingly little work on batching algorithms, considering its critical importance for efficient deep-learning training and inference. ~\citet{Neubig-autobatching} describe an novel batching algorithm, however, its aim is to alleviate the burden on developers of batching models rather than faster batching.
+
+Our paper follows most closely on from ~\citet{DBLP:conf/emnlp/Devlin17} which achieved faster NMT inference mainly by novel implementation of an existing model. However, we differ by focusing on GPU implementation, specifically the output layer, and the batching algorithm which was not touched on by the previous work. Our model is based on that of ~\citet{D14-1179} and ~\citet{sennrich-haddow-birch:2016:P16-12} but our work is applicable to other models and applications. % rather than CPUs as pursued by ~\cite{DBLP:conf/emnlp/Devlin17}.
+
+
+\section{Proposal}
+\label{sec:Proposal}
+
+
 
 \subsection{Top-up Batching}
 
