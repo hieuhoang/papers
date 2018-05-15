@@ -73,11 +73,26 @@ We will describe below our experimental setup as well as the enhancements to Amu
 
 \section{Improvements}
 
-We desribe the main enhancements to Amun since the original public in 2016.
+We desribe the main enhancements to Amun since the original 2016 publication.
 
 \subsection{Batching}
 
-\subsection{Softmax and Beam Search Kernel Fusion}
+The use of mini-batching is critical for fast model inference. However, a percularity 
+
+However, mini-batching often does not take into account variable sentence lengths which decrease the actual number of input or output sentences that are processed in parallel, negating the benefit of mini-batching. This can be partially reduced in the encoding with \emph{maxi-batching}, i.e. pre-sorting sentences by length before creating mini-batches with similar length source sentences. However, maxi-batching can introduce unacceptable delay in response for online applications as the input are not processed in the order they came. It is also not appropriate for applications where only the output lengths varies, for example, image captioning.
+
+
+\subsection{Softmax and Beam Search Fusion}
+
+The number of classes in many deep-learning applications is small but this is often not the case with NMT models. For example, ~\citet{sennrich-haddow-birch:2016:P16-12} experimented with target vocabulary sizes of 60,000 and 90,000 sub-word units. This makes the output layer of NMT models very computationally expensive. Figure~\ref{fig:pie-time-europarl} shows the breakdown of amount of time during translation our NMT system; nearly 70\% of the time is involved in the output layer. We describe the steps to fuse the operations to improve efficiency.
+\begin{figure}
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.3]{pie-time-europarl.png}} 
+\end{tabular}
+\caption{Proportion of time spent during translation (Europarl test set)}
+\label{fig:pie-time-europarl}
+\end{figure} 
 
 The output layer of most deep learning models consist of the following steps
 \begin{enumerate}
@@ -220,24 +235,14 @@ These changes do not reduce the asymptotic runtime of our algorithm, which remai
 
 
 
-/////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
 
 
 We have identified two areas where typical NMT models differ significantly from other deep-learning models that impact on their inference speed. Firstly, NMT models usually contains a large number of output classes, corresponding to the output vocabulary. Secondly, rather than a single label, the output from machine translation models is a sequence of class labels that makes up the words or sub-words in the target sentence. Target sentence lengths are unpredictable, leading to inefficiencies during batch processing. We provide solutions for each of these issues which together increase batched inference speed by up to 57\% on modern GPUs without affecting model quality.
 
 We examine two areas that are critical to fast NMT inference where the models differ significantly from other deep-learning models. We believe the optimizations of these models have been overlooked by the general deep-learning community.
 
-Firstly, the number of classes in many deep-learning applications is small. However, the number of classes in NMT models is typically in the tens or hundreds of thousands, corresponding to the vocabulary size of the output language. For example, ~\citet{sennrich-haddow-birch:2016:P16-12} experimented with target vocabulary sizes of 60,000 and 90,000 sub-word units. This makes the output layer of NMT models very computationally expensive. Figure~\ref{fig:pie-time-europarl} shows the breakdown of amount of time during translation our NMT system; nearly 70\% of the time is involved in the output layer. We will look at optimizations which explicitly target the output layer.
-\begin{figure}
-\centering
-\begin{tabular}{cc}
-{\includegraphics[scale=0.3]{pie-time-europarl.png}} 
-\end{tabular}
-\caption{Proportion of time spent during translation (Europarl test set)}
-\label{fig:pie-time-europarl}
-\end{figure} 
 
-Secondly, the use of mini-batching is critical for fast model inference. However, mini-batching does not take into account variable sentence lengths which decrease the actual number of input or output sentences that are processed in parallel, negating the benefit of mini-batching. This can be partially reduced in the encoding with \emph{maxi-batching}, i.e. pre-sorting sentences by length before creating mini-batches with similar length source sentences. However, maxi-batching can introduce unacceptable delay in response for online applications as the input are not processed in the order they came. It is also not appropriate for applications where only the output lengths varies, for example, image captioning.
 
 Even with sequence-to-sequence NMT models, target sentence lengths will still differ even for similar length inputs, compromising decoding performance. Figure~\ref{fig:batch-size} shows the actual batch size during decoding with a maximum batch size of 128; the batch was full in only 42\% of decoding iterations.
 
