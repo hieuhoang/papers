@@ -50,7 +50,9 @@
 
 \begin{abstract}
 
-This paper describe the submissions based on Amun, the fast inference engine for neural machine translation. Through efficient implementation, novel changes to the algorithms, our fastest submission is by far the fastest in the shared task. By using more complex models and with model distillation, our other submissions combine the inherent speed of our inference engine with better quality translation.
+This paper describe the submissions by members of the University of Edinburgh, Adam Mickiewicz University, Tilde and University of Alicante. We submit two systems based on Amun, the fast inference engine for neural machine translation. We partipated
+
+Through efficient implementation and novel enhancements to the algorithms, our fastest submission is by far the fastest in the shared task. By using more complex models and with model distillation, our other submissions combine the inherent speed of our inference engine with better quality translation.
 
 
 %The team is composed of members from the University of Edinburgh, Adam Mickiewicz University, Microsoft, Tilde, and the Internation Maritime Organization.
@@ -62,16 +64,18 @@ This paper describe the submissions based on Amun, the fast inference engine for
 
 As neural machine translation (NMT) models have become the new state-of-the-art, the challenge is to make their deployment efficient and economical. This is the challenge that this shared task is shining a spotlight on.
 
-It is tempting to use a general deep-learning toolkit such as Tensorflow or Pytorch to train and do the the inference. Faster translation could be obtained by tuning parameters within the toolkit, and choosing fast models. We believe this is the approach most other submissions have taken.
+It is tempting to use a general purpose deep-learning toolkit such as Tensorflow or Pytorch to train and do the the inference where faster translation could be obtained by tuning parameters within the toolkit, and choosing fast models. We believe this is the approach most other submissions have taken.
 
-Our inference engine, Amun, is developed on the premise that fast neural network inference is an issue that deserves dedicated tools which are not hobbled by other objectives such as training or support for multiple models. A tool that can deliver on the useful goal of fast inference, but also serves as a test bed for research into neural network inference without having to be concerned with maintaining a more complete toolkit. A tool that is also useful as a means to explore the upper limit of the possible speed for a particular model and hardware.
+We take an opposing approach by using and enhancing a custom inference engine, Amun, which is developed on the premise that fast neural network inference is an issue that deserves dedicated tools which are not compromised by other objectives such as training or support for multiple models. As well as delivering on the useful goal of fast inference, it can serve as a test-bed for novel ideas on neural network inference, and is useful as a means to explore the upper limit of the possible speed for a particular model and hardware.
 
-In summary, Amun is an inference-only engine that supports a limited number of NMT models and put fast inference on modern GPU above all other priorities. The consequence of this focused approach can be seen in the result of the shared task.
+That is, Amun is an inference-only engine that supports a limited number of NMT models that put fast inference on modern GPU above all other consideration. The consequence of this focused approach can be seen in the results of the shared task ???.
 
-We submitted three systems to this years shared task. Our first submission was tailored to be as fast as possible while being above the baseline BLEU score. Our second submission trade some of the speed of first submission to return good quality translation. Both of these systems were trained with standard training regimes.
+We submitted two systems to this year's shared task for the efficient translation on GPU. Our first submission was tailored to be as fast as possible while being above the baseline BLEU score. Our second submission trade some of the speed of first submission to return good quality translation.
 
-Our last submission uses model distillation to improve translation quality and increase speed.
+We will describe below our experimental setup as well as the enhancements to Amun that we feel enabled it to achieve its outstanding speed.
 
+
+Exper
 
 //////////////////////////////////////////////
 
