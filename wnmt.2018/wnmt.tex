@@ -62,9 +62,7 @@ As neural machine translation (NMT) models have become the new state-of-the-art,
 
 It is tempting to use a general purpose deep-learning toolkit such as Tensorflow or Pytorch to train and do the the inference where faster translation could be obtained by tuning parameters within the toolkit, and choosing fast models. We believe this is the approach most other submissions have taken.
 
-We take an opposing approach by using and enhancing a custom inference engine, Amun, which is developed on the premise that fast neural network inference is an issue that deserves dedicated tools which are not compromised by other objectives such as training or support for multiple models. As well as delivering on the useful goal of fast inference, it can serve as a test-bed for novel ideas on neural network inference, and is useful as a means to explore the upper limit of the possible speed for a particular model and hardware.
-
-That is, Amun is an inference-only engine that supports a limited number of NMT models that put fast inference on modern GPU above all other consideration. The consequence of this focused approach can be seen in the results of the shared task ???.
+We take an opposing approach by using and enhancing a custom inference engine, Amun, which is developed on the premise that fast neural network inference is an issue that deserves dedicated tools which are not compromised by other objectives such as training or support for multiple models. As well as delivering on the useful goal of fast inference, it can serve as a test-bed for novel ideas on neural network inference, and is useful as a means to explore the upper limit of the possible speed for a particular model and hardware. That is, Amun is an inference-only engine that supports a limited number of NMT models that put fast inference on modern GPU above all other considerations. %The consequence of this focused approach can be seen in the results of the shared task ???.
 
 We submitted two systems to this year's shared task for the efficient translation on GPU. Our first submission was tailored to be as fast as possible while being above the baseline BLEU score. Our second submission trade some of the speed of first submission to return good quality translation.
 
@@ -77,9 +75,35 @@ We desribe the main enhancements to Amun since the original 2016 publication.
 
 \subsection{Batching}
 
-The use of mini-batching is critical for fast model inference. However, a percularity 
+The use of mini-batching is critical for fast model inference. The size of the batch is determined by the number of inputs sentences to the encoder in an encoder-decoder model. However, the number of batches during decoding can vary as some sentences have completed translating or the beam search add more hypotheses to the batch.
 
-However, mini-batching often does not take into account variable sentence lengths which decrease the actual number of input or output sentences that are processed in parallel, negating the benefit of mini-batching. This can be partially reduced in the encoding with \emph{maxi-batching}, i.e. pre-sorting sentences by length before creating mini-batches with similar length source sentences. However, maxi-batching can introduce unacceptable delay in response for online applications as the input are not processed in the order they came. It is also not appropriate for applications where only the output lengths varies, for example, image captioning.
+It is tempting to ignore these consideration, for example, by always decoding with a constant batch and beam size and ignoring hypotheses which are not needed. This is the strategy taken by other inference engines such as Marian, at the cost of lower translation speed due to wasteful processing.
+
+The Amun engine implements an efficient batching algorithm that takes into account the actual number of hypotheses that needs to be decoded at each decoding step, Figure~\ref{algo:Mini-batching}.
+
+\begin{algorithm}
+\begin{algorithmic}
+\Procedure{Batching}{encoded records $i$}
+
+\State Create batch $b$ from $i$
+
+\While{$b$ is not empty} 
+  \State $b' \gets$ DecodeAndBeamSearch($b$)
+  \State $b \gets \emptyset$
+  
+  \ForAll{hypo $h$ in $b'$}
+    \If{$h \neq \textless/s \textgreater$  }
+      \State Add $h$ to $b$
+    \EndIf
+  \EndFor
+\EndWhile
+
+\EndProcedure
+
+\end{algorithmic}
+\caption{Mini-batching}
+\label{algo:Mini-batching}
+\end{algorithm}
 
 
 \subsection{Softmax and Beam Search Fusion}
@@ -281,28 +305,6 @@ Our paper follows most closely on from ~\citet{DBLP:conf/emnlp/Devlin17} which a
 
 The standard mini-batching algorithm is outlined in Algorithm~\ref{algo:Mini-batching}.
 
-\begin{algorithm}
-\begin{algorithmic}
-\Procedure{Mini-Batching}{}
-\While{more input} 
-  \State Create batch $b$
-  \State Encode($b$)
-  \While{batch is not empty} 
-    \State Decode($b$)
-    \ForAll{sentence $s$ in $b$}
-      \If{trans($s$) is complete}
-        \State Remove $s$ from $b$
-      \EndIf
-    \EndFor
-  \EndWhile
-\EndWhile
-
-\EndProcedure
-
-\end{algorithmic}
-\caption{Mini-batching}
-\label{algo:Mini-batching}
-\end{algorithm}
 
 This algorithm encode the sentences for a batch, followed by decoding the batch. The decoding stop once all sentences in the batch are completed. This is a potential inefficiency as the number of remaining sentences may not be optimal.
 
@@ -541,4 +543,5 @@ For future work, we would like to apply our optimization for other NLP and deep-
 
 
 \end{document}
+\grid
 \grid
