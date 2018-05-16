@@ -83,11 +83,11 @@ The Amun engine implements an efficient batching algorithm that takes into accou
 
 \begin{algorithm}
 \begin{algorithmic}
-\Procedure{Batching}{encoded records $i$}
+\Procedure{Batching}{encoded sentences $i$}
 
 \State Create batch $b$ from $i$
 
-\While{$b$ is not empty} 
+\While{$b \neq \emptyset$} 
   \State $b' \gets$ DecodeAndBeamSearch($b$)
   \State $b \gets \emptyset$
   
@@ -279,8 +279,8 @@ We experimented with varying the vocabulary size and the RNN state size before s
 \begin{tabular}{|l|r|r|r|} \hline
 		& \multicolumn{3}{|c|}{\emph{State dim}}	\\ \hline	
 Vocab size	& 256	& 512	& 1024 \\ \hline
-1000 		& 12.23 &	& 12.77 \\ 
-5000		& 16.79	&  	& 17.16 \\ 
+1.000 		& 12.23 &	& 12.77 \\ 
+5,000		& 16.79	&  	& 17.16 \\ 
 10,000		& 18.00	& 	& 18.19 \\
 20,000		& -	&	& 19.52 \\ 
 30,000		& 18.51	& 19.17	& 19.64 \\ \hline
