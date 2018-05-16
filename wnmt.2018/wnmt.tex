@@ -222,11 +222,11 @@ Secondly, we are only interested in the probabilities of the best classes. Since
 \label{algo:Fused Kernel}
 \end{algorithm}
 
-Thirdly, the calculation of $max$ and $sum$ can be accomplished in one loop by adjusting $sum$ whenever a higher $max$ is found:
+Thirdly, the calculation of $max$ and $sum$ can be accomplished in one loop by adjusting $sum$ whenever a higher $max$ is found during the looping:
 \begin{eqnarray*}
-sum & = & e^{a - max_b} + e^{b - max_b} \\
-    & = & e^{a - max_a + \Delta} + e^{b - max_b} \\
-    & = & e^{\Delta} e^{a - max_a} + e^{b - max_b}
+sum & = & e^{x_t - max_b} + \sum_{i=0...t-1}{e^{x_i - max_b}} \\
+    & = & e^{x_t - max_b} + \sum_{i=0...t-1}{e^{x_i - max_a + \Delta}}  \\
+    & = & e^{x_t - max_b} + e^{\Delta} \times \sum_{i=0...t-1}{e^{x_i - max_a}} 
 \end{eqnarray*}
 where $max_a$ is the original maximum value, $max_b$ is the new, higher maximum value, ie. $max_b > max_a$, and $\Delta = max_a - max_b$. The outline of our function is shown in Algorithm~\ref{algo:Fused Kernel}.
 
@@ -253,7 +253,7 @@ In fact, a well known optimization is to skip softmax altogether and calculate t
 \label{algo:Argmax only}
 \end{algorithm}
 
-These changes do not reduce the asymptotic runtime of our algorithm, which remains at $\mathcal{O}(|p|)$, but it does bring the number of iterations over $p$ down from 5 to 1. In practise, this has a significant affect on inference speed.
+%These changes do not reduce the asymptotic runtime of our algorithm, which remains at $\mathcal{O}(|p|)$, but it does bring the number of iterations over $p$ down from 5 to 1. In practise, this has a significant affect on inference speed.
 
 \subsection{Half-Precision}
 
@@ -315,6 +315,20 @@ Beam size	& 40,000	& 50,000 \\ \hline
 \section{Result}
 \label{sec:Result}
 
+\subsection{Batching}
+
+Using batching can increase the translation speed by over 20 times in Amun and shows little degradation with larger batch sizes, Figure~\ref{fig:batch-size}. This contrast with using the Marian, which uses a simpler batching algorithm, where the speedup is approximately 16 times and inference speed slows down when the batch size is above 1000.
+
+\begin{figure}
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.3]{batch-size.png}} 
+\end{tabular}
+\caption{Actual batch size during decoding}
+\label{fig:batch-size}
+\end{figure} 
+
+\subsection{Softmax and Beam Search Fusion}
 
 ////////////////////////////////////////////////////////////////
 
