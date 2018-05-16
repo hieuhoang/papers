@@ -295,13 +295,15 @@ After further experimentation, we decided to use sentence length normalization a
 Our second system uses multiplicative-LSTM in the encoder and the first layer of a decder, and a GRU in the second layer, using an extension of the Nematus toolkit which supports such model. We trained 2 systems with differing vocabulary sizes and varied the beam sizes before chose the the settings that produces good translation quality on the validation set, Table~\ref{tab:mLSTM BLEU - vocab sizes}. 
 
 \begin{table}
-\small
 \begin{center}
-\begin{tabular}{|l|r|r|r|r|r|} \hline
-		& \multicolumn{5}{|l|}{\emph{Beam size}}	\\ \hline	
-Vocab size	& 1	& 2	& 2	& 4	& 5 \\ \hline
-40,000 		& 23.45	& 24.15	& 24.48	& 24.42	& 24.48 \\ 
-50,000		& 23.32	& 24.04	& 	&	& \\ \hline
+\begin{tabular}{|l|r|r|} \hline
+		& \multicolumn{2}{|l|}{\emph{Vocab size}}	\\ \hline	
+Beam size	& 40,000	& 50,000 \\ \hline
+1 		& 23.45		& 23.32	\\ 
+2		& 24.15		& 24.04	\\
+3		& 24.48		&  	\\
+4		& 24.42		& 	\\
+5		& 24.48		& 	\\ \hline
 \end{tabular}
 \end{center}
 \caption{Validation set BLEU for mLSTM-based model}
