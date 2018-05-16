@@ -77,7 +77,7 @@ We desribe the main enhancements to Amun since the original 2016 publication.
 
 The use of mini-batching is critical for fast model inference. The size of the batch is determined by the number of inputs sentences to the encoder in an encoder-decoder model. However, the number of batches during decoding can vary as some sentences have completed translating or the beam search add more hypotheses to the batch.
 
-It is tempting to ignore these consideration, for example, by always decoding with a constant batch and beam size and ignoring hypotheses which are not needed. This is the strategy taken by other inference engines such as Marian, at the cost of lower translation speed due to wasteful processing.
+It is tempting to ignore these considerations, for example, by always decoding with a constant batch and beam size and ignoring hypotheses which are not needed but this comes at a cost of lower translation speed due to wasteful processing.
 
 The Amun engine implements an efficient batching algorithm that takes into account the actual number of hypotheses that needs to be decoded at each decoding step, Figure~\ref{algo:Mini-batching}.
 
@@ -108,7 +108,7 @@ The Amun engine implements an efficient batching algorithm that takes into accou
 
 \subsection{Softmax and Beam Search Fusion}
 
-The number of classes in many deep-learning applications is small but this is often not the case with NMT models. For example, ~\citet{sennrich-haddow-birch:2016:P16-12} experimented with target vocabulary sizes of 60,000 and 90,000 sub-word units. This makes the output layer of NMT models very computationally expensive. Figure~\ref{fig:pie-time-europarl} shows the breakdown of amount of time during translation our NMT system; nearly 70\% of the time is involved in the output layer. We describe the steps to fuse the operations to improve efficiency.
+Most NMT more predict a large number of classes in their output layer, corresponding to the number of words or subword units in their target language. For example, ~\citet{sennrich-haddow-birch:2016:P16-12} experimented with target vocabulary sizes of 60,000 and 90,000 sub-word units. This makes the output layer of NMT models very computationally expensive. Figure~\ref{fig:pie-time-europarl} shows the breakdown of amount of time during translation our NMT system; nearly 70\% of the time is involved in the output layer. We describe the steps to fuse the operations to improve efficiency.
 \begin{figure}
 \centering
 \begin{tabular}{cc}
@@ -222,13 +222,13 @@ Secondly, we are only interested in the probabilities of the best classes. Since
 \label{algo:Fused Kernel}
 \end{algorithm}
 
-Thirdly, the calculation of $max$ and $sum$ can be done in one loop by adjusting $sum$ whenever a higher $max$ is found:
+Thirdly, the calculation of $max$ and $sum$ can be accomplished in one loop by adjusting $sum$ whenever a higher $max$ is found:
 \begin{eqnarray*}
 sum & = & e^{a - max_b} + e^{b - max_b} \\
     & = & e^{a - max_a + \Delta} + e^{b - max_b} \\
     & = & e^{\Delta} e^{a - max_a} + e^{b - max_b}
 \end{eqnarray*}
-where $\Delta = max_a - max_b$ and $max_b > max_a$. The outline of our function is shown in Algorithm~\ref{algo:Fused Kernel}.
+where $max_a$ is the original maximum value, $max_b$ is the new, higher maximum value, ie. $max_b > max_a$, and $\Delta = max_a - max_b$. The outline of our function is shown in Algorithm~\ref{algo:Fused Kernel}.
 
 In fact, a well known optimization is to skip softmax altogether and calculate the argmax over the input vector, Algorithm~\ref{algo:Argmax only}. This is only possible for beam size 1 and when we are not interested in returning the softmax probabilities.
 
