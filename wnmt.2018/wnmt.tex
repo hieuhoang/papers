@@ -60,9 +60,9 @@ This paper describe the submissions to the efficiency track for GPUs by members 
 
 As neural machine translation (NMT) models have become the new state-of-the-art, the challenge is to make their deployment efficient and economical. This is the challenge that this shared task is shining a spotlight on.
 
-It is tempting to use a general purpose deep-learning toolkit such as Tensorflow or Pytorch to train and do the the inference where faster translation could be obtained by tuning parameters within the toolkit, and choosing fast models. We believe this is the approach most other submissions have taken.
+It is tempting to use a general purpose deep-learning toolkit such as Tensorflow or Pytorch to train and do the the inference where faster translation could be obtained by tuning parameters within the toolkit, and choosing fast models. %We believe this is the approach most other submissions have taken.
 
-We take an opposing approach by using and enhancing a custom inference engine, Amun, which is developed on the premise that fast neural network inference is an issue that deserves dedicated tools which are not compromised by other objectives such as training or support for multiple models. As well as delivering on the useful goal of fast inference, it can serve as a test-bed for novel ideas on neural network inference, and is useful as a means to explore the upper limit of the possible speed for a particular model and hardware. That is, Amun is an inference-only engine that supports a limited number of NMT models that put fast inference on modern GPU above all other considerations. %The consequence of this focused approach can be seen in the results of the shared task ???.
+We take an opposing approach by using and enhancing a custom inference engine, Amun~\citep{junczys2016neural}, which we developed on the premise that fast deep-learning inference is an issue that deserves dedicated tools which are not compromised by other objectives such as training or support for multiple models. As well as delivering on the useful goal of fast inference, it can serve as a test-bed for novel ideas on neural network inference, and is useful as a means to explore the upper limit of the possible speed for a particular model and hardware. That is, Amun is an inference-only engine that supports a limited number of NMT models that put fast inference on modern GPU above all other considerations. %The consequence of this focused approach can be seen in the results of the shared task ???.
 
 We submitted two systems to this year's shared task for the efficient translation on GPU. Our first submission was tailored to be as fast as possible while being above the baseline BLEU score. Our second submission trade some of the speed of first submission to return good quality translation.
 
@@ -259,7 +259,44 @@ These changes do not reduce the asymptotic runtime of our algorithm, which remai
 
 Reducing the number of bits needed to store floating point values from 32-bits to 16-bits promises to increase translation speed through faster calculations and reduced bandwidth usage. 16-bit floating point operations are supported by the GPU hardware and software available in the shared task.
 
-In practise, however, efficiently using half-precision value requires a comprehensive redvelopment of the GPU code. We therefore make do with using the GPU's Tensor Core fast matrix multiplication routines which transparently converts 32-bit float point input matrices to 16-bit values.
+In practise, however, efficiently using half-precision value requires a comprehensive redvelopment of the GPU code. We therefore make do with using the GPU's Tensor Core fast matrix multiplication routines which transparently converts 32-bit float point input matrices to 16-bit values and output a 32-bit float point product of the inputs.
+
+\section{Experimental Setup}
+\label{sec:Experimental Setup}
+
+Both of our submitted systems uses the sequence-to-sequence model similar to that described in ~\citet{sennrich-haddow-birch:2016:P16-12}, containing a bidirectional RNN in the encoder and a two-layer RNN in the decoder. We use BPE to adjust the vocabulary size.
+
+\subsection{GRU-based system}
+
+Our first system uses gated recurrent units (GRU) throughout, trained with Marian, but submitted both systems using the Amun inference engine.
+
+We experimented with varying the vocabulary size and the RNN state size before settling for a vocabulary size of 30,000 (for both source and target language) and 256 for the state size, Figure~\ref{tab:BLEU for newstest2014}.
+
+\begin{table}
+\begin{center}
+\small
+\begin{tabular}{|l|r|r|r|} \hline
+		& \multicolumn{3}{|c|}{\emph{State dim}}	\\ \hline	
+Vocab size	& 256	& 512	& 1024 \\ \hline
+1000 		& 10.9 	& 	& 11.8 \\ 
+5000		& 15.9	&  	& 16.4 \\ 
+10000		& 17.2	& 	& 17.9 \\
+20000		& -	&	& 18.4 \\ 
+30000		& 17.8	& 18.5	& 18.7 \\ \hline
+\end{tabular}
+\end{center}
+\caption{Test set BLEU (newstest2014) for hyper-parameters}
+\label{tab:BLEU for newstest2014}
+\end{table}
+
+After further experimentation, we decided to use sentence length normalization and NVidia's Tensor Core matrix multiplication which increased translation quality as well as translation speed. The beam was kept at 1 throughout for the fastet possible inference.
+
+\subsection{mLSTM-based system}
+
+Our second system uses multiplicative-LSTM in the encoder and the first layer of a decder, and a GRU in the second layer. We trained 2 systems with differing vocabulary sizes using an extension of the Nematus toolkit which supports such model.
+
+
+
 
 ////////////////////////////////////////////////////////////////
 
@@ -356,36 +393,6 @@ Rather than decoding the same batch until all sentences in the batch are complet
 \end{algorithm}
 
 
-\section{Experimental Setup}
-\label{sec:Experimental Setup}
-
-We trained a sequence-to-sequence, encoder-decoder NMT system similar to that described in ~\citet{sennrich-haddow-birch:2016:P16-12}. This uses recurrent neural networks with gated recurrent units. The input and output vocabulary size were both set to 85,000 sub-words using byte-pair encoding (BPE) to adjust the vocabulary to the desired size. The hidden layer dimensions was set to 512. %We used the Marian toolkit to train our models.
-
-For inference, we used and extend Amun~\citep{junczys2016neural}, the fastest open-source inference engine we are aware of for the model used in this paper. We used a beam size of 5, mini-batch of 128 sentences and maxi-batch 1280, unless otherwise stated.
-
-The hardware used in all experiments was an Nvidia GTX 1060 GPU on a host containing 8 Intel hypercores running at 2.8Ghz, 16GB RAM and SSD hard drive.
-
-Our training data consisted of the German-English parallel sentences from the Europarl corpus~\citep{Koehn:2005:MTS}. To test inference speed, we used two test sets with differing characteristics:
-\begin{enumerate}
-   \item \vspace{-2 mm} a subset of the Europarl training data, which contains mostly long sentences, and is, of course, in the same domain as the training data
-   \item \vspace{-2 mm} a subset of the German-English data from the Open-Subtitles corpus, consisting of mostly short, out-of-domain sentences.
-\end{enumerate}
-Table~\ref{tab:corpora} gives further details of the test sets.
-
-\begin{table}
-\begin{center}
-\small
-\begin{tabular}{|l|r|r|} \hline
-		  & Europarl		& OpenSubtitles \\ \hline
-\# sentences  	  & 30,000 		& 50,000 \\
-\# sub-words 	  & 787,908 		& 467,654 \\ 
-Avg sub-words/sent & 26.3		& 9.4 \\
-Std dev subwords/sent & 14.9		& 6.1 \\ \hline
-\end{tabular}
-\end{center}
-\caption{Test sets}
-\label{tab:corpora}
-\end{table}
 
 
 \section{Results}
