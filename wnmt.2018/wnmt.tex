@@ -266,7 +266,7 @@ In practise, however, efficiently using half-precision value requires a comprehe
 
 Both of our submitted systems uses the sequence-to-sequence model similar to that described in ~\citet{sennrich-haddow-birch:2016:P16-12}, containing a bidirectional RNN in the encoder and a two-layer RNN in the decoder. We use BPE to adjust the vocabulary size.
 
-We used a variety of GPUs to train the models but all testing was done on an Nvidia V100. Translation quality was measured using BLEU, specifically multi-bleu as found in the Moses toolkit. The validation and test sets provided by the shared task organisers were used to measure translation quality, but a 50,000 sentence subset of the training data was used to measure translation speed to obtain longer, more accurate measuremenrs.
+We used a variety of GPUs to train the models but all testing was done on an Nvidia V100. Translation quality was measured using BLEU, specifically multi-bleu as found in the Moses toolkit. The validation and test sets provided by the shared task organisers were used to measure translation quality, but a 50,000 sentence subset of the training data was used to measure translation speed to obtain longer, more accurate measurements.
 
 \subsection{GRU-based system}
 
