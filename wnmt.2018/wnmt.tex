@@ -257,7 +257,9 @@ These changes do not reduce the asymptotic runtime of our algorithm, which remai
 
 \subsection{Half-Precision}
 
+Reducing the number of bits needed to store floating point values from 32-bits to 16-bits promises to increase translation speed through faster calculations and reduced bandwidth usage. 16-bit floating point operations are supported by the GPU hardware and software available in the shared task.
 
+In practise, however, efficiently using half-precision value requires a comprehensive redvelopment of the GPU code. We therefore make do with using the GPU's Tensor Core fast matrix multiplication routines which transparently converts 32-bit float point input matrices to 16-bit values.
 
 ////////////////////////////////////////////////////////////////
 
