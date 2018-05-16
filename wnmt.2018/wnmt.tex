@@ -270,22 +270,21 @@ Both of our submitted systems uses the sequence-to-sequence model similar to tha
 
 Our first system uses gated recurrent units (GRU) throughout, trained with Marian, but submitted both systems using the Amun inference engine.
 
-We experimented with varying the vocabulary size and the RNN state size before settling for a vocabulary size of 30,000 (for both source and target language) and 256 for the state size, Figure~\ref{tab:BLEU for newstest2014}.
+We experimented with varying the vocabulary size and the RNN state size before settling for a vocabulary size of 30,000 (for both source and target language) and 256 for the state size, Table~\ref{tab:BLEU for newstest2014}.
 
 \begin{table}
 \begin{center}
-\small
 \begin{tabular}{|l|r|r|r|} \hline
 		& \multicolumn{3}{|c|}{\emph{State dim}}	\\ \hline	
 Vocab size	& 256	& 512	& 1024 \\ \hline
-1000 		& 10.9 	& 	& 11.8 \\ 
-5000		& 15.9	&  	& 16.4 \\ 
-10000		& 17.2	& 	& 17.9 \\
-20000		& -	&	& 18.4 \\ 
-30000		& 17.8	& 18.5	& 18.7 \\ \hline
+1000 		& 12.23 &	& 12.77 \\ 
+5000		& 16.79	&  	& 17.16 \\ 
+10,000		& 18.00	& 	& 18.19 \\
+20,000		& -	&	& 19.52 \\ 
+30,000		& 18.51	& 19.17	& 19.64 \\ \hline
 \end{tabular}
 \end{center}
-\caption{Test set BLEU (newstest2014) for hyper-parameters}
+\caption{Validation set BLEU (newstest2014) for GRU-based model}
 \label{tab:BLEU for newstest2014}
 \end{table}
 
@@ -293,9 +292,24 @@ After further experimentation, we decided to use sentence length normalization a
 
 \subsection{mLSTM-based system}
 
-Our second system uses multiplicative-LSTM in the encoder and the first layer of a decder, and a GRU in the second layer. We trained 2 systems with differing vocabulary sizes using an extension of the Nematus toolkit which supports such model.
+Our second system uses multiplicative-LSTM in the encoder and the first layer of a decder, and a GRU in the second layer, using an extension of the Nematus toolkit which supports such model. We trained 2 systems with differing vocabulary sizes and varied the beam sizes before chose the the settings that produces good translation quality on the validation set, Table~\ref{tab:mLSTM BLEU - vocab sizes}. 
 
+\begin{table}
+\small
+\begin{center}
+\begin{tabular}{|l|r|r|r|r|r|} \hline
+		& \multicolumn{5}{|l|}{\emph{Beam size}}	\\ \hline	
+Vocab size	& 1	& 2	& 2	& 4	& 5 \\ \hline
+40,000 		& 23.45	& 24.15	& 24.48	& 24.42	& 24.48 \\ 
+50,000		& 23.32	& 24.04	& 	&	& \\ \hline
+\end{tabular}
+\end{center}
+\caption{Validation set BLEU for mLSTM-based model}
+\label{tab:mLSTM BLEU - vocab sizes}
+\end{table}
 
+\section{Result}
+\label{sec:Result}
 
 
 ////////////////////////////////////////////////////////////////
