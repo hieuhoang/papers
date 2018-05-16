@@ -328,6 +328,17 @@ Using batching can increase the translation speed by over 20 times in Amun and s
 \label{fig:batch-size}
 \end{figure} 
 
+The efficiency of Amun's batching algorithm can be seen by observing the time taken for each decoding step in a batch of sentence, Figure~\ref{fig:decode-step}. Amun's decoding becomes faster as sentences finish translating. By contrast, Marian's decoding time stays relatively constant.
+
+\begin{figure}
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.3]{decode-step.png}} 
+\end{tabular}
+\caption{Time taken for decoding each for a batch of 1280 sentences}
+\label{fig:decode-step}
+\end{figure} 
+
 \subsection{Softmax and Beam Search Fusion}
 
 ////////////////////////////////////////////////////////////////
