@@ -317,27 +317,29 @@ Beam size	& 40,000	& 50,000 \\ \hline
 
 \subsection{Batching}
 
-Using batching can increase the translation speed by over 20 times in Amun and shows little degradation with larger batch sizes, Figure~\ref{fig:batch-size}. This contrast with using the Marian, which uses a simpler batching algorithm, where the speedup is approximately 16 times and inference speed slows down when the batch size is above 1000.
-
-\begin{figure}
-\centering
-\begin{tabular}{cc}
-{\includegraphics[scale=0.3]{batch-size.png}} 
-\end{tabular}
-\caption{Actual batch size during decoding}
-\label{fig:batch-size}
-\end{figure} 
-
-The efficiency of Amun's batching algorithm can be seen by observing the time taken for each decoding step in a batch of sentence, Figure~\ref{fig:decode-step}. Amun's decoding becomes faster as sentences finish translating. By contrast, Marian's decoding time stays relatively constant.
+The efficiency of Amun's batching algorithm can be seen by observing the time taken for each decoding step in a batch of sentence, Figure~\ref{fig:decode-step}. Amun's decoding becomes faster as sentences finish translating. This contrast with the Marian inference engine, which uses a simpler batching algorithm, where the speed stays relatively constant throughout the decoding of the batch.
 
 \begin{figure}
 \centering
 \begin{tabular}{cc}
 {\includegraphics[scale=0.3]{decode-step.png}} 
 \end{tabular}
-\caption{Time taken for decoding each for a batch of 1280 sentences}
+\caption{Time taken for each decoding step for a batch of 1280 sentences}
 \label{fig:decode-step}
 \end{figure} 
+
+Using batching can increase the translation speed by over 20 times in Amun and shows little degradation with larger batch sizes, Figure~\ref{fig:batch-size}. Just as importantly, however, it doesn't suffer degradation with large batch sizes unlike the simpler algorithm which slows down when the batch size is above 1000. This scalability issue is likely to increase with ever increasing core counts.
+
+
+\begin{figure}
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.3]{batch-size.png}} 
+\end{tabular}
+\caption{Speed v. batch size}
+\label{fig:batch-size}
+\end{figure} 
+
 
 \subsection{Softmax and Beam Search Fusion}
 
@@ -351,15 +353,6 @@ We examine two areas that are critical to fast NMT inference where the models di
 
 
 Even with sequence-to-sequence NMT models, target sentence lengths will still differ even for similar length inputs, compromising decoding performance. Figure~\ref{fig:batch-size} shows the actual batch size during decoding with a maximum batch size of 128; the batch was full in only 42\% of decoding iterations.
-
-\begin{figure}
-\centering
-\begin{tabular}{cc}
-{\includegraphics[scale=0.3]{batch-size.png}} 
-\end{tabular}
-\caption{Actual batch size during decoding (Europarl test set)}
-\label{fig:batch-size}
-\end{figure} 
 
 We will propose an alternative batching algorithm to increase the actual batch size during decoding without the problems associated with mini-batching and maxi-batching.
 
