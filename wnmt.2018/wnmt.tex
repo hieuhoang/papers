@@ -265,7 +265,7 @@ In practise, however, efficiently using half-precision value requires a comprehe
 \section{Experimental Setup}
 \label{sec:Experimental Setup}
 
-Both of our submitted systems uses the sequence-to-sequence model similar to that described in ~\citet{sennrich-haddow-birch:2016:P16-12}, containing a bidirectional RNN in the encoder and a two-layer RNN in the decoder. We use BPE to adjust the vocabulary size.
+Both of our submitted systems uses the sequence-to-sequence model similar to that described in ~\citet{DBLP:journals/corr/BahdanauCB14}, containing a bidirectional RNN in the encoder and a two-layer RNN in the decoder. We use byte pair encoding~\citep{sennrich-haddow-birch:2016:P16-12} to adjust the vocabulary size.
 
 We used a variety of GPUs to train the models but all testing was done on an Nvidia V100. Translation quality was measured using BLEU, specifically multi-bleu as found in the Moses toolkit\footnote{https://github.com/moses-smt/mosesdecoder}. The validation and test sets provided by the shared task organisers were used to measure translation quality, but a 50,000 sentence subset of the training data was used to measure translation speed to obtain longer, more accurate measurements.
 
@@ -295,7 +295,7 @@ After further experimentation, we decided to use sentence length normalization a
 
 \subsection{mLSTM-based system}
 
-Our second system uses multiplicative-LSTM in the encoder and the first layer of a decder, and a GRU in the second layer, using an extension of the Nematus~\citep{sennrich-EtAl:2017:EACLDemo} toolkit which supports such models. We trained 2 systems with differing vocabulary sizes and varied the beam sizes before choosing the the settings that produces good translation quality on the validation set, Table~\ref{tab:mLSTM BLEU - vocab sizes}. 
+Our second system uses multiplicative-LSTM~\citep{krause2017} in the encoder and the first layer of a decder, and a GRU in the second layer, using an extension of the Nematus~\citep{sennrich-EtAl:2017:EACLDemo} toolkit which supports such models. We trained 2 systems with differing vocabulary sizes and varied the beam sizes before choosing the the settings that produces good translation quality on the validation set, Table~\ref{tab:mLSTM BLEU - vocab sizes}. 
 
 \begin{table}
 \begin{center}
