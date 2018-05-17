@@ -108,15 +108,7 @@ The Amun engine implements an efficient batching algorithm that takes into accou
 
 \subsection{Softmax and Beam Search Fusion}
 
-Most NMT more predict a large number of classes in their output layer, corresponding to the number of words or subword units in their target language. For example, ~\citet{sennrich-haddow-birch:2016:P16-12} experimented with target vocabulary sizes of 60,000 and 90,000 sub-word units. This makes the output layer of NMT models very computationally expensive. Figure~\ref{fig:pie-time-europarl} shows the breakdown of amount of time during translation our NMT system; nearly 70\% of the time is involved in the output layer. We describe the steps to fuse the operations to improve efficiency.
-\begin{figure}
-\centering
-\begin{tabular}{cc}
-{\includegraphics[scale=0.3]{pie-time.png}} 
-\end{tabular}
-\caption{Proportion of time spent during translation}
-\label{fig:pie-time.png}
-\end{figure} 
+Most NMT more predict a large number of classes in their output layer, corresponding to the number of words or subword units in their target language. For example, ~\citet{sennrich-haddow-birch:2016:P16-12} experimented with target vocabulary sizes of 60,000 and 90,000 sub-word units.
 
 The output layer of most deep learning models consist of the following steps
 \begin{enumerate}
@@ -126,9 +118,18 @@ The output layer of most deep learning models consist of the following steps
    \item \vspace{-2 mm} a beam search for the best (or n-best) output classes $\argmax_i p_i$
 \end{enumerate}
 
-In models with a small number of classes such as binary classification, the computational effort required is trivial and fast but this is not the case for the large number of classes found in typical NMT models.
+Figure~\ref{fig:pie-time} shows the amount of time spent in each step during translation. Clearly, the output layer of NMT models are very computationally expensive, accounting for over 60\% of the translation time.
 
-We leave step 1 for future work and focus on the last three steps, the outline for which are shown in Algorithm~\ref{algo:original-softmax-beamsearch}. For brevity, we show the algorithm for 1-best, a beam search of the n-bests is a simple extension of this.
+\begin{figure}
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.3]{pie-time.png}} 
+\end{tabular}
+\caption{Proportion of time spent during translation}
+\label{fig:pie-time}
+\end{figure} 
+
+We focus on the last three steps, the outline for which are shown in Algorithm~\ref{algo:original-softmax-beamsearch}. For brevity, we show the algorithm for 1-best, a beam search of the n-bests is a simple extension of this.
 
 \begin{algorithm} 
 \begin{algorithmic}
