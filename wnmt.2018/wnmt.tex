@@ -60,18 +60,18 @@ This paper describe the submissions to the efficiency track for GPUs by members 
 
 As neural machine translation (NMT) models have become the new state-of-the-art, the challenge is to make their deployment efficient and economical. This is the challenge that this shared task is shining a spotlight on.
 
-It is tempting to use a general purpose deep-learning toolkit such as Tensorflow or Pytorch to train and do the the inference where faster translation could be obtained by tuning parameters within the toolkit, and choosing fast models. %We believe this is the approach most other submissions have taken.
+One approach is to use an off-the-shelf deep-learning toolkit such as Tensorflow\footnote{https://www.tensorflow.org/} or Pytorch\footnote{https://pytorch.org/} to train and do the inference where the novelty comes from selecting the appropriate models and tuning parameters within the toolkit for optimal performance. 
 
-We take an opposing approach by using and enhancing a custom inference engine, Amun~\citep{junczys2016neural}, which we developed on the premise that fast deep-learning inference is an issue that deserves dedicated tools which are not compromised by other objectives such as training or support for multiple models. As well as delivering on the useful goal of fast inference, it can serve as a test-bed for novel ideas on neural network inference, and is useful as a means to explore the upper limit of the possible speed for a particular model and hardware. That is, Amun is an inference-only engine that supports a limited number of NMT models that put fast inference on modern GPU above all other considerations. %The consequence of this focused approach can be seen in the results of the shared task ???.
+We take an opposing approach eschewing model selection in favour efficient implementation. We use a custom inference engine, Amun~\citep{junczys2016neural}, which we developed on the premise that fast deep-learning inference is an issue that deserves dedicated tools that are not compromised by competing objectives such as training or support for multiple models. As well as delivering on the useful goal of fast inference, it can serve as a test-bed for novel ideas on neural network inference, and is useful as a means to explore the upper limit of the possible speed for a particular model and hardware. That is, Amun is an inference-only engine that supports a limited number of NMT models that put fast inference on modern GPU above all other considerations. %The consequence of this focused approach can be seen in the results of the shared task ???.
 
-We submitted two systems to this year's shared task for the efficient translation on GPU. Our first submission was tailored to be as fast as possible while being above the baseline BLEU score. Our second submission trade some of the speed of first submission to return good quality translation.
+We submitted two systems to this year's shared task for the efficient translation on GPU. Our first submission was tailored to be as fast as possible while being above the baseline BLEU score. Our second submission trade some of the speed of first submission to return better quality translations.
 
-We will describe below our experimental setup as well as the enhancements to Amun that we feel enabled it to achieve its outstanding speed.
+%We will describe below our experimental setup as well as the enhancements to Amun that we feel enabled it to achieve its speed.
 
 
 \section{Improvements}
 
-We desribe the main enhancements to Amun since the original 2016 publication.
+We describe the main enhancements to Amun since the original 2016 publication.
 
 \subsection{Batching}
 
