@@ -294,7 +294,7 @@ After further experimentation, we decided to use sentence length normalization a
 
 \subsection{mLSTM-based system}
 
-Our second system uses multiplicative-LSTM in the encoder and the first layer of a decder, and a GRU in the second layer, using an extension of the Nematus toolkit which supports such model. We trained 2 systems with differing vocabulary sizes and varied the beam sizes before choosing the the settings that produces good translation quality on the validation set, Table~\ref{tab:mLSTM BLEU - vocab sizes}. 
+Our second system uses multiplicative-LSTM in the encoder and the first layer of a decder, and a GRU in the second layer, using an extension of the Nematus~\citep{sennrich-EtAl:2017:EACLDemo} toolkit which supports such models. We trained 2 systems with differing vocabulary sizes and varied the beam sizes before choosing the the settings that produces good translation quality on the validation set, Table~\ref{tab:mLSTM BLEU - vocab sizes}. 
 
 \begin{table}
 \begin{center}
