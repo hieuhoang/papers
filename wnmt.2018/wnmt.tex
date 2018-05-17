@@ -211,7 +211,7 @@ Firstly, softmax and $\exp$ are monotonic functions, therefore, we can move the 
 
 Secondly, we are only interested in the probabilities of the best classes. Since they are now known at the start of the kernel, we compute softmax only for those classes.
 
-\begin{algorithm}[ht]
+\begin{algorithm}
 \begin{algorithmic}
 \Procedure{Fused-Kernel}{vector $p$, bias vector $b$}
 
@@ -364,7 +364,7 @@ Using batching can increase the translation speed by over 20 times in Amun, Figu
 
 Fusing the bias and softmax operations in the output layer with the beam search results in a speed improvement by 25\%, Figure~\ref{fig:fused}. Its relative improvement decrease marginally with increasing beam size.
 
-\begin{figure}[ht]
+\begin{figure}
 \centering
 \begin{tabular}{cc}
 {\includegraphics[scale=0.3]{fused.png}} 
@@ -375,7 +375,7 @@ Fusing the bias and softmax operations in the output layer with the beam search 
 
 Further insight can be gained by examining the time taken for each step in the output layer and beam search, Table~\ref{tab:fused-breakdown}. The fused operation only has to loop through the large cost matrix once, therefore, for low beam sizes its is comparable in speed to the simple kernel to add the bias. For higher beam sizes, the cost of maintaining the n-best list is felt.
 
-\begin{table}[ht]
+\begin{table}
 \begin{center}
 \begin{tabular}{|l|r|r|} \hline
 		& Baseline	& Fused \\ \hline
@@ -404,7 +404,7 @@ Beam search	& 36.7		&  \\ \hline
 
 By taking advantage of the GPU's hardware accelerated matrix multiplication, we can gain up to 20\% in speed, Table~\ref{tab:tensor-cores}.
 
-\begin{table}[ht]
+\begin{table}
 \begin{center}
 \begin{tabular}{|l|r|r|} \hline
 Beam size	& Baseline	& Tensor Cores \\ \hline
