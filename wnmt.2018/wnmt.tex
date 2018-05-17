@@ -343,233 +343,66 @@ Using batching can increase the translation speed by over 20 times in Amun and s
 
 \subsection{Softmax and Beam Search Fusion}
 
-////////////////////////////////////////////////////////////////
+Fusing the bias and softmax operations in the output layer with the beam search results in a speed improvement by 25\%, Figure~\ref{fig:fused}. Its relative improvement decrease marginally with increasing beam size.
 
+\begin{figure}
+\centering
+\begin{tabular}{cc}
+{\includegraphics[scale=0.3]{fused.png}} 
+\end{tabular}
+\caption{Using fused operation}
+\label{fig:fused}
+\end{figure} 
 
-We have identified two areas where typical NMT models differ significantly from other deep-learning models that impact on their inference speed. Firstly, NMT models usually contains a large number of output classes, corresponding to the output vocabulary. Secondly, rather than a single label, the output from machine translation models is a sequence of class labels that makes up the words or sub-words in the target sentence. Target sentence lengths are unpredictable, leading to inefficiencies during batch processing. We provide solutions for each of these issues which together increase batched inference speed by up to 57\% on modern GPUs without affecting model quality.
-
-We examine two areas that are critical to fast NMT inference where the models differ significantly from other deep-learning models. We believe the optimizations of these models have been overlooked by the general deep-learning community.
-
-
-
-Even with sequence-to-sequence NMT models, target sentence lengths will still differ even for similar length inputs, compromising decoding performance. Figure~\ref{fig:batch-size} shows the actual batch size during decoding with a maximum batch size of 128; the batch was full in only 42\% of decoding iterations.
-
-We will propose an alternative batching algorithm to increase the actual batch size during decoding without the problems associated with mini-batching and maxi-batching.
-
-\section{Prior Work}
-
-Deep-learning models has been successfully used on many machine learning task in recent years in areas as diverse as computer vision and natural language processing. This success have been followed by the rush to put these model into production. The computational resources required in order to run these models has been challenging but, fortunately, there has been a lot work to meet this challenge.
-
-Hardware accelerators such as GPUs are very popular but other specialized hardware such as custom processors~\citep{DBLP:journals/corr/JouppiYPPABBBBB17} and FPGA~\citep{DBLP:journals/corr/LaceyTA16} have been used. Hardware-supported reduced precision is also an ideal way to speed up model inference~\citep{DBLP:journals/corr/abs-1710-03740}.
-
-Simpler, faster models have been created that are as good, or almost as good, as more slower, more complex models~\citep{DBLP:journals/corr/BahdanauCB14}. Research have also gone into smaller, faster models that can approximate slower, bigger models~\citep{DBLP:conf/emnlp/KimR16}. Some models have been justified as more suited for the parallel architecture of GPUs~\cite{DBLP:journals/corr/VaswaniSPUJGKP17}~\cite{gehring2017convs2s}.
-
-The speed of the softmax layer when used with large vocabularies have been looked at in~\citet{DBLP:journals/corr/GraveJCGJ16} but there have been many other attempts at faster softmax, for example~\citet{DBLP:journals/corr/abs-1301-3781}, ~\citet{Zoph-2016}.
-
-There has been surprisingly little work on batching algorithms, considering its critical importance for efficient deep-learning training and inference. ~\citet{Neubig-autobatching} describe an novel batching algorithm, however, its aim is to alleviate the burden on developers of batching models rather than faster batching.
-
-Our paper follows most closely on from ~\citet{DBLP:conf/emnlp/Devlin17} which achieved faster NMT inference mainly by novel implementation of an existing model. However, we differ by focusing on GPU implementation, specifically the output layer, and the batching algorithm which was not touched on by the previous work. Our model is based on that of ~\citet{D14-1179} and ~\citet{sennrich-haddow-birch:2016:P16-12} but our work is applicable to other models and applications. % rather than CPUs as pursued by ~\cite{DBLP:conf/emnlp/Devlin17}.
-
-
-\section{Proposal}
-\label{sec:Proposal}
-
-
-
-\subsection{Top-up Batching}
-
-The standard mini-batching algorithm is outlined in Algorithm~\ref{algo:Mini-batching}.
-
-
-This algorithm encode the sentences for a batch, followed by decoding the batch. The decoding stop once all sentences in the batch are completed. This is a potential inefficiency as the number of remaining sentences may not be optimal.
-
-We will focus on decoding as this is the more compute-intensive step, and issues with differing sentence sizes in encoding can partly be ameliorated by maxi-batching.
-
-Our proposed top-up batching algorithm encode and decode asynchronously. The encoding step, Algorithm~\ref{algo:Encoding for top-up batching}, is similar to the main loop of the standard algorithm but the results are added to a queue to be consumed by the decoding step.
-
-\begin{algorithm}
-\begin{algorithmic}
-
-\Procedure{Encode}{}
-\While{more input} 
-  \State Create encoding batch $b$
-  \State Encode($b$)
-  \State Add $b$ to queue $q$
-\EndWhile 
-
-\EndProcedure
-
-\end{algorithmic}
-\caption{Encoding for top-up batching}
-\label{algo:Encoding for top-up batching}
-\end{algorithm}
-
-Rather than decoding the same batch until all sentences in the batch are completed, the decoding step processing the same batch continuously. New sentences are added to the batch as old sentences completes, Algorithm~\ref{algo:Decoding for top-up batching}.
-
-\begin{algorithm}
-\begin{algorithmic}
-
-\Procedure{Decode}{}
-
-\State create batch $b$ from queue $q$
-\While{$b$ is not empty}
-  \State Decode($b$)
-  \ForAll{sentence $s$ in $b$}
-    \If{trans($s$) is complete}
-      \State Replace $s$ with $s'$ from $q$
-    \EndIf
-  \EndFor
-\EndWhile
-
-\EndProcedure
-
-\end{algorithmic}
-\caption{Decoding for top-up batching}
-\label{algo:Decoding for top-up batching}
-\end{algorithm}
-
-
-
-
-\section{Results}
-\label{sec:Results}
-
-\subsection{Softmax and Beam Search Fusion}
-
-Fusing the last 3 steps led to a substantial reduction in the time taken, especially for beam size of 1 where the softmax probability does not actually have to calculated, Table~\ref{tab:fused-breakdown-europarl} and ~\ref{tab:fused-breakdown-opensubtitles}. This led to an overall increase in translation speed of up to 23\% for the Europarl test set, Figure~\ref{fig:beam-europarl}, and up to 41\% for the OpenSubtitles test set, Figure~\ref{fig:beam-opensubtitles}. 
-
-The amount of time taken by the output layer dominates translation time for the OpenSubtitles test set, Figure~\ref{fig:pie-time-opensubtitles}, explaining the bigger overall translation speed with the fused kernel.
+Further insight can be gained by examining the time taken for each step in the output layer and beam search, Table~\ref{tab:fused-breakdown}. The fused operation only has to loop through the large cost matrix once, therefore, for low beam sizes its is comparable in speed to the simple kernel to add the bias. For higher beam sizes, the cost of maintaining the n-best list is felt.
 
 \begin{table}
 \begin{center}
-\small
 \begin{tabular}{|l|r|r|} \hline
 		& Baseline	& Fused \\ \hline
 \multicolumn{3}{|c|}{\emph{Beam size 1}}	\\ \hline	
-Multiplication 	& 25.62 	& 26.47 (+3.3\%) \\ \hline
-Add bias 	& 4.98		&  \\ 
-Softmax 	& 12.81		& 7.94 (-76.9\%)\\
-Beam search	& 16.64		&  \\ \hline
-\multicolumn{3}{|c|}{\emph{Beam size 5}}	\\ \hline	
-Multiplication 	& 112.9 	& 115.04 (+1.9\%) \\ \hline
-Add bias 	& 23.66		&  \\ 
-Softmax 	& 56.61		& 67.58 (-56.5\%)\\
-Beam search	& 75.12		&  \\ \hline
+Multiplication 	& 5.39 		& 5.38 (+0\%) \\ \hline
+Add bias 	& 1.26		&  \\ 
+Softmax 	& 1.69		& 2.07 (-86.6\%)\\
+Beam search	& 12.53		&  \\ \hline
+\multicolumn{3}{|c|}{\emph{Beam size 3}}	\\ \hline	
+Multiplication 	& 14.18 	& 14.16 (+0\%) \\ \hline
+Add bias 	& 3.76		&  \\ 
+Softmax 	& 4.75		& 3.43 (-87.1\%)\\
+Beam search	& 18.23		&  \\ \hline
+\multicolumn{3}{|c|}{\emph{Beam size 9}}	\\ \hline	
+Multiplication 	& 38.35 	& 38.42 (+0\%) \\ \hline
+Add bias 	& 11.64		&  \\ 
+Softmax 	& 14.4		& 17.5 (-72.1\%)\\
+Beam search	& 36.7		&  \\ \hline
 \end{tabular}
 \end{center}
-\caption{Time taken in sec (Europarl)}
-\label{tab:fused-breakdown-europarl}
+\caption{Time taken (sec) breakdown}
+\label{tab:fused-breakdown}
 \end{table}
 
-\begin{table}
+\subsection{Tensor Cores}
+
+By taking advantage of the GPU's hardware accelerated matrix multiplication, we can gain up to 20\% in speed, Table~\ref{tab:tensor-cores}.
+
+\begin{table}[ht]
 \begin{center}
-\small
 \begin{tabular}{|l|r|r|} \hline
-		& Baseline	& Fused \\ \hline
-\multicolumn{3}{|c|}{\emph{Beam size 1}}	\\ \hline	
-Multiplication 	& 21.47 	& 21.94 (+2.2\%) \\ \hline
-Add bias 	& 3.29		&  \\ 
-Softmax 	& 8.83		& 5.70 (-78.1\%)\\
-Beam search	& 13.91		&  \\ \hline
-\multicolumn{3}{|c|}{\emph{Beam size 5}}	\\ \hline	
-Multiplication 	& 79.66 	& 80.01 (+4.4\%) \\ \hline
-Add bias 	& 14.95		&  \\ 
-Softmax 	& 36.86		& 42.91 (-64.4\%)\\
-Beam search	& 68.80		&  \\ \hline
+Beam size	& Baseline	& Tensor Cores \\ \hline
+1	 	& 39.97 	& 34.54 (-13.6\%) \\ 
+9 		& 145.8		& 116.8 (-20.0\%) \\ \hline
 \end{tabular}
 \end{center}
-\caption{Time taken in sec (OpenSubtitles)}
-\label{tab:fused-breakdown-opensubtitles}
+\caption{Time taken (sec) using Tensor Cores}
+\label{tab:tensor-cores}
 \end{table}
 
-
-\begin{figure}
-\centering
-\begin{tabular}{cc}
-{\includegraphics[scale=0.5]{beam-europarl.png}} 
-\end{tabular}
-\caption{Speed using the fused kernel (Europarl)}
-\label{fig:beam-europarl}
-\end{figure} 
-
-\begin{figure}
-\centering
-\begin{tabular}{cc}
-{\includegraphics[scale=0.5]{beam-opensubtitles.png}} 
-\end{tabular}
-\caption{Speed using the fused kernel (OpenSubtitles)}
-\label{fig:beam-opensubtitles}
-\end{figure} 
-
-
-\subsection{Top-up Batching}
-
-After some experimentation, we decided to top-up the decoding batch only when it is at least half empty, rather than whenever a sentence has completed.
-
-The top-up batching and maxi-batching have similar goals of maximizing efficiency when translating batches of different lengths. Therefore, using both methods together gives limited gains, in fact, using top-up batching with maxi-batch slows of between 2\% to 18\% when translating the Europarl test set due to the overhead of using the algorithm, Figure~\ref{fig:topup-europarl}. When maxi-batching is inappropriate, using top-up batching alone matches the performance of maxi-batching, even being slightly faster when a small beam is used.
-
-\begin{figure}
-\centering
-\begin{tabular}{cc}
-{\includegraphics[scale=0.3]{topup-europarl.png}} 
-\end{tabular}
-\caption{Speed using top-up batching (Europarl)}
-\label{fig:topup-europarl}
-\end{figure} 
-
-The results are better when translating the OpenSubtitles test set, Figure~\ref{fig:topup-opensubtitles}. The top-up batching does not harm performance when used with maxi-batching, even helping a little for small beams. However, top-up batching increases translation speed by up to 12\% when used alone.
-
-\begin{figure}
-\centering
-\begin{tabular}{cc}
-{\includegraphics[scale=0.3]{topup-opensubtitles.png}} 
-\end{tabular}
-\caption{Speed using top-up batching (OpenSubtitles)}
-\label{fig:topup-opensubtitles}
-\end{figure} 
-
-The gain from top-up batching is partially dependent on how much time the standard mini-batching algorithm spend decoding with a very small number of sentences as this is does not fully utilize the GPU cores. From Figure~\ref{fig:batch-size-small}, 20\% of the decoding iterations have less than 8 sentences remaining in the batch when translating the Europarl test test with maxi-batching. This figure is 50\% for the OpenSubtitles test set with no maxi-batching. The OpenSubtitles test set has a higher variance of sentence lengths relative to its average sentence length, which forces the mini-batch algorithm to continue decoding with a small number of sentences while the other sentences have already completed.
-
-\begin{figure}
-\centering
-\begin{tabular}{cc}
-{\includegraphics[scale=0.3]{batch-size-small.png}} 
-\end{tabular}
-\caption{Actual batch size during decoding}
-\label{fig:batch-size-small}
-\end{figure} 
-
-\subsection{Cummulative Results}
-
-Using both the fused kernel and top-up batching to translate led to a cummalative speed improvement of up to 57\% and 34\% for the OpenSubtitles and Europarl test set, respectively, when no maxi-batching is used, Figure~\ref{fig:cummulative-europarl} and Figure~\ref{fig:cummulative-opensubtitles}. With maxi-batching, the speed was up to 41\% and 21\%.
-
-\begin{figure}
-\centering
-\begin{tabular}{cc}
-{\includegraphics[scale=0.3]{cummulative-europarl.png}} 
-\end{tabular}
-\caption{Cummulative results (Europarl}
-\label{fig:cummulative-europarl}
-\end{figure} 
-
-\begin{figure}
-\centering
-\begin{tabular}{cc}
-{\includegraphics[scale=0.3]{cummulative-opensubtitles.png}} 
-\end{tabular}
-\caption{Cummulative results (OpenSubtitles}
-\label{fig:cummulative-opensubtitles}
-\end{figure} 
 
 \section{Conclusion and Future Work}
 
-We have presented two methods for faster deep-learning inference, targeted at neural machine translation. 
+We have presented some of the improvement to Amun which are focused to improvement NMT inference.
 
-The first method focused on output layer of the neural network which accounts for a large part of the running time of the NMT model. By fusing the output layer with the beam search, we are able to increase translation speed by up to 41\%.
-
-The second method replaces the mini-batching algorithm with one that avoids decoding with a small number of sentences, maximizing the parallel processing potential of GPUs. For certain scenarios, this increases translating  speed by up to 12\%.
-
-For future work, we would like to apply our optimization for other NLP and deep-learning tasks. We are also interested in further optimization of the output layer in NMT, specifically the matrix multiplication which still takes up a significant proportion of the translation time.
+We are also working to make deep-learning faster using more specialised hardware such as FPGAs. It would be interesting as future work to bring our focused approach to fast deep-learning inference to a more general training toolkit. 
 
 %\section*{Acknowledgments}
 %This work is sponsored by the Air Force Research Laboratory, prime contract FA8650-11-C-6160.  The views and conclusions contained in this document are those of the authors and should not be interpreted as representative of the official policies, either expressed or implied, of the Air Force Research Laboratory or the U.S. Government.
