@@ -1,13 +1,22 @@
+%
+% File acl2018.tex
+%
+%% Based on the style files for ACL-2017, with some changes, which were, in turn,
+%% Based on the style files for ACL-2015, with some improvements
+%%  taken from the NAACL-2016 style
+%% Based on the style files for ACL-2014, which were, in turn,
+%% based on ACL-2013, ACL-2012, ACL-2011, ACL-2010, ACL-IJCNLP-2009,
+%% EACL-2009, IJCNLP-2008...
+%% Based on the style files for EACL 2006 by 
+%%e.agirre@ehu.es or Sergi.Balari@uab.es
+%% and that of ACL 08 by Joakim Nivre and Noah Smith
+
 \documentclass[11pt,a4paper]{article}
 \usepackage[hyperref]{acl2018}
 \usepackage{times}
 \usepackage{latexsym}
 
-\usepackage[letterpaper]{geometry}
-%\usepackage{amta2016}
 \usepackage{url}
-\usepackage{natbib}
-\usepackage{layout}
 
 \usepackage{algorithm}% http://ctan.org/pkg/algorithms
 \usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx
@@ -16,44 +25,47 @@
 \usepackage{amsmath}
 \DeclareMathOperator*{\argmax}{argmax}
 
-\newcommand{\confname}{AMTA 2016}
-\newcommand{\website}{\protect\url{http://www.amtaweb.org/}}
-\newcommand{\contactname}{research track co-chair Lane Schwartz}
-\newcommand{\contactemail}{lanes@illinois.edu} 
-\newcommand{\conffilename}{amta2016}
-\newcommand{\downloadsite}{\protect\url{http://www.amtaweb.org/}}
-\newcommand{\paperlength}{$12$ (twelve)}
-\newcommand{\shortpaperlength}{$6$ (six)}
 
-%% do not add any other page- or text-size instruction here
+\aclfinalcopy % Uncomment this line for the final submission
+\def\aclpaperid{***} %  Enter the acl Paper ID here
 
-\parskip=0.00in
+%\setlength\titlebox{5cm}
+% You can expand the titlebox if you need extra space
+% to show all the authors. Please do not make the titlebox
+% smaller than 5cm (the original size); we will check this
+% in the camera-ready version and ask you to change it back.
 
-\begin{document}
+\newcommand\BibTeX{B{\sc ib}\TeX}
 
 % \mtsummitHeader{x}{x}{xxx-xxx}{2016}{45-character paper description goes here}{Author(s) initials and last name go here}
-\title{\bf Fast Neural Machine Translation Implementation}  
+\title{Fast Neural Machine Translation Implementation}  
 
-\author{\name{\bf Hieu Hoang} \hfill  \addr{hieu@hoang.co.uk}\\ 
-        \addr{}
-\AND
-       \name{\bf Tomasz Dwojak} \hfill \addr{t.dwojak@amu.edu.pl}\\
-        \addr{Adam Mickiewicz University}
-\AND
-       \name{\bf Rihards Krislauks} \hfill \addr{rihards.krislauks@tilde.lv}\\
-        \addr{Tilde}
-\AND
-       \name{\bf Daniel Torregrosa} \hfill \addr{dtorregrosa@dlsi.ua.es}\\
-        \addr{Universitat d’Alacant}
-\AND
-       \name{\bf Kenneth Heafield} \hfill \addr{kheafiel@inf.ed.ac.uk}\\
-       %\name{\bf Kenneth Heafield} \hfill \addr{kheafiel@inf.ed.ac.uk}\\
-        \addr{University of Edinburgh, Scotland}
-}
+\author{Hieu Hoang \\
+  University of Edinburgh, Scotland \\
+  {\tt hieu@hoang.co.uk} \\
+  \And
+  Tomasz Dwojak \\
+  Adam Mickiewicz University \\
+  {\tt t.dwojak@amu.edu.pl} \\
+  \And
+  Rihards Krislauks \\
+  Tilde \\
+  {\tt rihards.krislauks@tilde.lv} \\
+  \And
+  Daniel Torregrosa \\
+  Universitat d’Alacant \\
+  {\tt dtorregrosa@dlsi.ua.es} \\
+  \And
+  Kenneth Heafield \\
+  University of Edinburgh, Scotland \\
+  {\tt kheafiel@inf.ed.ac.uk} \\
+  }
 
+
+\date{}
+
+\begin{document}
 \maketitle
-\pagestyle{empty}
-
 \begin{abstract}
 
 This paper describe the submissions to the efficiency track for GPUs by members of the University of Edinburgh, Adam Mickiewicz University, Tilde and University of Alicante. We focus on efficient implementation of the recurrent deep-learning model as implemented in Amun, the fast inference engine for neural machine translation. We improve the performance with an efficient mini-batching and maxi-batching algorithm. Translation speed was also reduced by fusing the softmax operation with the beam seach algorithm.
@@ -419,5 +431,3 @@ We are also working to make deep-learning faster using more specialised hardware
 
 
 \end{document}
-\grid
-\grid
