@@ -270,7 +270,7 @@ We used a variety of GPUs to train the models but all testing was done on an Nvi
 
 \subsection{GRU-based system}
 
-Our first system uses gated recurrent units (GRU) throughout, trained with Marian, but submitted both systems using the Amun inference engine.
+Our first system uses gated recurrent units (GRU) throughout, trained with Marian~\citep{junczys2018marian}, but submitted both systems using the Amun inference engine.
 
 We experimented with varying the vocabulary size and the RNN state size before settling for a vocabulary size of 30,000 (for both source and target language) and 256 for the state size, Table~\ref{tab:BLEU for newstest2014}.
 
