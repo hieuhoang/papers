@@ -335,7 +335,7 @@ The efficiency of Amun's batching algorithm can be seen by observing the time ta
 \label{fig:decode-step}
 \end{figure} 
 
-Using batching can increase the translation speed by over 20 times in Amun and shows little degradation with larger batch sizes, Figure~\ref{fig:batch-size}. Just as importantly, however, it doesn't suffer degradation with large batch sizes unlike the simpler algorithm which slows down when the batch size is above 1000. This scalability issue is likely to increase with ever increasing core counts.
+Using batching can increase the translation speed by over 20 times in Amun, Figure~\ref{fig:batch-size}. Just as important, it doesn't suffer degradation with large batch sizes unlike the simpler algorithm which slows down when batch size over 1000 is used. This scalability issue is likely to rise in importance with new GPUs with ever increasing core counts.
 
 
 \begin{figure}
