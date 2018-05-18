@@ -84,7 +84,7 @@ It is tempting to ignore these considerations, for example, by always decoding w
 
 \State Create batch $b$ from $i$
 
-\While{hypo $h \neq \textless/s \textgreater, \forall h \in b $ } 
+\While{hypo $h \neq EOS, \forall h \in b $ } 
   \State Decode($b$)
 \EndWhile
 
@@ -106,8 +106,8 @@ The Amun engine implements an efficient batching algorithm that takes into accou
 \While{$b \neq \emptyset$} 
   \State Decode($b$)
   
-  \ForAll{hypo $h \in b'$}
-    \If{$h = \textless/s \textgreater$  }
+  \ForAll{hypo $h \in b$}
+    \If{$h = EOS$  }
       \State Remove $h$ from $b$
     \EndIf
   \EndFor
