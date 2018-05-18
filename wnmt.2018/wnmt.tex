@@ -95,7 +95,7 @@ It is tempting to ignore these considerations, for example, by always decoding w
 \label{algo:simple-mini-batching}
 \end{algorithm}
 
-The Amun engine implements an efficient batching algorithm that takes into account the actual number of hypotheses that needs to be decoded at each decoding step, Figure~\ref{algo:Mini-batching}.
+Amun implements an efficient batching algorithm that takes into account the actual number of hypotheses that needs to be decoded at each decoding step, Figure~\ref{algo:Mini-batching}.
 
 \begin{algorithm}
 \begin{algorithmic}
@@ -202,11 +202,11 @@ We focus on the last three steps, the outline for which are shown in Algorithm~\
 \end{algorithm}
 
 
-As can be seen, the matrix p is iterated over five times - once to add the bias, three times to calculate the softmax, and once to search for the best classes. We propose fusing the three functions into one kernel, a popular optimization technique~\citep{Guevara2009EnablingTP}, making use of the following observations.
+As can be seen, the vector p is iterated over five times - once to add the bias, three times to calculate the softmax, and once to search for the best classes. We propose fusing the three functions into one kernel, a popular optimization technique~\citep{Guevara2009EnablingTP}, making use of the following observations.
 
 Firstly, softmax and $\exp$ are monotonic functions, therefore, we can move the search for the best class from FIND-BEST to SOFTMAX, at the start of the kernel.
 
-Secondly, we are only interested in the probabilities of the best classes. Since they are now known at the start of the kernel, we compute softmax only for those classes.
+Secondly, we are only interested in the probabilities of the best classes during inference, not of all classes. Since they are now known at the start of the softmax kernel, we compute softmax only for those classes.
 
 \begin{algorithm}
 \begin{algorithmic}
@@ -244,9 +244,7 @@ sum & = & e^{x_t - max_b} + \sum_{i=0...t-1}{e^{x_i - max_b}} \\
     & = & e^{x_t - max_b} + \sum_{i=0...t-1}{e^{x_i - max_a + \Delta}}  \\
     & = & e^{x_t - max_b} + e^{\Delta} \times \sum_{i=0...t-1}{e^{x_i - max_a}} 
 \end{eqnarray*}
-where $max_a$ is the previous
-%!dtr! original as in the one at the start of this iteration, or original as the one at the start of the process? 
-maximum value, $max_b$ is the now higher maximum value, ie. $max_b > max_a$, and $\Delta = max_a - max_b$. The outline of our function is shown in Algorithm~\ref{algo:Fused Kernel}.
+where $max_a$ is the previous maximum value, $max_b$ is the now higher maximum value, ie. $max_b > max_a$, and $\Delta = max_a - max_b$. The outline of our function is shown in Algorithm~\ref{algo:Fused Kernel}.
 
 In fact, a well known optimization is to skip softmax altogether and calculate the argmax over the input vector, Algorithm~\ref{algo:Argmax only}. This is only possible for beam size 1 and when we are not interested in returning the softmax probabilities.
 
@@ -377,8 +375,7 @@ Fusing the bias and softmax operations in the output layer with the beam search 
 \label{fig:fused}
 \end{figure} 
 
-Further insight can be gained by examining the time taken for each step in the output layer and beam search, Table~\ref{tab:fused-breakdown}. The fused operation only has to loop through the large cost matrix once, therefore, for low beam sizes its is comparable in speed to the simple kernel to add the bias. For higher beam sizes, the cost of maintaining the n-best list is felt.
-%!dtr! felt?
+Further insight can be gained by examining the time taken for each step in the output layer and beam search, Table~\ref{tab:fused-breakdown}. The fused operation only has to loop through the large cost matrix once, therefore, for low beam sizes its is comparable in speed to the simple kernel to add the bias. For higher beam sizes, the cost of maintaining the n-best list is begins to impact on speed.
 
 \begin{table}
 \begin{center}
