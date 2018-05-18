@@ -76,7 +76,24 @@ We describe the main enhancements to Amun since the original 2016 publication.
 
 The use of mini-batching is critical for fast model inference. The size of the batch is determined by the number of inputs sentences to the encoder in an encoder-decoder model. However, the number of batches during decoding can vary as some sentences have completed translating or the beam search add more hypotheses to the batch.
 
-It is tempting to ignore these considerations, for example, by always decoding with a constant batch and beam size and ignoring hypotheses which are not needed but this comes at a cost of lower translation speed due to wasteful processing.
+It is tempting to ignore these considerations, for example, by always decoding with a constant batch and beam size and ignoring hypotheses which are not needed. Figure~\ref{algo:simple-mini-batching} illustrates a na\"ive mini-batching with a constant size batch. The downside to this algorithm is lower translation speed due to wasteful processing.
+
+\begin{algorithm}
+\begin{algorithmic}
+\Procedure{Batching}{encoded sentences $i$, beam size $s$}
+
+\State Create batch $b$ from $i$, $s$
+
+\While{hypo $h \neq \textless/s \textgreater, \forall h \in b $ } 
+  \State $b$ = DecodeAndBeamSearch($b$)
+\EndWhile
+
+\EndProcedure
+
+\end{algorithmic}
+\caption{Na\"ive mini-batching}
+\label{algo:simple-mini-batching}
+\end{algorithm}
 
 The Amun engine implements an efficient batching algorithm that takes into account the actual number of hypotheses that needs to be decoded at each decoding step, Figure~\ref{algo:Mini-batching}.
 
@@ -90,7 +107,7 @@ The Amun engine implements an efficient batching algorithm that takes into accou
   \State $b' \gets$ DecodeAndBeamSearch($b$)
   \State $b \gets \emptyset$
   
-  \ForAll{hypo $h$ in $b'$}
+  \ForAll{hypo $h \in b'$}
     \If{$h \neq \textless/s \textgreater$  }
       \State Add $h$ to $b$
     \EndIf
@@ -317,7 +334,7 @@ Beam size	& 40,000	& 50,000 \\ \hline
 
 \subsection{Batching}
 
-The efficiency of Amun's batching algorithm can be seen by observing the time taken for each decoding step in a batch of sentence, Figure~\ref{fig:decode-step}. Amun's decoding becomes faster as sentences finish translating. This contrast with the Marian inference engine, which uses a simpler batching algorithm, where the speed stays relatively constant throughout the decoding of the batch.
+The efficiency of Amun's batching algorithm can be seen by observing the time taken for each decoding step in a batch of sentence, Figure~\ref{fig:decode-step}. Amun's decoding becomes faster as sentences finish translating. This contrast with the Marian inference engine, which uses a na\"ive batching algorithm, where the speed stays relatively constant throughout the decoding of the batch.
 
 \begin{figure}
 \centering
@@ -328,7 +345,7 @@ The efficiency of Amun's batching algorithm can be seen by observing the time ta
 \label{fig:decode-step}
 \end{figure} 
 
-Using batching can increase the translation speed by over 20 times in Amun, Figure~\ref{fig:batch-size}. Just as important, it doesn't suffer degradation with large batch sizes unlike the simpler algorithm which slows down when batch size over 1000 is used. This scalability issue is likely to rise in importance with new GPUs with ever increasing core counts.
+Using batching can increase the translation speed by over 20 times in Amun, Figure~\ref{fig:batch-size}. Just as important, it doesn't suffer degradation with large batch sizes unlike the na\"ive algorithm which slows down when batch size over 1000 is used. This scalability issue is likely to increase in importance with new GPUs with ever increasing core counts.
 
 
 \begin{figure}
