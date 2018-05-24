@@ -25,6 +25,15 @@
 \usepackage{amsmath}
 \DeclareMathOperator*{\argmax}{argmax}
 
+% declaration of the new block
+\algblock{ParFor}{EndParFor}
+% customising the new block
+\algnewcommand\algorithmicparfor{\textbf{parfor}}
+\algnewcommand\algorithmicpardo{\textbf{do}}
+\algnewcommand\algorithmicendparfor{\textbf{end\ parfor}}
+\algrenewtext{ParFor}[1]{\algorithmicparfor\ #1\ \algorithmicpardo}
+\algrenewtext{EndParFor}{\algorithmicendparfor}
+
 
 \aclfinalcopy % Uncomment this line for the final submission
 \def\aclpaperid{***} %  Enter the acl Paper ID here
@@ -269,6 +278,44 @@ In fact, a well known optimization is to skip softmax altogether and calculate t
 \end{algorithmic}
 \caption{Find 1-best only}
 \label{algo:Argmax only}
+\end{algorithm}
+
+Since we are working on GPU optimization, it is essential to make full use of the many GPU cores available. This is accomplished by well-known parallelization methods which multi-thread the algorithms. For example, Algorithm~\ref{algo:Argmax only} is parallelized by sharding the vector $p$ and calculating $best$ and $max$ on each shard in parallel. The ultimate $best$ is found in the following reduction step, Algorithm~\ref{algo:Parallel Argmax only}.
+
+\begin{algorithm}
+\begin{algorithmic}
+\Procedure{Fused-kernel-1-best}{vector $p$, bias vector $b$}
+
+\Comment{parallelize}
+\State Create shards ${p^1...p^n}$ from $p$
+\ParFor{$p^j \in {p^1...p^n}$}
+  \State $max^j \gets - \infty$ 
+  \ForAll{$p_i^j$ in $p^j$}
+    \If{$p_i^j + b_i > max$}
+      \State $max^j \gets p_i^j + b_i$
+      \State $best^j \gets i$
+    \EndIf
+  \EndFor
+
+\EndParFor
+
+\Comment{reduce}
+\State $max \gets - \infty$ 
+\ForAll{$max^j \in max^1...max^n$}
+  \If{$max^j > max$}
+    \State $max \gets max^j$
+    \State $best \gets best^j$
+  \EndIf
+\EndFor
+
+
+\Return $best$ 
+
+\EndProcedure
+
+\end{algorithmic}
+\caption{Parallel find 1-best only}
+\label{algo:Parallel Argmax only}
 \end{algorithm}
 
 %These changes do not reduce the asymptotic runtime of our algorithm, which remains at $\mathcal{O}(|p|)$, but it does bring the number of iterations over $p$ down from 5 to 1. In practise, this has a significant affect on inference speed.
