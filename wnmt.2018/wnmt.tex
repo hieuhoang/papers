@@ -57,7 +57,7 @@ This paper describes the submissions to the efficiency track for GPUs by members
 \section{Introduction}
 \label{sec:Introduction}
 
-As neural machine translation (NMT) models have become the new state-of-the-art, the challenge is to make their deployment efficient and economical. This is the challenge that this shared task is shining a spotlight on.
+As neural machine translation (NMT) models have become the new state-of-the-art, the challenge is to make their deployment efficient and economical. This is the challenge that this shared task~\citep{birch2018wnmt} is shining a spotlight on.
 
 One approach is to use an off-the-shelf deep-learning toolkit to complete the shared task where the novelty comes from selecting the appropriate models and tuning parameters within the toolkit for optimal performance. % such as Tensorflow\footnote{https://www.tensorflow.org/} or Pytorch\footnote{https://pytorch.org/} 
 
@@ -122,7 +122,7 @@ Amun implements an efficient batching algorithm that takes into account the actu
 
 We will compare the effect of the two implementations in the Section~\ref{sec:Result}.
 
-\subsection{Softmax and Beam Search Fusion}
+\subsection{Softmax and K-Best Fusion}
 
 Most NMT models predict a large number of classes in their output layer, corresponding to the number of words or subword units in their target language. For example, ~\citet{sennrich-haddow-birch:2016:P16-12} experimented with target vocabulary sizes of 60,000 and 90,000 sub-word units.
 
@@ -131,7 +131,7 @@ The output layer of most deep learning models consist of the following steps
    \item \vspace{-2 mm} multiplication of the weight matrix with the input vector $p = w x$
    \item \vspace{-2 mm} addition of a bias term to the resulting scores $p = p + b$
    \item \vspace{-2 mm} applying the activation function, most commonly softmax $ p_i = \exp(p_i) / \sum \exp(p_i) $
-   \item \vspace{-2 mm} a beam search for the best (or n-best) output classes $\argmax_i p_i$
+   \item \vspace{-2 mm} a search for the best (or k-best) output classes $\argmax_i p_i$
 \end{enumerate}
 
 Figure~\ref{fig:pie-time} shows the amount of time spent in each step during translation. Clearly, the output layer of NMT models are very computationally expensive, accounting for over 60\% of the translation time.
@@ -145,7 +145,7 @@ Figure~\ref{fig:pie-time} shows the amount of time spent in each step during tra
 \label{fig:pie-time}
 \end{figure} 
 
-We focus on the last three steps; their outline is shown in Algorithm~\ref{algo:original-softmax-beamsearch}. For brevity, we show the algorithm for 1-best, a beam search of the n-bests is a simple extension of this.
+We focus on the last three steps; their outline is shown in Algorithm~\ref{algo:original-softmax-beamsearch}. For brevity, we show the algorithm for 1-best, a k-best search is a simple extension of this.
 
 \begin{algorithm} 
 \begin{algorithmic}
@@ -198,7 +198,7 @@ We focus on the last three steps; their outline is shown in Algorithm~\ref{algo:
 \EndProcedure
 
 \end{algorithmic}
-\caption{Original softmax and beam Search Algorithm}
+\caption{Original softmax and k-best algorithm}
 \label{algo:original-softmax-beamsearch}
 \end{algorithm}
 
@@ -235,7 +235,7 @@ Secondly, we are only interested in the probabilities of the best classes during
 \EndProcedure
 \end{algorithmic}
 
-\caption{Fused softmax and beam search}
+\caption{Fused softmax and k-best}
 \label{algo:Fused Kernel}
 \end{algorithm}
 
@@ -364,7 +364,7 @@ Using batching can increase the translation speed by over 20 times in Amun, Figu
 \end{figure} 
 
 
-\subsection{Softmax and Beam Search Fusion}
+\subsection{Softmax and K-Best Fusion}
 
 Fusing the bias and softmax operations in the output layer with the beam search results in a speed improvement by 25\%, Figure~\ref{fig:fused}. Its relative improvement decreases marginally as the beam size increases.
 
