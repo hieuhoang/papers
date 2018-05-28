@@ -58,7 +58,7 @@
 \maketitle
 \begin{abstract}
 
-This paper describes the submissions to the efficiency track for GPUs by members of the University of Edinburgh, Adam Mickiewicz University, Tilde and University of Alicante. We focus on efficient implementation of the recurrent deep-learning model as implemented in Amun, the fast inference engine for neural machine translation. We improve the performance with an efficient mini-batching algorithm, and by fusing the softmax operation with the k-best extraction algorithm.
+This paper describes the submissions to the efficiency track for GPUs at the Workshop for Neural Machine Translation and Generation by members of the University of Edinburgh, Adam Mickiewicz University, Tilde and University of Alicante. We focus on efficient implementation of the recurrent deep-learning model as implemented in Amun, the fast inference engine for neural machine translation. We improve the performance with an efficient mini-batching algorithm, and by fusing the softmax operation with the k-best extraction algorithm.
 
 
 \end{abstract}
@@ -426,7 +426,7 @@ Fusing the bias and softmax operations in the output layer with the beam search 
 
 Further insight can be gained by examining the time taken for each step in the output layer and beam search, Table~\ref{tab:fused-breakdown}. The fused operation only has to loop through the large cost matrix once, therefore, for low beam sizes its is comparable in speed to the simple kernel to add the bias. For higher beam sizes, the cost of maintaining the n-best list is begins to impact on speed.
 
-\begin{table}
+\begin{table}[h]
 \begin{center}
 \begin{tabular}{|l|r|r|} \hline
 		& Baseline	& Fused \\ \hline
@@ -455,7 +455,7 @@ K-best extr.	& 36.7		&  \\ \hline
 
 By taking advantage of the GPU's hardware accelerated matrix multiplication, we can gain up to 20\% in speed, Table~\ref{tab:tensor-cores}.
 
-\begin{table}
+\begin{table}[h]
 \begin{center}
 \begin{tabular}{|l|r|r|} \hline
 Beam size	& Baseline	& Tensor Cores \\ \hline
